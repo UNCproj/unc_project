@@ -18,7 +18,8 @@
 <body>
 <div class="container" ng-controller="ralController as ralCtrl">
     <div class="col-md-3 col-md-offset-3">
-        <div class="logon">
+    <img src="resources/img/logo.png" alt="logo" class="logologreg">
+        <div class="contlogreg">
             <login-form ng-show="ralCtrl.isRegistred"></login-form>
             <registration-form ng-hide="ralCtrl.isRegistred"></registration-form>
         </div>
