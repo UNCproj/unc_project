@@ -1,0 +1,50 @@
+<!--<form class="form-horizontal" name="loginForm" ng-controller="loginController as loginCtrl" novalidate>
+    <div class="form-group">
+        <label for="login">Login:</label>
+        <br />
+        <input id="login" class="form-control" name="login" type="text" ng-model="loginCtrl.login" placeholder="Login" required />
+    </div>
+    <div class="form-group">
+        <label for="pass">Password:</label>
+        <br />
+        <input id="pass" class="form-control" name="pass" type="password" ng-model="loginCtrl.pass" placeholder="Password" required />
+    </div>
+    <div  class="errors-wrapper">
+        <div class="alert alert-danger" ng-show="loginCtrl.isLogInFailed">Wrong login or password</div>
+    </div>
+    <button type="submit" class="btn btn-default" ng-click="loginCtrl.submit()">Login</button>
+</form>
+<br />-->
+
+<form class="form-horizontal" ng-controller="loginController as loginCtrl">
+    <h2>
+        <img src="resources/img/Login-Arrow.png">
+        Вход в систему
+    </h2>
+    <div class="form-group">
+        <label for="inputLogin3" class="col-sm-2 control-label">Логин</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="inputLogin3" placeholder="Логин" ng-model="loginCtrl.login"  required />
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="inputPassword3" class="col-sm-2 control-label">Пароль</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control" id="inputPassword3" placeholder="Пароль" ng-model="loginCtrl.pass" required />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-primary btn-block" ng-click="loginCtrl.submit()">Войти</button>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <div class="checkbox">
+                <p class="ques">
+                    Вы еще не с нами? <a ng-click="ralCtrl.setRegistred(false)">Присоединиться</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</form>

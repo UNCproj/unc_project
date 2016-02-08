@@ -1,0 +1,84 @@
+<!--<div id="registration-container" ng-controller="registrationController as regCtrl">
+    <form name="registrationForm" novalidate>
+        <div class="form-group">
+            <label for="login">Login:</label>
+            <br />
+            <input id="login" class="form-control" name="login" type="text" ng-model="regCtrl.login" placeholder="Login" required />
+        </div>
+        <div class="errors-wrapper">
+            <div class="alert alert-danger" ng-show="registrationForm.login.$dirty && registrationForm.login.$error['required']">Login must be specified</div>
+        </div>
+
+        <div class="form-group">
+            <label for="pass">Password:</label>
+            <br />
+            <input id="pass" class="form-control" name="pass" type="password" ng-model="regCtrl.pass" placeholder="Password" ng-minlength="6" required />
+        </div>
+        <div  class="errors-wrapper">
+            <div class="alert alert-danger" ng-show="registrationForm.pass.$dirty && registrationForm.pass.$error['required']">Password must be specified</div>
+            <div class="alert alert-danger" ng-show="registrationForm.pass.$dirty && registrationForm.pass.$error['minlength']">Password must be at least 6 symbols length</div>
+        </div>
+
+        <div class="form-group">
+            <label for="retype-pass">Retype password:</label>
+            <br />
+            <input id="retype-pass" class="form-control" name="retypePass" type="password" ng-model="regCtrl.retypePass" placeholder="Retype password" ng-minlength="6" compare-to="regCtrl.pass" required />
+        </div>
+        <div  class="errors-wrapper">
+            <div class="alert alert-danger" ng-show="registrationForm.retypePass.$dirty && regCtrl.retypePass == null">Passwords must be the same</div>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <br />
+            <input id="email" class="form-control" name="email" type="email" ng-model="regCtrl.email" placeholder="Email" required />
+        </div>
+        <button type="submit" class="btn btn-default" ng-click="registrationForm.$valid && regCtrl.submit()">Register</button>
+    </form>
+    <br />
+    <button class="btn btn-default" ng-click="ralCtrl.setRegistred(true)">Back to login</button>
+</div>-->
+
+<form class="form-horizontal" ng-controller="registrationController as regCtrl">
+    <h2>
+        <img src="resources/img/User-Add.png">
+        Регистрация</h2>
+    <div class="form-group">
+        <label for="inputEmail3" class="col-sm-2 control-label">Логин</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="inputLogin3" ng-model="regCtrl.login" placeholder="Логин" required>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+        <div class="col-sm-10">
+            <input type="email" class="form-control" id="inputEmail3" placeholder="Email" ng-model="regCtrl.email" required>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="inputPassword3" class="col-sm-2 control-label">Пароль</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control" id="inputPassword3" placeholder="Пароль" ng-model="regCtrl.pass" ng-minlength="6" required>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="inputPassword3" class="col-sm-2 control-label">Повторите пароль</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control" id="inputPassword3" placeholder="Пароль" ng-model="regCtrl.retypePass" ng-minlength="6" compare-to="regCtrl.pass" required>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-primary btn-block" ng-click="regCtrl.submit()">Регистрация</button>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <div >
+                <p class="ques">
+                    Уже с нами? <a ng-click="ralCtrl.setRegistred(true)">Войти</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</form>

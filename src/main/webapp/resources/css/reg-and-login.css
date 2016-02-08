@@ -1,0 +1,14 @@
+#login-container, #registration-container {
+	text-align: center;
+	width: 50%;
+	margin: 0 auto;
+	vertical-align: middle;
+}
+
+.ng-invalid.ng-dirty {
+	border-color: #FA787E;
+}
+
+.ng-valid.ng-dirty {
+	border-color: #78FA89;
+}
