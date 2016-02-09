@@ -81,6 +81,13 @@
 
     <!-- Import the CDI API, we use provided scope as the API is included in WildFly -->
     <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.0.1</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>c3p0</groupId>
       <artifactId>c3p0</artifactId>
       <version>0.9.0.2</version>
@@ -213,6 +220,13 @@
       <artifactId>json</artifactId>
       <version>20151123</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.jboss.as</groupId>
+      <artifactId>jboss-as-ejb3</artifactId>
+      <version>7.1.0.CR1</version>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -236,6 +250,9 @@
         <groupId>org.wildfly.plugins</groupId>
         <artifactId>wildfly-maven-plugin</artifactId>
         <version>${version.wildfly.maven.plugin}</version>
+        <configuration>
+          <port>8054</port>
+        </configuration>
       </plugin>
     </plugins>
   </build>
