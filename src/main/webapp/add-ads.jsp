@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="newAd.*" %>
-<%@ page import="beans.*" %>
+
 <!DOCTYPE html>
 <html lang="ru" ng-app="addAds">
 <head>
@@ -10,46 +9,6 @@
     <link rel="stylesheet" type="text/css" href="resources/css/add-ads.css">
 </head>
 <body>
-<%
-    request.setCharacterEncoding("utf-8");
-    response.setCharacterEncoding("utf-8");
-    response.setContentType("text/html");
-%>
-
-<%!
-    String  category,
-            city,
-            price,
-            name,
-            description,
-            id;
-%>
-
-<%
-    if(request.getParameter("category")!=null){
-        category = request.getParameter("category");
-    }
-    if(request.getParameter("typeCategory")!=null){
-        category = category + ":" + request.getParameter("typeCategory");
-    }
-    if(request.getParameter("typeTypes")!=null){
-        category = category + ":" + request.getParameter("typeTypes");
-    }
-    if(request.getParameter("typeTypesType")!=null){
-        category = category + ":" + request.getParameter("typeTypesType");
-    }
-    city = request.getParameter("inputCity");
-    price = request.getParameter("price");
-    name = request.getParameter("adsName");
-    description = request.getParameter("adsDescription");
-    UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
-    id = userAccountBean.getId();
-%>
-<%if(request.getParameter("city")!=null)%>
-<%=request.getParameter("city")%>
-
-<%!AddAds addAds = new AddAds();%>
-<%if(!addAds.inputNewAdvert(category, city, price, name, description, id)){%>
 
 <div ng-controller="addAdsController">
 
@@ -58,7 +17,7 @@
         <h1 style="padding-left: 40%">Новое объявление</h1>
     </div>
 
-    <form class="form-horizontal" role="form" id="ads" name="ads" method="post" action="add-ads.jsp">
+    <form class="form-horizontal" role="form" id="ads" name="ads" method="post" action="add-ads" enctype="multipart/form-data">
 <!--Выбор категории-->
         <div class="form-group">
             <label for="productCategoryId" class="col-sm-2 control-label">Выберите категорию</label>
@@ -104,7 +63,7 @@
         <div class="form-group">
             <label for="inputCity" class="col-sm-2 control-label">Местоположение</label>
             <div class="col-sm-10">
-                <select ng-model="inputCity" name="inputCity" class="form-control" id="inputCity" required
+                <select ng-model="inputCity" name="city" class="form-control" id="inputCity" required
                         ng-options="c.label for c in cities track by c.label">
                     <option disabled value="">--Выберите--</option>
                 </select><br>
@@ -142,7 +101,7 @@
             <div class="col-sm-10">
                     <span class="btn btn-default btn-file">
                         <i class="icon-plus"></i> <span>Добавить фото</span>
-                        <input type="file" ng-model="photos" class="form-control" name="photos" id="inputPhoto"
+                        <input type="file" ng-model="photos" class="form-control" name="file" id="inputPhoto"
                                placeholder="Фото" multiple/>
                     </span>
                 <div id="lists"></div>
@@ -156,10 +115,6 @@
             </div>
         </div>
     </form>
-
-    <%}else{%>
-    <jsp:forward page="print-ads.jsp"></jsp:forward>
-    <%}%>
 </div>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
 <script type="text/javascript" src="resources/scripts/angular.min.js"></script>

@@ -21,6 +21,11 @@ public class SQLQueriesHelper {
     static public final String LAST_VISIT_DATE_ATTR = "last_visit_date";
     static public final String EMAIL_ATTR = "email";
     static public final String USER_PIC_FILE_ATTR = "user_pic_file";
+    static public final String DESCRIPTION_ATTR = "description";
+    static public final String CATEGORY_ADVERT_ATTR = "category";
+    static public final String CITY_ADVERT_ATTR = "city";
+    static public final String PRICE_ADVERT_ATTR = "price";
+    static public final String USERS_ADVERT_ATTR = "user_advert";
 
     static public final String LOGIN_ATTR_ID = "1";
     static public final String PASSWORD_ATTR_ID = "2";
@@ -28,6 +33,11 @@ public class SQLQueriesHelper {
     static public final String LAST_VISIT_DATE_ATTR_ID = "4";
     static public final String EMAIL_ATTR_ID = "5";
     static public final String USER_PIC_FILE_ATTR_ID = "6";
+    static public final String DESCRIPTION_ATTR_ID = "7";
+    static public final String CATEGORY_ADVERT_ATTR_ID = "8";
+    static public final String CITY_ADVERT_ATTR_ID = "9";
+    static public final String PRICE_ADVERT_ATTR_ID = "10";
+    static public final String USERS_ADVERT_ATTR_ID = "11";
 
     static public final String DEFAULT_USER_PIC_FILE = "/unc-project/resources/img/user-pics/default.png";
 
