@@ -236,4 +236,5 @@ public class SQLQueriesHelper {
         String query = "insert into unc_params(object_id, attr_id, date_value) values (" + id +",'3', to_date('" + param + "','yyyy:mm:dd hh24:mi:ss'))";
         return query;
     }
+    
 }

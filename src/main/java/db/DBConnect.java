@@ -15,7 +15,7 @@ public class DBConnect {
     public DBConnect(String userName, String password) {
         this.userName = userName;
         this.password = password;
-        this.host = "jdbc:oracle:thin:@localhost:1521:xe";
+        this.host = "jdbc:oracle:thin:@54.174.120.172:1521:xe";
     }
     
     public void setHost(String host) {
