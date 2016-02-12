@@ -19,7 +19,7 @@
 <ul class="nav nav-tabs">
     <li class="active"><a href="#main" data-toggle="tab">Основная информация</a></li>
     <li><a href="#about" data-toggle="tab">О себе</a></li>
-    <li><a href="#statid" data-toggle="tab">Статка</a></li>
+    <li><a href="#statid" data-toggle="tab">Статистика</a></li>
 </ul>
 
 <div class="tab-content">
