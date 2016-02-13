@@ -2,10 +2,18 @@
  * Created by Денис on 05.02.2016.
  */
 (function(){
+<<<<<<< HEAD
     var app = angular.module('accountSettings', ['flow']);
 
     app.controller('mainSettingsController', ['$scope', '$http', function($scope, $http) {
         $scope.user = {};
+=======
+    var app = angular.module('accountSettings', ['flow','chart.js']);
+        this.login;
+        this.pass;
+        this.changePass;
+        this.email;
+>>>>>>> 1e2fbbd889a9aa82dad3ce4fdeafdd004373202c
 
         $scope.newAvatarAdded = false;
         $scope.isSettingsChanged = false;
@@ -79,6 +87,7 @@
         };
     }]);
 
+<<<<<<< HEAD
     //app.config(['flowFactoryProvider', function (flowFactoryProvider) {
     //    flowFactoryProvider.defaults = {
     //        target: '/unc-project/upload',
@@ -89,3 +98,36 @@
     //    };
     //}])
 })();
+=======
+    app.config(['flowFactoryProvider', function (flowFactoryProvider) {
+        flowFactoryProvider.defaults = {
+            target: '/uploadImg',
+            permanentErrors:[404, 500, 501],
+            singleFile: true
+        };
+    }])
+
+    
+    app.controller("LineCtrl", function ($scope) {
+        var id = "194858612108367968"; //здесь должен быть object_id текущего пользователя
+        var labels = [];
+        var data = [];
+        $.ajax({
+        url: "StatServlet",
+        async: false,
+        data: {"object_id": id}
+        }).done(function(visits) {
+        $.each(visits, function(index, visit) {
+                labels.push(visit.date);
+                data.push(visit.count);
+            });
+      });
+        $scope.labels = labels;
+        $scope.series = ['Просмотров объявлений за день'];
+        $scope.data = [data];
+        $scope.onClick = function (points, evt) {
+                    //console.log(points, evt);
+        };
+    });
+})();
+>>>>>>> 1e2fbbd889a9aa82dad3ce4fdeafdd004373202c

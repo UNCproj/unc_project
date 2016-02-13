@@ -3,11 +3,15 @@
 <head>
     <title>unc_project | Личный кабинет</title>
     <link rel="stylesheet" type="text/css" href="resources/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/angular-chart.css" >
     <script type="text/javascript" src="resources/scripts/jquery-1.12.0.min.js"></script>
     <script type="text/javascript" src="resources/scripts/angular.min.js"></script>
     <script type="text/javascript" src="resources/scripts/bootstrap.min.js"></script>
     <script type="text/javascript" src="resources/scripts/ng-flow-standalone.min.js"></script>
     <script type="text/javascript" src="resources/scripts/accountSettings.js"></script>
+    <script type="text/javascript" src="resources/scripts/Chart.js"></script>
+    <script type="text/javascript" src="resources/scripts/angular-chart.js"></script>
+    <script type="text/javascript" src="resources/scripts/d3.min.js"></script>
 </head>
 <body flow-prevent-drop>
 <script>
@@ -19,6 +23,7 @@
 <ul class="nav nav-tabs">
     <li class="active"><a href="#main" data-toggle="tab">Основная информация</a></li>
     <li><a href="#about" data-toggle="tab">О себе</a></li>
+    <li><a href="#statid" data-toggle="tab">Статистика</a></li>
 </ul>
 
 <div class="settings tab-content" ng-controller="mainSettingsController">
@@ -128,6 +133,18 @@
             </div>
             <input type="submit" ng-click="submit('about')">
         </form>
+=======
+        <h3>О себe:</h3>
+    </div>
+    <div id="statid" class="tab-pane fade in">
+        <h3>Статистика просмотров объявлений:</h3>
+        <div action="" class="tab-pane fade in" ng-controller="LineCtrl">
+        <canvas id="line" class="chart chart-line" chart-data="data"
+  chart-labels="labels" chart-legend="true" chart-series="series"
+  chart-click="onClick" >
+</canvas>
+    </div>
+>>>>>>> 1e2fbbd889a9aa82dad3ce4fdeafdd004373202c
     </div>
 </div>
 </body>
