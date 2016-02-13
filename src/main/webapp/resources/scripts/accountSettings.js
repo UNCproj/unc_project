@@ -2,18 +2,16 @@
  * Created by Денис on 05.02.2016.
  */
 (function(){
-<<<<<<< HEAD
-    var app = angular.module('accountSettings', ['flow']);
+
+    var app = angular.module('accountSettings', ['flow','chart.js']);
 
     app.controller('mainSettingsController', ['$scope', '$http', function($scope, $http) {
         $scope.user = {};
-=======
-    var app = angular.module('accountSettings', ['flow','chart.js']);
+
         this.login;
         this.pass;
         this.changePass;
         this.email;
->>>>>>> 1e2fbbd889a9aa82dad3ce4fdeafdd004373202c
 
         $scope.newAvatarAdded = false;
         $scope.isSettingsChanged = false;
@@ -87,7 +85,6 @@
         };
     }]);
 
-<<<<<<< HEAD
     //app.config(['flowFactoryProvider', function (flowFactoryProvider) {
     //    flowFactoryProvider.defaults = {
     //        target: '/unc-project/upload',
@@ -97,16 +94,6 @@
     //        method: 'multipart'
     //    };
     //}])
-})();
-=======
-    app.config(['flowFactoryProvider', function (flowFactoryProvider) {
-        flowFactoryProvider.defaults = {
-            target: '/uploadImg',
-            permanentErrors:[404, 500, 501],
-            singleFile: true
-        };
-    }])
-
     
     app.controller("LineCtrl", function ($scope) {
         var id = "194858612108367968"; //здесь должен быть object_id текущего пользователя
@@ -130,4 +117,3 @@
         };
     });
 })();
->>>>>>> 1e2fbbd889a9aa82dad3ce4fdeafdd004373202c

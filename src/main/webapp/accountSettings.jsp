@@ -133,18 +133,15 @@
             </div>
             <input type="submit" ng-click="submit('about')">
         </form>
-=======
-        <h3>О себe:</h3>
     </div>
     <div id="statid" class="tab-pane fade in">
         <h3>Статистика просмотров объявлений:</h3>
         <div action="" class="tab-pane fade in" ng-controller="LineCtrl">
         <canvas id="line" class="chart chart-line" chart-data="data"
-  chart-labels="labels" chart-legend="true" chart-series="series"
-  chart-click="onClick" >
-</canvas>
-    </div>
->>>>>>> 1e2fbbd889a9aa82dad3ce4fdeafdd004373202c
+          chart-labels="labels" chart-legend="true" chart-series="series"
+          chart-click="onClick" >
+        </canvas>
+        </div>
     </div>
 </div>
 </body>
