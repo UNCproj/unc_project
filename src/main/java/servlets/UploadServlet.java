@@ -21,16 +21,26 @@ import java.util.function.BooleanSupplier;
 /**
  * Created by Денис on 07.02.2016.
  */
-@WebServlet(name = "UploadServlet", urlPatterns = "upload")
+@WebServlet(name = "UploadServlet", urlPatterns = "/upload")
 @MultipartConfig
 public class UploadServlet extends HttpServlet {
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Part filePart = request.getPart("file");
+        String fileName = request.getParameter("flowFilename");
         File uploadDir = new File(getServletContext().getInitParameter("upload.location"));
-        File uploadFile = new File(uploadDir, filePart.getName());
+        File uploadFile = new File(uploadDir, fileName);
 
         try (InputStream input = filePart.getInputStream()) {
             Files.copy(input, uploadFile.toPath());
         }
+        catch (Exception e) {
+            throw new ServletException(e);
+        }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doPost(request, response);
     }
 }

@@ -1,3 +1,5 @@
+<%@ page import="beans.BeansHelper" %>
+<%@ page import="beans.UserAccountBean" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -5,6 +7,11 @@
 </head>
 <body>
     <a href="${pageContext.request.contextPath}/account?accountLogin=${userAccount.getLogin()}">Личный кабинет</a>
-    <a href="${pageContext.request.contextPath}/logout">Выйти из профиля</a>
+    <%
+        UserAccountBean accountBean = (UserAccountBean)session.getAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY);
+        if (accountBean != null && accountBean.isLoggedIn()) {
+    %>
+        <a href="${pageContext.request.contextPath}/logout">Выйти из профиля</a>
+    <%}%>
 </body>
 </html>

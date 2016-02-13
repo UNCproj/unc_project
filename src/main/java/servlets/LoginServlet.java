@@ -94,7 +94,8 @@ public class LoginServlet extends HttpServlet {
             }
 
             UserAccountBean userAccountBean = new UserAccountBean();
-            userAccountBean.initialize(userId.toString(), request.getParameter("login"), request.getParameter("pass"),
+            userAccountBean.initialize(userId.toString(), request.getParameter("login"),
+                    String.valueOf(request.getParameter("pass").hashCode()),
                     email, userPicFile, isLoggedIn, new Date());
             request.getSession().setAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY, userAccountBean);
         }

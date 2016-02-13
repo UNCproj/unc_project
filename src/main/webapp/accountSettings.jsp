@@ -10,6 +10,10 @@
     <script type="text/javascript" src="resources/scripts/accountSettings.js"></script>
 </head>
 <body flow-prevent-drop>
+<script>
+    var initialUserLogin = '${userAccount.getLogin()}';
+</script>
+
 <h2>Личный кабинет:</h2>
 
 <ul class="nav nav-tabs">
@@ -17,12 +21,17 @@
     <li><a href="#about" data-toggle="tab">О себе</a></li>
 </ul>
 
-<div class="tab-content">
-    <div id="main" class="tab-pane fade in active">
+<div class="settings tab-content" ng-controller="mainSettingsController">
+    <div id="main" class="tab-pane fade in active"
+         flow-init="{target: '/unc-project/upload', testChunks:false}"
+         flow-file-added="fileAdded($file, $event, $flow)"
+         flow-name="uploader.flow">
         <h3>Основная информация:</h3>
-        <form action="" class="form-horizontal col-md-3 col-md-offset-3" flow-init ng-controller="mainSettingsController as mainSetCtrl">
+        <form class="form-horizontal col-md-3 col-md-offset-3" novalidate>
+
+            <!--Обновление аватара-->
             <div class="form-group">
-                <img flow-img="$flow.files[0]">
+                <img src="${userAccount.getUserPicFile()}" flow-img="uploader.flow.files[0]">
                 <br/>
                 <label for="load-avatar">Загрузить аватар:</label>
                 <div id="load-avatar" class="alert bg-primary" flow-drop>
@@ -30,27 +39,95 @@
                 </div>
                 <button type="button" flow-btn>Загрузить аватар</button>
             </div>
+
+            <!--Обновление логина-->
             <div class="form-group">
-                <label for="login" class="control-label">Логин:</label>
-                <div><input id="login" type="text" class="form-control" placeholder="${userAccount.getLogin()}" ng-model="mainSetCtrl.login"></div>
+                <label for="login_elem" class="control-label">Логин:</label>
+                <div><input id="login_elem" type="text" class="form-control" placeholder="${userAccount.getLogin()}" ng-model="user.login"></div>
             </div>
+
+            <!--Обновление пароля-->
             <div class="form-group">
-                <label for="changePass" class="control-label">Изменить пароль:</label>
-                <div><input id="changePass" type="password" class="form-control" ng-model="mainSetCtrl.changePass"></div>
+                <label for="changePass_elem" class="control-label">Изменить пароль:</label>
+                <div><input id="changePass_elem" type="password" class="form-control" ng-model="user.changePass"></div>
             </div>
+
+            <!--Обновление email-->
             <div class="form-group">
-                <label for="email" class="control-label">Email:</label>
-                <div><input id="email" type="text" class="form-control" placeholder="${userAccount.getEmail()}" ng-model="mainSetCtrl.email"></div>
+                <label for="email_elem" class="control-label">Email:</label>
+                <div><input id="email_elem" type="email" class="form-control" placeholder="${userAccount.getEmail()}" ng-model="user.email"></div>
             </div>
+
+            <!--Валидация пароля-->
             <div class="form-group">
-                <label for="pass" class="control-label">Введите пароль:</label>
-                <div><input id="pass" type="text" class="form-control" ng-model="mainSetCtrl.pass"></div>
+                <label for="pass_elem" class="control-label">Введите пароль:</label>
+                <div><input id="pass_elem" type="password" class="form-control" ng-model="user.pass" required></div>
             </div>
-            <input type="submit" ng-click="mainSetCtrl.submit()">
+
+            <input type="submit" ng-click="submit('main')">
         </form>
     </div>
     <div id="about" class="tab-pane fade in">
         <h3>О себе:</h3>
+        <form class="form-horizontal col-md-3 col-md-offset-3" novalidate>
+
+            <!--Обновление имени-->
+            <div class="form-group">
+                <label for="firstName_elem" class="control-label">Имя:</label>
+                <div><input id="firstName_elem" type="text" class="form-control" placeholder="${userAccount.getFirstName()}" ng-model="user.firstName"></div>
+            </div>
+
+            <!--Обновление отчества-->
+            <div class="form-group">
+                <label for="secondName_elem" class="control-label">Отчество:</label>
+                <div><input id="secondName_elem" type="text" class="form-control" placeholder="${userAccount.getSecondName()}" ng-model="user.secondName"></div>
+            </div>
+
+            <!--Обновление фамилии-->
+            <div class="form-group">
+                <label for="surname_elem" class="control-label">Фамилия:</label>
+                <div><input id="surname_elem" type="text" class="form-control" placeholder="${userAccount.getSurname()}" ng-model="user.surname"></div>
+            </div>
+
+            <!--Обновление телефона-->
+            <div class="form-group">
+                <label for="phone_elem" class="control-label">Телефон:</label>
+                <div><input id="phone_elem" type="text" class="form-control" placeholder="${userAccount.getPhone()}" ng-model="user.phone"></div>
+            </div>
+
+            <!--Обновление улицы и дома-->
+            <div class="form-group">
+                <label for="streetAndHouse_elem" class="control-label">Улица и дом::</label>
+                <div><input id="streetAndHouse_elem" type="text" class="form-control" placeholder="${userAccount.getStreetAndHouse()}" ng-model="user.streetAndHouse"></div>
+            </div>
+
+            <!--Обновление города-->
+            <div class="form-group">
+                <label for="city_elem" class="control-label">Город:</label>
+                <div><input id="city_elem" type="text" class="form-control" placeholder="${userAccount.getCity()}" ng-model="user.city"></div>
+            </div>
+
+            <!--Обновление страны-->
+            <div class="form-group">
+                <label for="country_elem" class="control-label">Страна:</label>
+                <div><input id="country_elem" type="text" class="form-control" placeholder="${userAccount.getCountry()}" ng-model="user.country"></div>
+            </div>
+
+            <!--Обновление доп. информации-->
+            <div class="form-group">
+                <label for="additionalInfo_elem" class="control-label">О себе:</label>
+                <div><textarea id="additionalInfo_elem" type="text" class="form-control"
+                               placeholder="${userAccount.getAdditionalInfo()}" ng-model="user.additionalInfo"></textarea>
+                </div>
+            </div>
+
+            <!--Валидация пароля-->
+            <div class="form-group">
+                <label for="pass_elem1" class="control-label">Введите пароль:</label>
+                <div><input id="pass_elem1" type="password" class="form-control" ng-model="user.pass" required></div>
+            </div>
+            <input type="submit" ng-click="submit('about')">
+        </form>
     </div>
 </div>
 </body>

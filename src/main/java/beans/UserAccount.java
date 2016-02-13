@@ -18,6 +18,12 @@ public interface UserAccount {
     void setEmail(String email);
     String getUserPicFile();
     void setUserPicFile(String userPicFile);
+    String getFirstName();
+    void setFirstName(String firstName);
+    String getSecondName();
+    void setSecondName(String secondName);
+    String getSurname();
+    void setSurname(String surname);
     String getPhone();
     void setPhone(String phone);
     String getStreetAndHouse();

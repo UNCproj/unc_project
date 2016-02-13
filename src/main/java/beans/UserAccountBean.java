@@ -24,8 +24,11 @@ public class UserAccountBean implements UserAccount {
     private String login;
     private String password;
     private String email;
-    private String userPicFile;
     private Date lastLoginDate;
+    private String userPicFile;
+    private String firstName = null;
+    private String secondName = null;
+    private String surname = null;
     private String phone = null;
     private String streetAndHouse = null;
     private String city = null;
@@ -86,6 +89,36 @@ public class UserAccountBean implements UserAccount {
     @Override
     public void setUserPicFile(String userPicFile) {
         this.userPicFile = userPicFile;
+    }
+
+    @Override
+    public String getFirstName() {
+        return firstName;
+    }
+
+    @Override
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    @Override
+    public String getSecondName() {
+        return secondName;
+    }
+
+    @Override
+    public void setSecondName(String secondName) {
+        this.secondName = secondName;
+    }
+
+    @Override
+    public String getSurname() {
+        return surname;
+    }
+
+    @Override
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
     @Override
@@ -153,4 +186,66 @@ public class UserAccountBean implements UserAccount {
         isLoggedIn = isLogged;
     }
 
+    public void preparePersonalInfo() throws PropertyVetoException, IOException, SQLException {
+        if (firstName == null) {
+            Connection connection = DataSource.getInstance().getConnection();
+            loadPersonalInfo(connection);
+        }
+    }
+
+    public void updateAllInfo() throws PropertyVetoException, SQLException, IOException {
+        Connection connection = DataSource.getInstance().getConnection();
+        loadPersonalInfo(connection);
+        loadMainInfo(connection);
+    }
+
+    private void loadMainInfo(Connection connection) throws SQLException {
+        Statement statement = connection.createStatement();
+        ResultSet results = statement.executeQuery(SQLQueriesHelper.selectFullObjectInformationById(
+                new String[]{ SQLQueriesHelper.USER_TYPE_ID },
+                new String[]{ id }));
+
+        while (results.next()) {
+            if (results.getString("attr_name").equals(SQLQueriesHelper.LOGIN_ATTR)) {
+                this.login = results.getString("value");
+            } else if (results.getString("attr_name").equals(SQLQueriesHelper.PASSWORD_ATTR)) {
+                this.password = results.getString("value");
+            } else if (results.getString("attr_name").equals(SQLQueriesHelper.EMAIL_ATTR)) {
+                this.email = results.getString("value");
+            } else if (results.getString("attr_name").equals(SQLQueriesHelper.USER_PIC_FILE_ATTR)) {
+                this.userPicFile = results.getString("value");
+            }
+        }
+    }
+
+    /**
+     * Загружает персональные данные - от firstName до additionalInfo
+     */
+    private void loadPersonalInfo(Connection connection) throws PropertyVetoException, SQLException, IOException {
+        Statement statement = connection.createStatement();
+        String[] types = new String[1];
+        types[0] = SQLQueriesHelper.USER_TYPE_ID;
+        ResultSet results = statement.executeQuery(
+                SQLQueriesHelper.selectFullObjectInformationByName(types, login));
+
+        while (results.next()) {
+            if (results.getString("attr_name").equals(SQLQueriesHelper.FIRST_NAME_ATTR)) {
+                this.firstName = results.getString("value");
+            } else if (results.getString("attr_name").equals(SQLQueriesHelper.SECOND_NAME_ATTR)) {
+                this.secondName = results.getString("value");
+            } else if (results.getString("attr_name").equals(SQLQueriesHelper.SURNAME_ATTR)) {
+                this.surname = results.getString("value");
+            } else if (results.getString("attr_name").equals(SQLQueriesHelper.PHONE_ATTR)) {
+                this.phone = results.getString("value");
+            } else if (results.getString("attr_name").equals(SQLQueriesHelper.STREET_AND_HOUSE_NAME_ATTR)) {
+                this.streetAndHouse = results.getString("value");
+            } else if (results.getString("attr_name").equals(SQLQueriesHelper.CITY_ADVERT_ATTR)) {
+                this.city = results.getString("value");
+            } else if (results.getString("attr_name").equals(SQLQueriesHelper.COUNTRY_ATTR)) {
+                this.country = results.getString("value");
+            } else if (results.getString("attr_name").equals(SQLQueriesHelper.ADDITIONAL_INFO_ATTR)) {
+                this.additionalInfo = results.getString("value");
+            }
+        }
+    }
 }

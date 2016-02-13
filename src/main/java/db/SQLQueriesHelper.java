@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.StringJoiner;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -26,6 +27,14 @@ public class SQLQueriesHelper {
     static public final String CITY_ADVERT_ATTR = "city";
     static public final String PRICE_ADVERT_ATTR = "price";
     static public final String USERS_ADVERT_ATTR = "user_advert";
+    static public final String FIRST_NAME_ATTR = "first_name";
+    static public final String SECOND_NAME_ATTR = "second_name";
+    static public final String SURNAME_ATTR = "surname";
+    static public final String PHONE_ATTR = "phone";
+    static public final String STREET_AND_HOUSE_NAME_ATTR = "street_and_house";
+    static public final String COUNTRY_ATTR = "country";
+    static public final String ADDITIONAL_INFO_ATTR = "additional_info";
+    static public final String BOOKMARK_ATTR = "bookmark";
 
     static public final String LOGIN_ATTR_ID = "1";
     static public final String PASSWORD_ATTR_ID = "2";
@@ -38,10 +47,18 @@ public class SQLQueriesHelper {
     static public final String CITY_ADVERT_ATTR_ID = "9";
     static public final String PRICE_ADVERT_ATTR_ID = "10";
     static public final String USERS_ADVERT_ATTR_ID = "11";
+    static public final String FIRST_NAME_ATTR_ID = "12";
+    static public final String SECOND_NAME_ATTR_ID = "13";
+    static public final String SURNAME_ATTR_ID = "14";
+    static public final String PHONE_ATTR_ID = "15";
+    static public final String STREET_AND_HOUSE_NAME_ATTR_ID = "16";
+    static public final String COUNTRY_ATTR_ID = "17";
+    static public final String ADDITIONAL_INFO_ATTR_ID = "18";
+    static public final String BOOKMARK_ATTR_ID = "19";
 
     static public final String DEFAULT_USER_PIC_FILE = "/unc-project/resources/img/user-pics/default.png";
 
-    static public String selectFullObjectInformationByName(String[] types, String name) {
+    static public String selectFullObjectInformationByName(String[] types, String objectName) {
         StringBuffer query = new StringBuffer(
                         "select  o.object_id,\n" +
                         "        o.object_name,\n" +
@@ -73,7 +90,7 @@ public class SQLQueriesHelper {
             query.append(" or o.object_type_id = " + types[i]);
         }
 
-        query.append(") and o.object_name = '" + name + "'");
+        query.append(") and o.object_name = '" + objectName + "'");
         query.append(  " order by o.object_id,\n" +
                         "         a.attr_id");
 
@@ -220,10 +237,16 @@ public class SQLQueriesHelper {
         String query = "update unc_params set " +
                 "value = " + (value == null ? "null" : "'" + value + "'") + ", " +
                 "date_value = " + (value == null ? "to_date('" + df.format(dateValue) + "', 'yyyy-MM-dd HH24:mi:ss')" : "null") +
-                "where object_id = " + id + "and attr_id = " + attrId;
+                " where object_id = " + id + "and attr_id = " + attrId;
 
         return query;
     }
+
+    static public String changeName(BigDecimal objectId, String newName) {
+        String query = "update unc_objects set object_name = '" + newName + "' where object_id = " + objectId;
+        return query;
+    }
+
     static public String newId (){
         String query = "select GetID() as id from dual";
         return query;
