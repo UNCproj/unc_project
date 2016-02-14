@@ -56,7 +56,7 @@ public class SQLQueriesHelper {
     static public final String ADDITIONAL_INFO_ATTR_ID = "18";
     static public final String BOOKMARK_ATTR_ID = "19";
 
-    static public final String DEFAULT_USER_PIC_FILE = "/unc-project/resources/img/user-pics/default.png";
+    //static public final String DEFAULT_USER_PIC_FILE = "/unc-project/resources/img/user-pics/default.png";
 
     static public String selectFullObjectInformationByName(String[] types, String objectName) {
         StringBuffer query = new StringBuffer(

@@ -8,13 +8,9 @@
     app.controller('mainSettingsController', ['$scope', '$http', function($scope, $http) {
         $scope.user = {};
 
-        this.login;
-        this.pass;
-        this.changePass;
-        this.email;
-
         $scope.newAvatarAdded = false;
         $scope.isSettingsChanged = false;
+        $scope.settingsGroup = "";
         $scope.uploader = {};
 
         var uploadChanges = function(settingsGroup) {
@@ -30,7 +26,7 @@
                         'settingsGroup': settingsGroup
                     };
 
-                    if ($scope.uploader.flow.files.length > 0 && $scope.uploader.flow.files[0].name === undefined) {
+                    if ($scope.uploader.flow.files.length > 0 && $scope.uploader.flow.files[0].name !== undefined) {
                         params.userPicFile = $scope.uploader.flow.files[0].name;
                     }
                     break;
@@ -65,8 +61,10 @@
         }
 
         $scope.submit = function(settingsGroup) {
+            $scope.settingsGroup = settingsGroup;
+
             if ($scope.newAvatarAdded) {
-                $scope.uploader.flow.files[0].name = '/img/ava_' + initialUserLogin + "_" + Date.now() + ".png";
+                $scope.uploader.flow.files[0].name = '/img/user-pics/ava_' + initialUserLogin + "_" + Date.now() + ".png";
                 $scope.uploader.flow.upload();
             }
             else {
@@ -81,7 +79,7 @@
         };
 
         $scope.complete = function () {
-            uploadChanges();
+            uploadChanges($scope.settingsGroup);
         };
     }]);
 

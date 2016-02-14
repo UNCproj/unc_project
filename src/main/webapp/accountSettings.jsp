@@ -30,6 +30,7 @@
     <div id="main" class="tab-pane fade in active"
          flow-init="{target: '/unc-project/upload', testChunks:false}"
          flow-file-added="fileAdded($file, $event, $flow)"
+         flow-complete="complete()"
          flow-name="uploader.flow">
         <h3>Основная информация:</h3>
         <form class="form-horizontal col-md-3 col-md-offset-3" novalidate>

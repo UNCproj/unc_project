@@ -61,7 +61,11 @@ public class AccountSettingsServlet extends HttpServlet {
                     String newLogin = request.getParameter("login");
                     String newPass = request.getParameter("changePass");
                     String newEmail = request.getParameter("email");
-                    String newUserPicFile = "/unc_project/resources" + request.getParameter("userPicFile");
+                    String newUserPicFile = request.getParameter("userPicFile");
+
+                    if (newUserPicFile != null) {
+                        newUserPicFile = "/unc_project/resources" + newUserPicFile;
+                    }
 
                     UserRegistrationValidationBean validationBean = new UserRegistrationValidationBean(
                             (newLogin != null && newLogin.length() > 0) ? newLogin : account.getLogin(),
@@ -71,6 +75,7 @@ public class AccountSettingsServlet extends HttpServlet {
 
                     String validationConstrJSON = validationBean.validate();
 
+                    //TODO: переделать валидацию
                     if (validationBean.isValid()) {
                         if (newLogin != null && newLogin.length() > 0) {
                             connection.setAutoCommit(false);
@@ -98,6 +103,7 @@ public class AccountSettingsServlet extends HttpServlet {
                                             SQLQueriesHelper.EMAIL_ATTR_ID, newEmail, null));
                         }
 
+                        int len = newUserPicFile.length();
                         if (newUserPicFile != null && newUserPicFile.length() > 0) {
                             paramUpdateStatement.executeUpdate(
                                     SQLQueriesHelper.updateParam(new BigDecimal(account.getId()),

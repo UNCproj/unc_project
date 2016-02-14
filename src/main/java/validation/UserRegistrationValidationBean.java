@@ -88,14 +88,14 @@ public class UserRegistrationValidationBean {
                         if (attrName.equals(SQLQueriesHelper.LOGIN_ATTR)) {
                             if (value.equals(login)) {
                                 outputJSON.append("\"registred\":\"false\",");
-                                outputJSON.append("\"retypePassword\":\"Login already exists\"");
+                                outputJSON.append("\"login\":\"Login already exists\"");
                                 break;
                             }
                         }
                         else if (attrName.equals(SQLQueriesHelper.EMAIL_ATTR)) {
                             if (value.equals(email)) {
                                 outputJSON.append("\"registred\":\"false\",");
-                                outputJSON.append("\"retypePassword\":\"Email already exists\"");
+                                outputJSON.append("\"email\":\"Email already exists\"");
                                 break;
                             }
                         }
@@ -108,7 +108,7 @@ public class UserRegistrationValidationBean {
                     }
                 } catch (SQLException|IOException|java.beans.PropertyVetoException e) {
                     outputJSON.append("\"registred\":\"false\",");
-                    outputJSON.append("\"retypePassword\":\"Cannot connect to login server\"");
+                    outputJSON.append("\"server\":\"Cannot connect to login server\"");
                 }
                 finally {
                     try {
@@ -116,7 +116,7 @@ public class UserRegistrationValidationBean {
                     }
                     catch (SQLException e) {
                         outputJSON.append("\"registred\":\"false\",");
-                        outputJSON.append("\"retypePassword\":\"Cannot connect to login server\"");
+                        outputJSON.append("\"server\":\"Cannot connect to login server\"");
                     }
                 }
             }
