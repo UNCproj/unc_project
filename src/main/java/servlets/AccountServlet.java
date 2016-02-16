@@ -33,14 +33,14 @@ public class AccountServlet extends HttpServlet {
         }
 
         if (requestedLogin.equals(userAccount.getLogin())) {
-            req.getRequestDispatcher("/accountSettings.jsp").forward(req, resp);
-
             try {
                 userAccount.preparePersonalInfo();
             }
             catch (Exception e) {
                 throw new ServletException(e);
             }
+
+            req.getRequestDispatcher("/accountSettings.jsp").forward(req, resp);
         }
         else {
             req.getRequestDispatcher("/account.jsp").forward(req, resp);

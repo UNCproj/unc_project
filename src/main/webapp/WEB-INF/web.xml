@@ -9,6 +9,11 @@
         <param-value>C:\var</param-value>
     </context-param>
 
+    <context-param>
+        <param-name>upload.url</param-name>
+        <param-value>/var</param-value>
+    </context-param>
+
     <servlet>
         <servlet-name>UploadServlet</servlet-name>
         <servlet-class>servlets.UploadServlet</servlet-class>

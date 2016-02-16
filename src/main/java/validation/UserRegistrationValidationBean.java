@@ -74,7 +74,7 @@ public class UserRegistrationValidationBean {
                     types[0] = "1";
                     String[] params = new String[2];
                     params[0] = SQLQueriesHelper.LOGIN_ATTR;
-                    params[1] = SQLQueriesHelper.PASSWORD_ATTR;
+                    params[1] = SQLQueriesHelper.EMAIL_ATTR;
                     ResultSet results = statement.executeQuery(SQLQueriesHelper.selectParams(types, null, params, null));
 
                     while (results.next()) {
