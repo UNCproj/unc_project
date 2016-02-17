@@ -5,5 +5,20 @@
         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
         version="3.0">
 
+    <description>A simple Servlet-based chat listener.</description>
+
+    <!-- Register ChatListener. It implements multiple Listener intrfaces! -->
+    <listener>
+        <listener-class>darwinsys.chat.ChatListener</listener-class>
+    </listener>
+
+    <servlet>
+        <servlet-name>ChatServlet</servlet-name>
+        <servlet-class>darwinsys.chat.ChatServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ChatServlet</servlet-name>
+        <url-pattern>/ChatServlet</url-pattern>
+    </servlet-mapping>
 </web-app>
         

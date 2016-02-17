@@ -31,10 +31,7 @@ public class AddAdsServlet extends HttpServlet {
 
         request.setCharacterEncoding("utf-8");
         response.setCharacterEncoding("utf-8");
-        response.setContentType("text/html");
-
-        RequestDispatcher requestDispatcher = getServletContext().getNamedDispatcher("UploadServlet");
-        requestDispatcher.include(request, response);
+        response.setContentType("text/html, charset=utf-8");
 
         String city = request.getParameter("city");
         String price = request.getParameter("price");
