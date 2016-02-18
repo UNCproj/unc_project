@@ -30,6 +30,9 @@ public class chatPublishServlet extends HttpServlet {
         response.setContentType("text/html");
 
         String message = noQuotes(request.getParameter("message"));
+        String sellerLogin = request.getParameter("sellerLogin");
+        UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
+        String senderId = userAccountBean.getId();
 
         String messageId = "";
 
@@ -43,8 +46,13 @@ public class chatPublishServlet extends HttpServlet {
                 resultSetId.next();
                 messageId = resultSetId.getString("id");
 
+                Statement statementfindIdNamed = connection.createStatement();
+                ResultSet resultSetFindIdNamed = statementfindIdNamed.executeQuery(SQLQueriesHelper.findIdNamed(sellerLogin));
+                resultSetFindIdNamed.next();
+                String recipientId = resultSetFindIdNamed.getString("object_id");
+
                 Statement statementMessage = connection.createStatement();
-                statementMessage.executeUpdate(SQLQueriesHelper.newMessage(messageId, message));
+                statementMessage.executeUpdate(SQLQueriesHelper.newMessage(messageId, message, senderId, recipientId));
 
             } catch (SQLException e) {
                 e.printStackTrace();

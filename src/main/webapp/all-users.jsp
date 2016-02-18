@@ -15,7 +15,6 @@
     <title>Title</title>
 </head>
 <body>
-Пользователи:
 <%
     UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
     String userId = userAccountBean.getId();
@@ -24,12 +23,19 @@
     try {
         connection = DataSource.getInstance().getConnection();
         Statement statementOutputUsers = connection.createStatement();
-        ResultSet resultSetOutputUsers =  statementOutputUsers.executeQuery(SQLQueriesHelper.outputUsers(userId));
-        while (resultSetOutputUsers.next()) {
-//        out.println(resultSetOutputUsers.getString("object_name"));
-            out.println();
-        }
-    } catch (SQLException e) {
+        ResultSet resultSetOutputUsers =  statementOutputUsers.executeQuery(SQLQueriesHelper.outputUsers(userId));%>
+        <p>Выберите пользователя которому хотите написать:</p>
+        <form action="chat.jsp" method="get">
+        <select name="name">
+        <option disabled>Выберите пользователя</option>
+        <%while (resultSetOutputUsers.next()) {
+            out.println("<option value=\""+resultSetOutputUsers.getString("object_name")+"\">"+
+                    resultSetOutputUsers.getString("object_name")+"</option>");
+        }%>
+        </select>
+        <input type="submit">
+        </form>
+    <%} catch (SQLException e) {
         e.printStackTrace();
     } catch (PropertyVetoException e) {
         e.printStackTrace();

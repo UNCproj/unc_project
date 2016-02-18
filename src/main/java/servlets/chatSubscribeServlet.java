@@ -34,23 +34,30 @@ public class chatSubscribeServlet extends HttpServlet {
         response.setContentType("text/html");
 
         String lastMessageId = request.getParameter("lastMessageId");
-        System.out.println("Пришло в сервлет для отправки:" + lastMessageId);
-        System.out.println(request.getCharacterEncoding());
+        String sellerLogin = request.getParameter("sellerLogin");
+
+        UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
+        String senderId = userAccountBean.getId();
 
         PrintWriter out = response.getWriter();
-//        out.println("Hello");
         Connection connection = null;
         try {
             connection = DataSource.getInstance().getConnection();
-System.out.println("|"+lastMessageId+"|");
+
+            Statement statementfindIdNamed = connection.createStatement();
+            ResultSet resultSetFindIdNamed = statementfindIdNamed.executeQuery(SQLQueriesHelper.findIdNamed(sellerLogin));
+            resultSetFindIdNamed.next();
+            String recipientId = resultSetFindIdNamed.getString("object_id");
+
             Statement statementOutputMessages = connection.createStatement();
-            ResultSet resultSetOutputMessagees =  statementOutputMessages.executeQuery(SQLQueriesHelper.outputMessages(lastMessageId));
+            ResultSet resultSetOutputMessagees =  statementOutputMessages.executeQuery(SQLQueriesHelper.outputMessages(
+                    lastMessageId,senderId,recipientId));
             ArrayList <Message> messagesArray = new ArrayList<Message>();
             int step = 0;
             if(resultSetOutputMessagees.next()==false){
-                System.out.println("Подходящих записей нет");
                 while(true){
-                    resultSetOutputMessagees =  statementOutputMessages.executeQuery(SQLQueriesHelper.outputMessages(lastMessageId));
+                    resultSetOutputMessagees =  statementOutputMessages.executeQuery(SQLQueriesHelper.outputMessages(
+                            lastMessageId,senderId,recipientId));
                     if(resultSetOutputMessagees.next()) {
                         break;
                     }else if(step==10){
@@ -66,7 +73,8 @@ System.out.println("|"+lastMessageId+"|");
                 String id_message = resultSetOutputMessagees.getString("id_message");
                 String date_message = resultSetOutputMessagees.getString("date_message");
                 String text_message = resultSetOutputMessagees.getString("text_message");
-                Message message = new Message(id_message,date_message,text_message);
+                String sender_message = resultSetOutputMessagees.getString("object_name");
+                Message message = new Message(id_message,date_message,text_message,sender_message);
                 messagesArray.add(message);
             }while (resultSetOutputMessagees.next());
 
@@ -75,21 +83,6 @@ System.out.println("|"+lastMessageId+"|");
             System.out.println(gson.toJson(messagesArray));
 
             out.println(gson.toJson(messagesArray));
-
-//            out.println(id_message);
-//            out.println(text_message);
-//            out.println(date_message);
-//
-//            ArrayList <String> arrStr = new ArrayList<>();
-//            arrStr.add(0,"hello");
-//            arrStr.add(1,"it's me...");
-//
-//            String[] arrStr = new String[2];
-//            arrStr[0]="123";
-//            arrStr[1]="456";
-//
-//            out.println(arrStr[0]);
-//            out.println(arrStr[1]);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -110,10 +103,12 @@ System.out.println("|"+lastMessageId+"|");
         String id;
         String date;
         String text;
-        Message(String id, String date, String text){
+        String sender;
+        Message(String id, String date, String text, String sender){
             this.id = id;
             this.date = date;
             this.text = text;
+            this.sender = sender;
         }
     }
 }

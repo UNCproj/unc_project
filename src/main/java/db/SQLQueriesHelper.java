@@ -246,24 +246,40 @@ public class SQLQueriesHelper {
         String query = "insert into unc_params(object_id, attr_id, date_value) values (" + id +",'3', to_date('" + param + "','yyyy:mm:dd hh24:mi:ss'))";
         return query;
     }
-    static public String newMessage(String id, String text){
-        String query = "insert into unc_messages(id_message, text_message, date_message) values (" +
-                id + ",'" + text +"',systimestamp)";
+    static public String newMessage(String id, String text, String senderId, String recipientId){
+        String query = "insert into unc_messages(id_message, text_message, date_message,id_sender,id_recipient) values (" +
+                id + ",'" + text +"',systimestamp,"+senderId+","+recipientId+")";
         return query;
     }
-    static public String outputMessages(String lastId){
-        if(lastId!=null)System.out.println("!!!!!!!!!!!!"+lastId.equals(""));
+    static public String outputMessages(String lastId,String senderId, String recipientId){
         if(lastId==null || lastId.equals("") || lastId.equals("undefined")){
-            String query = "select * from unc_messages order by date_message";
+            String query = "select m.TEXT_MESSAGE,\n" +
+                    "        m.DATE_MESSAGE,\n" +
+                    "        m.ID_MESSAGE,\n" +
+                    "        o.OBJECT_NAME \n" +
+                    "  from unc_messages m\n" +
+                    " join UNC_OBJECTS o \n" +
+                    "          on o.OBJECT_ID=m.ID_SENDER "+
+                    "where" +
+                    "(m.id_sender = "+senderId+" and m.id_recipient="+recipientId+") or"+
+                    "(m.id_sender = "+recipientId+" and m.id_recipient="+senderId+")"+
+                    " order by m.date_message";
             return query;
         }else {
-            String query = "select * \n" +
+            String query = "select m.TEXT_MESSAGE,\n" +
+                    "        m.DATE_MESSAGE,\n" +
+                    "        m.ID_MESSAGE,\n" +
+                    "        o.OBJECT_NAME \n" +
                     "  from unc_messages m\n" +
+                    " join UNC_OBJECTS o \n" +
+                    "          on o.OBJECT_ID=m.ID_SENDER "+
                     " where m.date_message>(\n" +
                     "  select um.date_message\n" +
                     "  from unc_messages um\n" +
                     "  where um.id_message=" + lastId + "\n" +
                     " )\n" +
+                    " and (m.id_sender = "+senderId+" and m.id_recipient="+recipientId+") or"+
+                    "(m.id_sender = "+recipientId+" and m.id_recipient="+senderId+")"+
                     " order by m.date_message";
             return query;
         }
@@ -274,6 +290,12 @@ public class SQLQueriesHelper {
                 "  where object_type_id=1 and\n" +
                 "        object_id !=  "+id+"\n" +
                 " order by object_name";
-            return query;
+        return query;
+    }
+    static public String findIdNamed (String name){
+        String query = "select object_id\n" +
+                "  from unc_objects\n" +
+                " where object_name = '"+name+"'";
+        return query;
     }
 }
