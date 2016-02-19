@@ -46,6 +46,10 @@
                 </div>
                 или
                 <button type="button" flow-btn>Загрузить аватар</button>
+                <br/>
+                <div class="alert alert-success" role="alert" ng-show="isAvatarChanged">
+                    Аватар успешно обновлен!
+                </div>
             </div>
 
             <!--Обновление логина-->
@@ -70,9 +74,16 @@
             <div class="form-group">
                 <label for="pass_elem" class="control-label">Введите пароль:</label>
                 <div><input id="pass_elem" type="password" class="form-control" ng-model="user.pass" required></div>
+                <div class="alert alert-danger" role="alert" ng-hide="isCorrectPass">
+                    Введите пароль от аккаунта!
+                </div>
+            </div>
+            <div class="alert alert-success" role="alert" ng-show="isSettingsChanged">
+                Данные аккаунта успешно обновлены!
             </div>
 
             <input type="submit" ng-click="submit('main')">
+            <br/>
         </form>
     </div>
     <div id="about" class="tab-pane fade in">
@@ -133,6 +144,12 @@
             <div class="form-group">
                 <label for="pass_elem1" class="control-label">Введите пароль:</label>
                 <div><input id="pass_elem1" type="password" class="form-control" ng-model="user.pass" required></div>
+                <div class="alert alert-danger" role="alert" ng-hide="isCorrectPass">
+                    Введите пароль от аккаунта!
+                </div>
+            </div>
+            <div class="alert alert-success" role="alert" ng-show="isSettingsChanged">
+                Данные аккаунта успешно обновлены!
             </div>
             <input type="submit" ng-click="submit('about')" />
         </form>

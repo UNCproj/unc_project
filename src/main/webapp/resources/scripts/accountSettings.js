@@ -5,11 +5,13 @@
 
     var app = angular.module('accountSettings', ['flow','chart.js']);
 
-    app.controller('mainSettingsController', ['$scope', '$http',
-        function($scope, $http, ImageResizerService) {
+    app.controller('mainSettingsController', ['$scope', '$http', '$timeout',
+        function($scope, $http, $timeout, ImageResizerService) {
             $scope.user = {};
 
+            $scope.isCorrectPass = true;
             $scope.isSettingsChanged = false;
+            $scope.isAvatarChanged = false;
             $scope.settingsGroup = "";
             $scope.uploader = {};
 
@@ -55,12 +57,23 @@
                     .success(function (data) {
                         if (data["changed"]) {
                             $scope.isSettingsChanged = true;
+                            $timeout(function(){
+                                $scope.isSettingsChanged = false;
+                            }, 5000);
                         }
                         //TODO: show error
                     });
             };
 
             $scope.submit = function (settingsGroup) {
+                if ($scope.user.pass === undefined) {
+                    $scope.isCorrectPass = false;
+                    $timeout(function(){
+                        $scope.isCorrectPass = true;
+                    }, 5000);
+                    return;
+                }
+
                 $scope.settingsGroup = settingsGroup;
                 uploadChanges(settingsGroup);
             };
@@ -83,7 +96,10 @@
                     .success(function(data) {
                         var avatarImgElem = $('#avatar_img');
                         avatarImgElem.attr('src', avatarImgElem.attr('src') + "?" + Date.now());
-                        $scope.isSettingsChanged = true;
+                        $scope.isAvatarChanged = true;
+                        $timeout(function(){
+                            $scope.isAvatarChanged = false;
+                        }, 5000);
                     });
             };
         }]);

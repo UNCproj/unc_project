@@ -35,6 +35,8 @@ public class AccountSettingsServlet extends HttpServlet {
             return;
         }
 
+        boolean isSettingsChanged = false;
+
         UserAccountBean account = (UserAccountBean) request.getSession().getAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY);
 
         String password = request.getParameter("pass");
@@ -113,6 +115,7 @@ public class AccountSettingsServlet extends HttpServlet {
                 }
 
                 account.updateAllInfo();
+                isSettingsChanged = true;
             } catch (Exception e) {
                 //TODO: logging
                 throw new ServletException(e);
@@ -120,7 +123,12 @@ public class AccountSettingsServlet extends HttpServlet {
         }
 
         try (PrintWriter out = response.getWriter()) {
-            //TODO: return JSON
+            if (isSettingsChanged) {
+                out.print("{\"changed\":true}");
+            }
+            else {
+                //TODO: send constraints violations
+            }
         }
         catch (IOException e) {
             throw new ServletException(e);
