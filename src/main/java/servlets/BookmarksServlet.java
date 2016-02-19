@@ -41,7 +41,7 @@ public class BookmarksServlet extends HttpServlet {
                     SQLQueriesHelper.selectFullObjectInformationByName(types, user.getLogin()));
 
             while (results.next()) {
-                if (results.getString("attr_name").equals("bookmark")) {
+                if (results.getString("attr_name").equals(SQLQueriesHelper.BOOKMARK_ATTR)) {
                     bookmarksIDs.add(results.getInt("value"));
                 }
             }

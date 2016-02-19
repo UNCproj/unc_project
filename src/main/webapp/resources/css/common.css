@@ -44,3 +44,9 @@ height: 50px;
 .nav .navbar-nav {
   color: red;
 }
+
+.loading-bar {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}

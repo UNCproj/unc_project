@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 (function () {
 
   var app = {
@@ -62,7 +61,6 @@
 
   app.initialize();
 }());
-=======
 
 // 
 // CommonJS Client-side Implementation
@@ -356,4 +354,3 @@
 	};
 
 }(window));
->>>>>>> 1e2fbbd889a9aa82dad3ce4fdeafdd004373202c

@@ -5,85 +5,104 @@
 
     var app = angular.module('accountSettings', ['flow','chart.js']);
 
-    app.controller('mainSettingsController', ['$scope', '$http', function($scope, $http) {
-        $scope.user = {};
+    app.controller('mainSettingsController', ['$scope', '$http', '$timeout',
+        function($scope, $http, $timeout, ImageResizerService) {
+            $scope.user = {};
 
-        this.login;
-        this.pass;
-        this.changePass;
-        this.email;
+            $scope.isCorrectPass = true;
+            $scope.isSettingsChanged = false;
+            $scope.isAvatarChanged = false;
+            $scope.settingsGroup = "";
+            $scope.uploader = {};
 
-        $scope.newAvatarAdded = false;
-        $scope.isSettingsChanged = false;
-        $scope.uploader = {};
+            var uploadChanges = function (settingsGroup) {
+                var params;
 
-        var uploadChanges = function(settingsGroup) {
-            var params;
+                switch (settingsGroup) {
+                    case 'main':
+                        params = {
+                            'login': $scope.user.login,
+                            'pass': $scope.user.pass,
+                            'changePass': $scope.user.changePass,
+                            'email': $scope.user.email,
+                            'settingsGroup': settingsGroup
+                        };
 
-            switch (settingsGroup) {
-                case 'main':
-                    params = {
-                        'login': $scope.user.login,
-                        'pass': $scope.user.pass,
-                        'changePass': $scope.user.changePass,
-                        'email': $scope.user.email,
-                        'settingsGroup': settingsGroup
-                    };
+                        if ($scope.uploader.flow.files.length > 0 && $scope.uploader.flow.files[0].name !== undefined) {
+                            params.userPicFile = $scope.uploader.flow.files[0].name;
+                        }
+                        break;
 
-                    if ($scope.uploader.flow.files.length > 0 && $scope.uploader.flow.files[0].name === undefined) {
-                        params.userPicFile = $scope.uploader.flow.files[0].name;
-                    }
-                    break;
+                    case 'about':
+                        params = {
+                            'firstName': $scope.user.firstName,
+                            'secondName': $scope.user.secondName,
+                            'surname': $scope.user.surname,
+                            'phone': $scope.user.phone,
+                            'streetAndHouse': $scope.user.streetAndHouse,
+                            'city': $scope.user.city,
+                            'country': $scope.user.country,
+                            'additionalInfo': $scope.user.additionalInfo,
+                            'pass': $scope.user.pass,
+                            'settingsGroup': settingsGroup
+                        };
+                        break;
+                }
 
-                case 'about':
-                    params = {
-                        'firstName': $scope.user.firstName,
-                        'secondName': $scope.user.secondName,
-                        'surname': $scope.user.surname,
-                        'phone': $scope.user.phone,
-                        'streetAndHouse': $scope.user.streetAndHouse,
-                        'city': $scope.user.city,
-                        'country': $scope.user.country,
-                        'additionalInfo': $scope.user.additionalInfo,
-                        'pass': $scope.user.pass,
-                        'settingsGroup': settingsGroup
-                    };
-                    break;
-            }
+                $http({
+                    url: '/unc-project/accountSettings',
+                    method: 'POST',
+                    params: params
+                })
+                    .success(function (data) {
+                        if (data["changed"]) {
+                            $scope.isSettingsChanged = true;
+                            $timeout(function(){
+                                $scope.isSettingsChanged = false;
+                            }, 5000);
+                        }
+                        //TODO: show error
+                    });
+            };
 
-            $http({
-                url: '/unc-project/accountSettings',
-                method: 'POST',
-                params: params
-            })
-                .success(function(data) {
-                    if (data["changed"]) {
-                        $scope.isSettingsChanged = true;
-                    }
-                    //TODO: show error
-                });
-        }
+            $scope.submit = function (settingsGroup) {
+                if ($scope.user.pass === undefined) {
+                    $scope.isCorrectPass = false;
+                    $timeout(function(){
+                        $scope.isCorrectPass = true;
+                    }, 5000);
+                    return;
+                }
 
-        $scope.submit = function(settingsGroup) {
-            if ($scope.newAvatarAdded) {
-                $scope.uploader.flow.files[0].name = '/img/ava_' + initialUserLogin + "_" + Date.now() + ".png";
-                $scope.uploader.flow.upload();
-            }
-            else {
+                $scope.settingsGroup = settingsGroup;
                 uploadChanges(settingsGroup);
-            }
-        }
+            };
 
-        $scope.fileAdded = function ($file, $event, $flow) {
-            $event.preventDefault();
-            $scope.uploader.flow.files[0] = $file;
-            $scope.newAvatarAdded = true;
-        };
+            $scope.fileAdded = function ($file, $event, $flow) {
+                $event.preventDefault();
+                $scope.uploader.flow.files[0] = $file;
+                $scope.uploader.flow.files[0].name = '/img/user-pics/ava_' + initialUserId + ".png";
+                $scope.uploader.flow.upload();
+            };
 
-        $scope.complete = function () {
-            uploadChanges();
-        };
-    }]);
+            $scope.complete = function () {
+                $http({
+                    url: '/unc-project/imageResize',
+                    method: 'POST',
+                    params: {
+                        "imageName": $scope.uploader.flow.files[0].name
+                    }
+                })
+                    .success(function(data) {
+                        var avatarImgElem = $('#avatar_img');
+                        avatarImgElem.attr('src', avatarImgElem.attr('src') + "?" + Date.now());
+                        $scope.isAvatarChanged = true;
+                        $timeout(function(){
+                            $scope.isAvatarChanged = false;
+                        }, 5000);
+                    });
+            };
+        }]);
 
     //app.config(['flowFactoryProvider', function (flowFactoryProvider) {
     //    flowFactoryProvider.defaults = {

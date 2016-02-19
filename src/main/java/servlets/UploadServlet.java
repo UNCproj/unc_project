@@ -1,8 +1,5 @@
 package servlets;
 
-import beans.BeansHelper;
-import beans.UserAccountBean;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -14,9 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.Date;
-import java.util.Random;
-import java.util.function.BooleanSupplier;
+import java.nio.file.StandardCopyOption;
 
 /**
  * Created by Денис on 07.02.2016.
@@ -31,11 +26,8 @@ public class UploadServlet extends HttpServlet {
         File uploadDir = new File(getServletContext().getInitParameter("upload.location"));
         File uploadFile = new File(uploadDir, fileName);
 
-        try (InputStream input = filePart.getInputStream()) {
-            Files.copy(input, uploadFile.toPath());
-        }
-        catch (Exception e) {
-            throw new ServletException(e);
+        try(InputStream input = filePart.getInputStream()) {
+            Files.copy(input, uploadFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
     }
 

@@ -228,7 +228,10 @@ public class UserAccountBean implements UserAccount {
         ResultSet results = statement.executeQuery(
                 SQLQueriesHelper.selectFullObjectInformationByName(types, login));
 
+        String attrName = null;
         while (results.next()) {
+            attrName = results.getString("attr_name");
+
             if (results.getString("attr_name").equals(SQLQueriesHelper.FIRST_NAME_ATTR)) {
                 this.firstName = results.getString("value");
             } else if (results.getString("attr_name").equals(SQLQueriesHelper.SECOND_NAME_ATTR)) {

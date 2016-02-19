@@ -1,10 +1,11 @@
 (function() {
     var app = angular.module('login', []);
 
-    app.controller('loginController', ['$http', function($http) {
+    app.controller('loginController', ['$http', '$timeout', function($http, $timeout) {
         this.login;
         this.pass;
         this.isLogInFailed = false;
+        this.isLogging = false;
         var context = this;
 
         this.submit = function() {
@@ -26,6 +27,8 @@
         });
 
     function login ($http, context, onSuccess) {
+        context.isLogging = true;
+
         $http({
             url: '/unc-project/login',
             method: 'GET',
@@ -34,6 +37,9 @@
                 'pass': context.pass
             }
         })
-            .success(onSuccess);
+            .success(function(data) {
+                context.isLogging = false;
+                onSuccess(data);
+            });
     }
 })();

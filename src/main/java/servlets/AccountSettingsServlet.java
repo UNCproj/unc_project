@@ -5,6 +5,7 @@ import beans.UserAccountBean;
 import db.DataSource;
 import db.SQLQueriesHelper;
 import validation.UserRegistrationValidationBean;
+import validation.UserUpdateValidationBean;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,6 +18,8 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Hashtable;
 
 /**
  * Created by Денис on 05.02.2016.
@@ -25,53 +28,36 @@ import java.sql.Statement;
 @WebServlet(name = "AccountSettingsServlet", urlPatterns = "/accountSettings")
 public class AccountSettingsServlet extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        UserAccountBean account = (UserAccountBean) request.getSession().getAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY);
-        String password = request.getParameter("pass");
-        PrintWriter out;
-
-        try {
-            out = response.getWriter();
-        }
-        catch (IOException e) {
-            throw new ServletException(e);
-        }
-
-        if (password == null || password.length() == 0 ||
-                !String.valueOf(password.hashCode()).equals(account.getPassword())) {
-            out.print("{\"changed\":false, \"violation\":\"pass\"}");
-            return;
-        }
-
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         String settingsGroup = request.getParameter("settingsGroup");
-
         if (settingsGroup == null) {
             //TODO:logging
             return;
         }
 
-        Connection connection = null;
-        Statement paramUpdateStatement = null;
-        try {
-            connection = DataSource.getInstance().getConnection();
-            paramUpdateStatement = connection.createStatement();
+        boolean isSettingsChanged = false;
 
-            switch (settingsGroup) {
-                case "main":
-                    String newLogin = request.getParameter("login");
-                    String newPass = request.getParameter("changePass");
-                    String newEmail = request.getParameter("email");
-                    String newUserPicFile = "/unc_project/resources" + request.getParameter("userPicFile");
+        UserAccountBean account = (UserAccountBean) request.getSession().getAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY);
 
-                    UserRegistrationValidationBean validationBean = new UserRegistrationValidationBean(
-                            (newLogin != null && newLogin.length() > 0) ? newLogin : account.getLogin(),
-                            (newPass != null && newPass.length() > 0) ? newPass : password,
-                            (newPass != null && newPass.length() > 0) ? newPass : password,
-                            (newEmail != null && newEmail.length() > 0) ? newEmail : account.getEmail());
+        String password = request.getParameter("pass");
+        String newLogin = request.getParameter("login");
+        String newPass = request.getParameter("changePass");
+        String newEmail = request.getParameter("email");
+        String newUserPicFile = request.getParameter("userPicFile");
 
-                    String validationConstrJSON = validationBean.validate();
+        UserUpdateValidationBean validationBean = new UserUpdateValidationBean(
+                newLogin, password, newPass, newEmail);
 
-                    if (validationBean.isValid()) {
+        Hashtable<String, String> constraintViolations = validationBean.validate(account);
+
+        if (validationBean.isValid()) {
+            try (
+                    Connection connection = DataSource.getInstance().getConnection();
+                    Statement paramUpdateStatement = connection.createStatement()
+            ) {
+                switch (settingsGroup) {
+                    case "main":
+
                         if (newLogin != null && newLogin.length() > 0) {
                             connection.setAutoCommit(false);
 
@@ -99,54 +85,53 @@ public class AccountSettingsServlet extends HttpServlet {
                         }
 
                         if (newUserPicFile != null && newUserPicFile.length() > 0) {
+                            newUserPicFile = getServletContext().getInitParameter("upload.url") + newUserPicFile;
+
                             paramUpdateStatement.executeUpdate(
                                     SQLQueriesHelper.updateParam(new BigDecimal(account.getId()),
                                             SQLQueriesHelper.USER_PIC_FILE_ATTR_ID, newUserPicFile, null));
                         }
-                    }
-                    else {
-                        out.print("{\"changed\":false, \"violation\":\"login_or_email\"}");
-                    }
-                    break;
+                        break;
 
-                case "about":
-                    String firstName = request.getParameter("firstName");
-                    String secondName = request.getParameter("secondName");
-                    String surname = request.getParameter("surname");
-                    String phone = request.getParameter("phone");
-                    String streetAndHouse = request.getParameter("streetAndHouse");
-                    String city = request.getParameter("city");
-                    String country = request.getParameter("country");
-                    String additionalInfo = request.getParameter("additionalInfo");
+                    case "about":
+                        String firstName = request.getParameter("firstName");
+                        String secondName = request.getParameter("secondName");
+                        String surname = request.getParameter("surname");
+                        String phone = request.getParameter("phone");
+                        String streetAndHouse = request.getParameter("streetAndHouse");
+                        String city = request.getParameter("city");
+                        String country = request.getParameter("country");
+                        String additionalInfo = request.getParameter("additionalInfo");
 
-                    updateOrCreateUserParam(firstName, SQLQueriesHelper.FIRST_NAME_ATTR_ID, paramUpdateStatement, account);
-                    updateOrCreateUserParam(secondName, SQLQueriesHelper.SECOND_NAME_ATTR_ID, paramUpdateStatement, account);
-                    updateOrCreateUserParam(surname, SQLQueriesHelper.SURNAME_ATTR_ID, paramUpdateStatement, account);
-                    updateOrCreateUserParam(phone, SQLQueriesHelper.PHONE_ATTR_ID, paramUpdateStatement, account);
-                    updateOrCreateUserParam(streetAndHouse, SQLQueriesHelper.STREET_AND_HOUSE_NAME_ATTR_ID, paramUpdateStatement, account);
-                    updateOrCreateUserParam(city, SQLQueriesHelper.CITY_ADVERT_ATTR_ID, paramUpdateStatement, account);
-                    updateOrCreateUserParam(country, SQLQueriesHelper.COUNTRY_ATTR_ID, paramUpdateStatement, account);
-                    updateOrCreateUserParam(additionalInfo, SQLQueriesHelper.ADDITIONAL_INFO_ATTR_ID, paramUpdateStatement, account);
-                    break;
-            }
+                        updateOrCreateUserParam(firstName, SQLQueriesHelper.FIRST_NAME_ATTR_ID, paramUpdateStatement, account);
+                        updateOrCreateUserParam(secondName, SQLQueriesHelper.SECOND_NAME_ATTR_ID, paramUpdateStatement, account);
+                        updateOrCreateUserParam(surname, SQLQueriesHelper.SURNAME_ATTR_ID, paramUpdateStatement, account);
+                        updateOrCreateUserParam(phone, SQLQueriesHelper.PHONE_ATTR_ID, paramUpdateStatement, account);
+                        updateOrCreateUserParam(streetAndHouse, SQLQueriesHelper.STREET_AND_HOUSE_NAME_ATTR_ID, paramUpdateStatement, account);
+                        updateOrCreateUserParam(city, SQLQueriesHelper.CITY_ADVERT_ATTR_ID, paramUpdateStatement, account);
+                        updateOrCreateUserParam(country, SQLQueriesHelper.COUNTRY_ATTR_ID, paramUpdateStatement, account);
+                        updateOrCreateUserParam(additionalInfo, SQLQueriesHelper.ADDITIONAL_INFO_ATTR_ID, paramUpdateStatement, account);
+                        break;
+                }
 
-            account.updateAllInfo();
-        }
-        catch (Exception e) {
-            out.print("{\"changed\":false, \"violation\":\"error\"}");
-            throw new ServletException(e);
-        }
-        finally {
-            try {
-                if (connection != null)
-                    connection.close();
-
-                if (paramUpdateStatement != null)
-                    paramUpdateStatement.close();
-            }
-            catch (SQLException e) {
+                account.updateAllInfo();
+                isSettingsChanged = true;
+            } catch (Exception e) {
+                //TODO: logging
                 throw new ServletException(e);
             }
+        }
+
+        try (PrintWriter out = response.getWriter()) {
+            if (isSettingsChanged) {
+                out.print("{\"changed\":true}");
+            }
+            else {
+                //TODO: send constraints violations
+            }
+        }
+        catch (IOException e) {
+            throw new ServletException(e);
         }
     }
 

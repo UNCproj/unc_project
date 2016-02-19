@@ -15,9 +15,10 @@
 </head>
 <body flow-prevent-drop>
 <script>
-    var initialUserLogin = '${userAccount.getLogin()}';
+    var initialUserId = '${userAccount.getId()}';
 </script>
 
+<a href="/unc-project/index" style="float: right">На главную</a>
 <h2>Личный кабинет:</h2>
 
 <ul class="nav nav-tabs">
@@ -30,19 +31,25 @@
     <div id="main" class="tab-pane fade in active"
          flow-init="{target: '/unc-project/upload', testChunks:false}"
          flow-file-added="fileAdded($file, $event, $flow)"
+         flow-complete="complete()"
          flow-name="uploader.flow">
         <h3>Основная информация:</h3>
         <form class="form-horizontal col-md-3 col-md-offset-3" novalidate>
 
             <!--Обновление аватара-->
             <div class="form-group">
-                <img src="${userAccount.getUserPicFile()}" flow-img="uploader.flow.files[0]">
+                <img id="avatar_img" src="${initParam["upload.url"]}/img/user-pics/ava_${userAccount.getId()}.png">
                 <br/>
                 <label for="load-avatar">Загрузить аватар:</label>
                 <div id="load-avatar" class="alert bg-primary" flow-drop>
                     Перетащите изображение сюда
                 </div>
+                или
                 <button type="button" flow-btn>Загрузить аватар</button>
+                <br/>
+                <div class="alert alert-success" role="alert" ng-show="isAvatarChanged">
+                    Аватар успешно обновлен!
+                </div>
             </div>
 
             <!--Обновление логина-->
@@ -67,9 +74,16 @@
             <div class="form-group">
                 <label for="pass_elem" class="control-label">Введите пароль:</label>
                 <div><input id="pass_elem" type="password" class="form-control" ng-model="user.pass" required></div>
+                <div class="alert alert-danger" role="alert" ng-hide="isCorrectPass">
+                    Введите пароль от аккаунта!
+                </div>
+            </div>
+            <div class="alert alert-success" role="alert" ng-show="isSettingsChanged">
+                Данные аккаунта успешно обновлены!
             </div>
 
             <input type="submit" ng-click="submit('main')">
+            <br/>
         </form>
     </div>
     <div id="about" class="tab-pane fade in">
@@ -130,8 +144,14 @@
             <div class="form-group">
                 <label for="pass_elem1" class="control-label">Введите пароль:</label>
                 <div><input id="pass_elem1" type="password" class="form-control" ng-model="user.pass" required></div>
+                <div class="alert alert-danger" role="alert" ng-hide="isCorrectPass">
+                    Введите пароль от аккаунта!
+                </div>
             </div>
-            <input type="submit" ng-click="submit('about')">
+            <div class="alert alert-success" role="alert" ng-show="isSettingsChanged">
+                Данные аккаунта успешно обновлены!
+            </div>
+            <input type="submit" ng-click="submit('about')" />
         </form>
     </div>
     <div id="statid" class="tab-pane fade in">

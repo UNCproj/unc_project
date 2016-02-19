@@ -23,7 +23,7 @@
                 .success(function (data) {
                     if (data["registred"] == "true") {
                         login($http, context, function (data) {
-                            window.location = "/unc-project/account";
+                            window.location = "/unc-project/account?accountLogin=" + context.login;
                         });
                     }
                     else {
