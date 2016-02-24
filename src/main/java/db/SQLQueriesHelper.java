@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.StringJoiner;
 import java.util.concurrent.ExecutionException;
+import java.util.jar.Attributes;
 
 /**
  * Created by Денис on 15.12.2015.
@@ -71,7 +72,8 @@ public class SQLQueriesHelper {
                         "            then to_char(r.object_reference_id)\n" +
                         "          else\n" +
                         "            to_char(p.date_value)\n" +
-                        "        end as value\n" +
+                        "        end as value,\n" +
+                        "        aot.attr_group_id as group\n" +
                         "  from  unc_objects o\n" +
                         "        left join unc_attr_object_types aot\n" +
                         "          on o.object_type_id = aot.ot_id\n" +
@@ -111,7 +113,8 @@ public class SQLQueriesHelper {
                         "            then to_char(r.object_reference_id)\n" +
                         "          else\n" +
                         "            to_char(p.date_value)\n" +
-                        "        end as value\n" +
+                        "        end as value,\n" +
+                        "        aot.attr_group_id as group\n" +
                         "  from  unc_objects o\n" +
                         "        left join unc_attr_object_types aot\n" +
                         "          on o.object_type_id = aot.ot_id\n" +
@@ -200,6 +203,20 @@ public class SQLQueriesHelper {
         return queryString;
     }
 
+    static public String insertObject(String id, String type, String name) {
+        String query = "insert into unc_objects(object_id, object_type_id, object_name) values(" +
+                id + "," + type + "'" + name + "')";
+
+        return query;
+    }
+
+    static public String insertObject(String type, String name) {
+        String query = "insert into unc_objects(object_id, object_type_id, object_name) values(" +
+                "GetID()," + type + "'" + name + "')";
+
+        return query;
+    }
+
     static public String insertNewUser(String login) {
         String query = "insert into unc_objects(object_id, object_type_id, object_name) values(" +
                                     "GetID(), 1, '" + login + "')";
@@ -207,17 +224,12 @@ public class SQLQueriesHelper {
         return query;
     }
 
-    static public String insertParam(BigDecimal id, String attrId, String value, Date dateValue)
-            throws Exception
+    static public String insertParam(BigDecimal object_id, String attrId, String value, Date dateValue)
     {
-        if (value != null && dateValue != null) {
-            throw new Exception("Value or dateValue must be null!");
-        }
-
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         String query = "insert into unc_params(object_id, attr_id, value, date_value) values(" +
-                id + ", " +
+                object_id + ", " +
                 attrId + ", " +
                 (value == null ? "null" : "'" + value + "'") + ", " +
                 (value == null ? "to_date('" + df.format(dateValue) + "', 'yyyy-MM-dd HH24:mi:ss')" : "null") + ")";
@@ -226,12 +238,7 @@ public class SQLQueriesHelper {
     }
 
     static public String updateParam(BigDecimal id, String attrId, String value, Date dateValue)
-        throws Exception
     {
-        if (value != null && dateValue != null) {
-            throw new Exception("Value or dateValue must be null!");
-        }
-
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         String query = "update unc_params set " +
@@ -242,8 +249,27 @@ public class SQLQueriesHelper {
         return query;
     }
 
+    static public String getAllAttributes(String type) {
+        String query = "select a.attr_name, uao.attr_group_id as group " +
+                       "from unc_attr_object_types uao " +
+                       "left join unc_attributes a " +
+                       "on uao.attr_id = a.attr_id " +
+                       "where uao.ot_id = " + type;
+        return query;
+    }
+
     static public String changeName(BigDecimal objectId, String newName) {
         String query = "update unc_objects set object_name = '" + newName + "' where object_id = " + objectId;
+        return query;
+    }
+
+    static public String changeType(BigDecimal objectId, String newTypeId) {
+        String query = "update unc_objects set object_type_id = '" + newTypeId + "' where object_id = " + objectId;
+        return query;
+    }
+
+    static public String getTypeId(String typeName) {
+        String query = "select ot_id as id from unc_object_types where ot_name = " + typeName;
         return query;
     }
 
