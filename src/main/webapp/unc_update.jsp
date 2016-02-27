@@ -2,7 +2,9 @@
 <%@ page import="unc.helpers.UncObject" %>
 <%@ page import="java.beans.PropertyVetoException" %>
 <%@ page import="java.sql.SQLException" %>
-<%@ page import="java.net.URL" %><%--
+<%@ page import="java.net.URL" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="unc.helpers.Param" %><%--
   Created by IntelliJ IDEA.
   User: Денис
   Date: 24.02.2016
@@ -10,10 +12,9 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%!public URL fileURL;%>
 <%
     String objectId = request.getParameter("id");
-    UncObject currentObject = new UncObject(objectId);
+    UncObject currentObject = new UncObject(objectId, null, true);
 
     try {
         currentObject.selectFromDB();
@@ -21,95 +22,75 @@
         e.printStackTrace();
     }
 %>
-<html>
+<html ng-app="default">
 <head>
     <title>update | <%= currentObject.getName() %></title>
     <c:catch var="e">
-        <c:import url="/includes/scripts/<%= currentObject.getType() %>.jspf" />
+        <c:import url="/includes/update/scripts/<%= currentObject.getType() %>.jspf" />
     </c:catch>
     <c:if test="${!empty e}">
-        <c:import url="/includes/scripts/default.jspf" />
+        <c:import url="/includes/update/scripts/default.jspf" />
     </c:if>
 
-    <%
-        if(customPartsHelper.isCustomCSS()) {
-    %>
-    <jsp:include page = "/includes/css/<%= currentObject.getType() %>" flush="true" />
-    <%
-    } else {
-    %>
-    <jsp:include page="/includes/css/default.jspf" flush="true" />
-    <%
-        }
-    %>
+    <c:catch var="e">
+        <c:import url="/includes/update/css/<%= currentObject.getType() %>.jspf" />
+    </c:catch>
+    <c:if test="${!empty e}">
+        <c:import url="/includes/update/css/default.jspf" />
+    </c:if>
 </head>
 <body>
-    <%
-        if(customPartsHelper.isCustomHeader()) {
-    %>
-    <jsp:include page="/includes/headers/<%= currentObject.getType() %>" flush="true" />
-    <%
-    } else {
-    %>
-    <jsp:include page="/includes/headers/default.jspf" flush="true" />
-    <%
-        }
-    %>
+<c:catch var="e">
+    <c:import url="/includes/update/headers/<%= currentObject.getType() %>.jspf" />
+</c:catch>
+<c:if test="${!empty e}">
+    <c:import url="/includes/update/headers/default.jspf" />
+</c:if>
 
 <ul class="nav nav-tabs">
     <% for (int i = 0; i < currentObject.getAttributeGroups().size(); i++) { %>
-    <li><a href="#<%= o.getAttributeGroups().get(i).getName() %>" data-toggle="tab">О себе</a></li>
+    <li><a href="#<%= currentObject.getAttributeGroups().get(i) %>" data-toggle="tab"><%=currentObject.getAttributeGroups().get(i)%></a></li>
     <% } %>
 
-    <%
-        if(o.isCustomTabs) {
-    %>
-    <jsp:include page="tab_nav_<%= o.getId() %>.jspf" flush="true" />
-    <%
-        }
-    %>
+    <c:catch var="e">
+        <c:import url="/includes/update/headers/<%= currentObject.getType() %>.jspf" />
+    </c:catch>
 </ul>
 
-<div class="settings tab-content">
-    <% for (int i = 0; i < o.getAttributes().length; i++) { %>
-    <div id="<%= o.getgetAttributeGroups().get(i).getName() %>" class="tab-pane fade in active">
-        <!--Это тоже можно будет вынисте в отдельный инклюд-->
+<div class="settings tab-content .col-md-3 .col-md-offset-3" ng-controller="updateController">
+    <% for (int i = 0; i < currentObject.getAttributeGroups().size(); i++) {
+        String attrGroupName = currentObject.getAttributeGroups().get(i);
+        ArrayList<Param> currentGroupParams = currentObject.getParams(attrGroupName);
+    %>
+    <div id="<%= attrGroupName %>" class="tab-pane fade in">
         <form>
-            <% for (int i = 0; i < o.getAttributes().length; i++) { %>
-            <input/><!--Какие то поля редактирования атрибута-->
+            <% for (int j = 0; j < currentGroupParams.size(); j++) { %>
+            <c:catch var="e">
+                <c:import url="/includes/update/attr_views/<%= currentObject.getType() %>.jsp" />
+            </c:catch>
+            <c:if test="${!empty e}">
+                <c:import url="/includes/update/attr_views/default.jsp">
+                    <c:param name="attr_name" value="<%= currentGroupParams.get(j).getName()%>" />
+                    <c:param name="attr_value" value="<%= currentGroupParams.get(j).getValue()%>" />
+                    <c:param name="attr_type" value="<%= currentGroupParams.get(j).getType()%>" />
+                </c:import>
+            </c:if>
             <% } %>
-            <submit onclick="update()"><!--Метод update() содержится в *.js файле, который заинклюдили в начале-->
+            <input type="button" value="Обновить" ng-click="update()" />
         </form>
     </div>
     <% } %>
 </div>
 
-<%
-    if(o.isCustomTabs) {
-%>
-<jsp:include page="tab_<%= o.getId() %>.jspf" flush="true" />
-<%
-    }
-%>
+<c:catch var="e">
+    <c:import url="/includes/update/tabs/<%= currentObject.getType() %>.jspf" />
+</c:catch>
 
-<%
-    if(o.isCustomContent) {
-%>
-<jsp:include page="content_<%= o.getId() %>.jspf" flush="true" />
-<%
-    }
-%>
-
-<%
-    if(o.isCustomFooter) {
-%>
-<jsp:include page="footer_<%= o.getId() %>.jspf" flush="true" />
-<%
-} else {
-%>
-<jsp:include page="footer_default.jspf" flush="true" />
-<%
-    }
-%>
+<c:catch var="e">
+    <c:import url="/includes/update/footers/<%= currentObject.getType() %>.jspf" />
+</c:catch>
+<c:if test="${!empty e}">
+    <c:import url="/includes/update/footers/default.jspf" />
+</c:if>
 </body>
 </html>

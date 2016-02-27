@@ -6,7 +6,7 @@
     var app = angular.module('accountSettings', ['flow','chart.js']);
 
     app.controller('mainSettingsController', ['$scope', '$http', '$timeout',
-        function($scope, $http, $timeout, ImageResizerService) {
+        function($scope, $http, $timeout) {
             $scope.user = {};
 
             $scope.isCorrectPass = true;

@@ -31,10 +31,7 @@ public class DataSource {
         Locale.setDefault(Locale.ENGLISH);
         this.userName = "unc_user";
         this.password = "pass123";
-<<<<<<< HEAD
         this.host = "jdbc:oracle:thin:@ec2-54-174-120-172.compute-1.amazonaws.com:1521:xe";
-=======
->>>>>>> 1e2fbbd889a9aa82dad3ce4fdeafdd004373202c
         cpds = new ComboPooledDataSource();
         cpds.setDriverClass("oracle.jdbc.OracleDriver"); //loads the jdbc driver
         cpds.setJdbcUrl(this.host);

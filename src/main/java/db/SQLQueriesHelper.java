@@ -59,12 +59,13 @@ public class SQLQueriesHelper {
 
     //static public final String DEFAULT_USER_PIC_FILE = "/unc-project/resources/img/user-pics/default.png";
 
-    static public String selectFullObjectInformationByName(String[] types, String objectName) {
+    static public String selectFullObjectInformationByName(String[] typesIds, String objectName) {
         StringBuffer query = new StringBuffer(
                         "select  o.object_id,\n" +
                         "        o.object_name,\n" +
                         "        ot.ot_name as type,\n" +
                         "        a.attr_name as attr_name,\n" +
+                        "        a.attr_type,\n" +
                         "        case\n" +
                         "          when p.value is not null\n" +
                         "            then p.value\n" +
@@ -73,7 +74,7 @@ public class SQLQueriesHelper {
                         "          else\n" +
                         "            to_char(p.date_value)\n" +
                         "        end as value,\n" +
-                        "        aot.attr_group_id as group\n" +
+                        "        aot.attr_group_id as attr_group\n" +
                         "  from  unc_objects o\n" +
                         "        left join unc_attr_object_types aot\n" +
                         "          on o.object_type_id = aot.ot_id\n" +
@@ -86,10 +87,10 @@ public class SQLQueriesHelper {
                         "        join unc_object_types ot\n" +
                         "          on ot.ot_id = o.object_type_id\n");
 
-        query.append("where (o.object_type_id = " + types[0]);
+        query.append("where (o.object_type_id = " + typesIds[0]);
 
-        for (int i = 1; i < types.length; i++) {
-            query.append(" or o.object_type_id = " + types[i]);
+        for (int i = 1; i < typesIds.length; i++) {
+            query.append(" or o.object_type_id = " + typesIds[i]);
         }
 
         query.append(") and o.object_name = '" + objectName + "'");
@@ -100,12 +101,14 @@ public class SQLQueriesHelper {
         return queryString;
     }
 
-    static public String selectFullObjectInformationById(String[] types, String[] ids) {
+    static public String selectFullObjectInformationByName(String objectName) {
         StringBuffer query = new StringBuffer(
                 "select  o.object_id,\n" +
                         "        o.object_name,\n" +
                         "        ot.ot_name as type,\n" +
+                        "        ot.ot_id as type_id,\n" +
                         "        a.attr_name as attr_name,\n" +
+                        "        a.attr_type,\n" +
                         "        case\n" +
                         "          when p.value is not null\n" +
                         "            then p.value\n" +
@@ -114,7 +117,7 @@ public class SQLQueriesHelper {
                         "          else\n" +
                         "            to_char(p.date_value)\n" +
                         "        end as value,\n" +
-                        "        aot.attr_group_id as group\n" +
+                        "        aot.attr_group_id as attr_group\n" +
                         "  from  unc_objects o\n" +
                         "        left join unc_attr_object_types aot\n" +
                         "          on o.object_type_id = aot.ot_id\n" +
@@ -127,10 +130,46 @@ public class SQLQueriesHelper {
                         "        join unc_object_types ot\n" +
                         "          on ot.ot_id = o.object_type_id\n");
 
-        query.append("where (o.object_type_id = " + types[0]);
+        query.append("where (o.object_name = '" + objectName + "'");
+        query.append(  " order by o.object_id,\n" +
+                "         a.attr_id");
 
-        for (int i = 1; i < types.length; i++) {
-            query.append(" or o.object_type_id = " + types[i]);
+        String queryString = query.toString();
+        return queryString;
+    }
+
+    static public String selectFullObjectInformationById(String[] typesIds, String[] ids) {
+        StringBuffer query = new StringBuffer(
+                "select  o.object_id,\n" +
+                        "        o.object_name,\n" +
+                        "        ot.ot_name as type,\n" +
+                        "        a.attr_name as attr_name,\n" +
+                        "        a.attr_type,\n" +
+                        "        case\n" +
+                        "          when p.value is not null\n" +
+                        "            then p.value\n" +
+                        "          when r.object_reference_id is not null\n" +
+                        "            then to_char(r.object_reference_id)\n" +
+                        "          else\n" +
+                        "            to_char(p.date_value)\n" +
+                        "        end as value,\n" +
+                        "        aot.attr_group_id as attr_group\n" +
+                        "  from  unc_objects o\n" +
+                        "        left join unc_attr_object_types aot\n" +
+                        "          on o.object_type_id = aot.ot_id\n" +
+                        "        left join unc_attributes a\n" +
+                        "          on a.attr_id = aot.attr_id\n" +
+                        "        left join unc_params p\n" +
+                        "          on (aot.attr_id = p.attr_id) and (o.object_id = p.object_id)\n" +
+                        "        left join unc_references r\n" +
+                        "          on (aot.attr_id = r.attr_id) and (o.object_id = r.object_id)\n" +
+                        "        join unc_object_types ot\n" +
+                        "          on ot.ot_id = o.object_type_id\n");
+
+        query.append("where (o.object_type_id = " + typesIds[0]);
+
+        for (int i = 1; i < typesIds.length; i++) {
+            query.append(" or o.object_type_id = " + typesIds[i]);
         }
 
         query.append(") and (o.object_id = " + ids[0]);
@@ -146,12 +185,55 @@ public class SQLQueriesHelper {
         return queryString;
     }
 
-    static public String selectParams(String[] types, String[] ids, String[] paramsNames, String name) {
+    static public String selectFullObjectInformationById(String[] ids) {
+        StringBuffer query = new StringBuffer(
+                "select  o.object_id,\n" +
+                        "        o.object_name,\n" +
+                        "        ot.ot_name as type,\n" +
+                        "        ot.ot_id as type_id,\n" +
+                        "        a.attr_name as attr_name,\n" +
+                        "        a.attr_type,\n" +
+                        "        case\n" +
+                        "          when p.value is not null\n" +
+                        "            then p.value\n" +
+                        "          when r.object_reference_id is not null\n" +
+                        "            then to_char(r.object_reference_id)\n" +
+                        "          else\n" +
+                        "            to_char(p.date_value)\n" +
+                        "        end as value,\n" +
+                        "        aot.attr_group_id as attr_group\n" +
+                        "  from  unc_objects o\n" +
+                        "        left join unc_attr_object_types aot\n" +
+                        "          on o.object_type_id = aot.ot_id\n" +
+                        "        left join unc_attributes a\n" +
+                        "          on a.attr_id = aot.attr_id\n" +
+                        "        left join unc_params p\n" +
+                        "          on (aot.attr_id = p.attr_id) and (o.object_id = p.object_id)\n" +
+                        "        left join unc_references r\n" +
+                        "          on (aot.attr_id = r.attr_id) and (o.object_id = r.object_id)\n" +
+                        "        join unc_object_types ot\n" +
+                        "          on ot.ot_id = o.object_type_id\n");
+
+        query.append("where (o.object_id = " + ids[0]);
+
+        for (int i = 1; i < ids.length; i++) {
+            query.append(" or o.object_id = " + ids[i]);
+        }
+
+        query.append(  ") order by o.object_id,\n" +
+                "         a.attr_id");
+
+        String queryString = query.toString();
+        return queryString;
+    }
+
+    static public String selectParams(String[] typesIds, String[] ids, String[] paramsNames, String name) {
         StringBuffer query = new StringBuffer(
                 "select  o.object_id,\n" +
                         "        o.object_name,\n" +
                         "        ot.ot_name as type,\n" +
                         "        a.attr_name as attr_name,\n" +
+                        "        a.attr_type,\n" +
                         "        case\n" +
                         "          when p.value is not null\n" +
                         "            then p.value\n" +
@@ -172,10 +254,10 @@ public class SQLQueriesHelper {
                         "        join unc_object_types ot\n" +
                         "          on ot.ot_id = o.object_type_id\n");
 
-        query.append("where (o.object_type_id = " + types[0]);
+        query.append("where (o.object_type_id = " + typesIds[0]);
 
-        for (int i = 1; i < types.length; i++) {
-            query.append(" or o.object_type_id = " + types[i]);
+        for (int i = 1; i < typesIds.length; i++) {
+            query.append(" or o.object_type_id = " + typesIds[i]);
         }
 
         query.append(") and (a.attr_name = '" + paramsNames[0] + "'");
@@ -244,13 +326,26 @@ public class SQLQueriesHelper {
         String query = "update unc_params set " +
                 "value = " + (value == null ? "null" : "'" + value + "'") + ", " +
                 "date_value = " + (value == null ? "to_date('" + df.format(dateValue) + "', 'yyyy-MM-dd HH24:mi:ss')" : "null") +
-                " where object_id = " + id + "and attr_id = " + attrId;
+                " where object_id = " + id + " and attr_id = " + attrId;
+
+        return query;
+    }
+
+    static public String updateParamByName(BigDecimal id, String attrName, String value, Date dateValue)
+    {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        String query = "update unc_params set " +
+                "value = " + (value == null ? "null" : "'" + value + "'") + ", " +
+                "date_value = " + (value == null ? "to_date('" + df.format(dateValue) + "', 'yyyy-MM-dd HH24:mi:ss')" : "null") +
+                " where object_id = " + id + " and attr_id in " +
+                "(select attr_id from unc_attributes where attr_name = '" + attrName + "')";
 
         return query;
     }
 
     static public String getAllAttributes(String type) {
-        String query = "select a.attr_name, uao.attr_group_id as group " +
+        String query = "select a.attr_name, uao.attr_group_id " +
                        "from unc_attr_object_types uao " +
                        "left join unc_attributes a " +
                        "on uao.attr_id = a.attr_id " +
@@ -268,7 +363,14 @@ public class SQLQueriesHelper {
         return query;
     }
 
-    static public String getTypeId(String typeName) {
+    static public String getTypeIdByObjectId(String objectId) {
+        String query = "select o.object_type_id as type_id\n" +
+                        "from unc_objects o\n" +
+                        "where o.object_id = " + objectId;
+        return query;
+    }
+
+    static public String getTypeIdByTypeName(String typeName) {
         String query = "select ot_id as id from unc_object_types where ot_name = " + typeName;
         return query;
     }
