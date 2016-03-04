@@ -1,0 +1,45 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 03.03.2016, 14:27:53
+    Author     : Andrey
+*/
+.table-pos {
+    margin-left: 100px;
+    margin-right: 100px;
+}
+
+.table-params {
+    border-collapse: initial;
+}
+
+.table-params td:first-child{
+    width: 40%;
+}
+
+.table-params tr:first-child td{
+    border-top: none;
+}
+
+.table-params td {
+    padding-left: 100px !important;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+
+.custom-tabs li a {
+    background: #DCDCDC !important;
+    transition: background 0.3s;
+    color: #000
+}
+
+.custom-tabs .active a {
+    background: #FFF !important;
+}
