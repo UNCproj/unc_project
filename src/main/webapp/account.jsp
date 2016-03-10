@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
+<htm</div>l>
 <head>
     <title>unc_project | account</title>
     <link rel="stylesheet" type="text/css" href="resources/css/bootstrap.min.css">

@@ -40,4 +40,14 @@
         <servlet-name>RegistrationServlet</servlet-name>
         <url-pattern>/registration</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>   
+        <servlet-name>StatServlet</servlet-name>
+        <url-pattern>/StatServlet/getList</url-pattern>
+        <url-pattern>/StatServlet/getStat</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>   
+        <servlet-name>testServlet</servlet-name>
+        <url-pattern>/testServlet/a</url-pattern>
+        <url-pattern>/testServlet/b</url-pattern>
+    </servlet-mapping>
 </web-app>

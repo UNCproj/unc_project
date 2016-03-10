@@ -35,7 +35,6 @@ public class UncObject {
 
     public UncObject(String id, String name, boolean isNeedLoadAllAttributes) {
         this(id, name);
-
         if (isNeedLoadAllAttributes) {
             try {
                 loadAttributesListFromDB();
@@ -149,6 +148,8 @@ public class UncObject {
                     );
                 }
             }
+            
+            
         }
     }
 
