@@ -1,4 +1,5 @@
-<script src="/unc-project/resources/scripts/jquery-1.12.0.min.js"></script>
-<script src="/unc-project/resources/scripts/angular.min.js"></script>
-<script src="/unc-project/resources/scripts/bootstrap.min.js"></script>
-<script src="/unc-project/resources/scripts/default.js"></script>
+
+<script src="resources/scripts/jquery-1.12.0.min.js"></script>
+<script src="resources/scripts/angular.min.js"></script>
+<script src="resources/scripts/bootstrap.min.js"></script>
+<script src="resources/scripts/default.js"></script>
