@@ -108,6 +108,7 @@ public class SQLQueriesHelper {
                         "        ot.ot_name as type,\n" +
                         "        ot.ot_id as type_id,\n" +
                         "        a.attr_name as attr_name,\n" +
+                        "        aot.attr_name_ru as attr_name_ru,\n" +
                         "        a.attr_type,\n" +
                         "        case\n" +
                         "          when p.value is not null\n" +
@@ -144,6 +145,7 @@ public class SQLQueriesHelper {
                         "        o.object_name,\n" +
                         "        ot.ot_name as type,\n" +
                         "        a.attr_name as attr_name,\n" +
+                        "        nvl(aot.attr_name_ru, a.attr_name) as attr_name_ru,\n" +
                         "        a.attr_type,\n" +
                         "        case\n" +
                         "          when p.value is not null\n" +
@@ -192,6 +194,7 @@ public class SQLQueriesHelper {
                         "        ot.ot_name as type,\n" +
                         "        ot.ot_id as type_id,\n" +
                         "        a.attr_name as attr_name,\n" +
+                        "        nvl(aot.attr_name_ru, a.attr_name) as attr_name_ru,\n" +
                         "        a.attr_type,\n" +
                         "        case\n" +
                         "          when p.value is not null\n" +
@@ -345,7 +348,7 @@ public class SQLQueriesHelper {
     }
 
     static public String getAllAttributes(String type) {
-        String query = "select a.attr_name, uao.attr_group_id " +
+        String query = "select a.attr_name, uao.attr_group_id, uao.attr_name_ru " +
                        "from unc_attr_object_types uao " +
                        "left join unc_attributes a " +
                        "on uao.attr_id = a.attr_id " +

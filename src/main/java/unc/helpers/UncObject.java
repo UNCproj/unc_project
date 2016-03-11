@@ -128,7 +128,7 @@ public class UncObject {
                     name = results.getString("object_name");
                 }
 
-                String currentParamName = results.getString("attr_name");
+                String currentParamName = results.getString("attr_name_ru");
                 boolean isAdded = false;
                 for (Param param: params) {
                     if (param.getName().equals(currentParamName)) {
@@ -148,8 +148,6 @@ public class UncObject {
                     );
                 }
             }
-            
-            
         }
     }
 
@@ -172,7 +170,7 @@ public class UncObject {
                     attributeGroups.add(group);
                 }
 
-                params.add(new Param(results.getString("attr_name"), null, group));
+                params.add(new Param(results.getString("attr_name_ru"), null, group));
             }
         }
     }
