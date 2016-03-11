@@ -11,8 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.StringJoiner;
 
 /**
  * Created by Денис on 24.02.2016.
@@ -25,16 +23,18 @@ public class UncObject {
     private ArrayList<String> attributeGroups;
 
     public UncObject() {
-
+        params = new ArrayList<>();
+        attributeGroups = new ArrayList<>();
     }
 
-    public UncObject(String name) {
+    public UncObject(String id, String name) {
+        this();
+        this.id = id;
         this.name = name;
     }
 
-    public UncObject(String name, boolean isNeedLoadAllAttributes) {
-        this(name);
-
+    public UncObject(String id, String name, boolean isNeedLoadAllAttributes) {
+        this(id, name);
         if (isNeedLoadAllAttributes) {
             try {
                 loadAttributesListFromDB();
@@ -46,25 +46,22 @@ public class UncObject {
 
     public void insertIntoDB() throws PropertyVetoException, SQLException, IOException {
         try(Connection connection = DataSource.getInstance().getConnection();
-            Statement statement = connection.createStatement())
-        {
+            Statement statement = connection.createStatement()) {
             connection.setAutoCommit(false);
             ResultSet results = (statement.executeQuery(SQLQueriesHelper.newId()));
             results.next();
             id = results.getString("id");
             statement.executeUpdate(SQLQueriesHelper.insertObject(id, type, name));
 
-            if (params != null) {
-                for (Param param : params) {
-                    if (param.isReference()) {
-                        statement.executeUpdate(SQLQueriesHelper.newReference(
-                                id, param.getValue(), param.getAttrId()
-                        ));
-                    } else {
-                        statement.executeUpdate(SQLQueriesHelper.insertParam(
-                                new BigDecimal(id), param.getAttrId(), param.getValue(), param.getDateValue()
-                        ));
-                    }
+            for (Param param : params) {
+                if (param.isReference()) {
+                    statement.executeUpdate(SQLQueriesHelper.newReference(
+                            id, param.getValue(), param.getAttrId()
+                    ));
+                } else {
+                    statement.executeUpdate(SQLQueriesHelper.insertParam(
+                            new BigDecimal(id), param.getAttrId(), param.getValue(), param.getDateValue()
+                    ));
                 }
             }
             connection.commit();
@@ -77,7 +74,7 @@ public class UncObject {
         {
             connection.setAutoCommit(false);
             if (type != null && type.length() > 0) {
-                ResultSet results = statement.executeQuery(SQLQueriesHelper.getTypeId(type));
+                ResultSet results = statement.executeQuery(SQLQueriesHelper.getTypeIdByTypeName(type));
                 results.next();
                 String typeId = results.getString("id");
                 statement.executeUpdate(SQLQueriesHelper.changeType(new BigDecimal(id), typeId));
@@ -89,9 +86,16 @@ public class UncObject {
 
             if (params != null) {
                 for (Param param : params) {
-                    statement.executeUpdate(SQLQueriesHelper.updateParam(
-                            new BigDecimal(id), param.getAttrId(), param.getValue(), param.getDateValue()
-                    ));
+                    if (param.getAttrId() == null) {
+                        statement.executeUpdate(SQLQueriesHelper.updateParamByName(
+                                new BigDecimal(id), param.getName(), param.getValue(), param.getDateValue()
+                        ));
+                    }
+                    else {
+                        statement.executeUpdate(SQLQueriesHelper.updateParam(
+                                new BigDecimal(id), param.getAttrId(), param.getValue(), param.getDateValue()
+                        ));
+                    }
                 }
             }
             connection.commit();
@@ -106,8 +110,9 @@ public class UncObject {
 
             ResultSet results = statement.executeQuery(
                     (id == null || id.length() == 0) ?
-                            SQLQueriesHelper.selectFullObjectInformationById(new String[]{type}, new String[]{id}) :
-                            SQLQueriesHelper.selectFullObjectInformationByName(new String[]{type}, name)
+                            SQLQueriesHelper.selectFullObjectInformationByName(name) :
+                            SQLQueriesHelper.selectFullObjectInformationById(new String[]{id})
+
             );
 
             while (results.next()) {
@@ -123,12 +128,13 @@ public class UncObject {
                     name = results.getString("object_name");
                 }
 
-                String currentParamName = results.getString("attr_name");
+                String currentParamName = results.getString("attr_name_ru");
                 boolean isAdded = false;
                 for (Param param: params) {
                     if (param.getName().equals(currentParamName)) {
                         param.setValue(results.getString("value"));
-                        param.setGroup(results.getString("group"));
+                        param.setGroup(results.getString("attr_group"));
+                        param.setType(results.getString("attr_type"));
                         isAdded = true;
                         break;
                     }
@@ -137,7 +143,8 @@ public class UncObject {
                 if (!isAdded) {
                     params.add(new Param(currentParamName,
                                             results.getString("value"),
-                                            results.getString("group"))
+                                            results.getString("attr_group"),
+                                            results.getString("attr_type"))
                     );
                 }
             }
@@ -149,19 +156,21 @@ public class UncObject {
             Statement statement = connection.createStatement())
         {
             if (type == null || type.length() == 0) {
-                selectFromDB();
+                ResultSet results = statement.executeQuery(SQLQueriesHelper.getTypeIdByObjectId(id));
+                results.next();
+                type = results.getString("type_id");
             }
 
             ResultSet results = statement.executeQuery(SQLQueriesHelper.getAllAttributes(type));
 
             while (results.next()) {
-                String group = results.getString("group");
+                String group = results.getString("attr_group_id");
 
                 if (!attributeGroups.contains(group)) {
                     attributeGroups.add(group);
                 }
 
-                params.add(new Param(results.getString("attr_name"), null, group));
+                params.add(new Param(results.getString("attr_name_ru"), null, group));
             }
         }
     }

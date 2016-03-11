@@ -11,6 +11,7 @@ public class Param {
     private String value;
     private Date dateValue;
     private String group;
+    private String type;
     private boolean isReference;
 
     public Param() {
@@ -20,13 +21,16 @@ public class Param {
     public Param(String name, String value) {
         this.name = name;
         this.value = value;
-        this.group = null;
     }
 
     public Param(String name, String value, String group) {
-        this.name = name;
-        this.value = value;
+        this(name, value);
         this.group = group;
+    }
+
+    public Param(String name, String value, String group, String type) {
+        this(name, value, group);
+        this.type = type;
     }
 
     public String getName() {
@@ -67,6 +71,14 @@ public class Param {
 
     public void setDateValue(Date dateValue) {
         this.dateValue = dateValue;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public void setReference(boolean reference) {

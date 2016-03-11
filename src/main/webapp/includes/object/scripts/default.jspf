@@ -1,0 +1,5 @@
+
+<script src="resources/scripts/jquery-1.12.0.min.js"></script>
+<script src="resources/scripts/angular.min.js"></script>
+<script src="resources/scripts/bootstrap.min.js"></script>
+<script src="resources/scripts/default.js"></script>
