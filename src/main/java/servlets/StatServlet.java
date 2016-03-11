@@ -142,7 +142,7 @@ public class StatServlet extends HttpServlet {
                             + "group by  o.object,\n"
                             + "          to_char(s.visit_date, 'YYYY-MM-DD')\n"
                             + "order by  to_date(to_char(s.visit_date, 'YYYY-MM-DD'), 'YYYY-MM-DD')";
-
+                    //response.getWriter().write(comm);
                     //DBConnect dc = new DBConnect("unc_user", "pass123");
                     Connection connection = null;
                     try {

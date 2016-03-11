@@ -92,20 +92,22 @@
                          <%if ("1".equals(currentObject.getType())) {%>
                             <div id="statid" class="tab-pane fade in">
                                <h3>Статистика просмотров объявлений:</h3>
-                               <div id = "dropdown1" action="" class="tab-pane fade in" ng-controller="LineCtrl" ng-show="isExistData()">
-                                   <div class="dropdown">
-                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    {{selectedItem.name}}
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                    <li ng-repeat="a in subjects"><a ng-click="dropboxitemselected(a)">{{a.name}}</a></li>
-                                </ul>
-                                </div>
-                               <canvas id="line" class="chart chart-line" chart-data="data"
-                                 chart-labels="labels" chart-legend="true" chart-series="series"
-                                 chart-click="onClick" height="40%" width="40%">
-                               </canvas>
+                               <div ng-controller="LineCtrl">
+                                    <div id = "dropdown1" action="" class="tab-pane fade in" >
+                                        <div class="dropdown">
+                                     <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                         {{selectedItem.name}}
+                                         <span class="caret"></span>
+                                     </button>
+                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                         <li ng-repeat="a in subjects"><a ng-click="dropboxitemselected(a)">{{a.name}}</a></li>
+                                     </ul>
+                                     </div>
+                                    <canvas id="line" class="chart chart-line" chart-data="data"
+                                      chart-labels="labels" chart-legend="true" chart-series="series"
+                                      chart-click="onClick" height="20%" width="40%">
+                                    </canvas>
+                                    </div>
                                </div>
                                <div id="ifempty"></div>
                             </div>

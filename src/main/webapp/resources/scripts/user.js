@@ -21,7 +21,7 @@
             
             $scope.isExistData = function isExistData(){
                 if ((data.length === 0)&&(adverts.length===0)){
-                    $('#ifempty').html('<h1>У вас пока что нет объявлений.</h1>');
+                    $('#ifempty').html('У вас пока что нет объявлений.');
                     return false;
                 }
                 $('#ifempty').html('');
@@ -41,30 +41,32 @@
             
             
             $scope.dropboxitemselected = function (item) {
+                console.log('query!');
                 $scope.selectedItem = item;
                 $.ajax({
                 url: "/unc_project/StatServlet/getStat",
-                async: false,
                 data: {"object_id": id, "ad_id":$scope.selectedItem.id}
                 }).done(function(visits) {
                     labels = []; data = [];
                 $.each(visits, function(index, visit) {
-                        
                         labels.push(visit.date);
                         data.push(visit.count);
                     });
+                
+                if (labels.length == 0) 
+                {
+                    labels = ['0']; data = ['0'];
+                }
                 $scope.labels = labels;
                 $scope.series = ['Просмотров объявлений за день'];
                 $scope.data = [data];
+                console.log($scope.labels);
+                console.log($scope.data);
             });
             }
-            
-            
-            
-            console.log(data);
             $scope.subjects = adverts;
             $scope.selectedItem = adverts[0];
-            
+            $scope.dropboxitemselected($scope.selectedItem);
             $scope.onClick = function (points, evt) {
                         console.log(points, evt);
             };
