@@ -43,3 +43,7 @@ table {
 .custom-tabs .active a {
     background: #FFF !important;
 }
+
+.button-update:focus, .button-update:hover {    
+    color: #23527c
+}

@@ -70,20 +70,20 @@ a {
     text-decoration: none;
 }
 
-a:hover {
+a:hover { 
     text-decoration: none;
-}
+} 
 
 .a-outline:focus {
     outline: none;
-    
+    text-decoration: none;
 }
 
 .enter {
     float : right;
     font-size: 15px;
     margin : 10px 10px;
-    width: 200px;
+    width: 100px;
 }
 
 .block-footer {
