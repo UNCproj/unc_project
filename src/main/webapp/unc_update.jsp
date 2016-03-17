@@ -71,6 +71,7 @@
             <c:if test="${!empty e}">
                 <c:import url="/includes/update/attr_views/default.jsp">
                     <c:param name="attr_name" value="<%= currentGroupParams.get(j).getName()%>" />
+                    <c:param name="attr_name_ru" value="<%= currentGroupParams.get(j).getRuName()%>" />
                     <c:param name="attr_value" value="<%= currentGroupParams.get(j).getValue()%>" />
                     <c:param name="attr_type" value="<%= currentGroupParams.get(j).getType()%>" />
                 </c:import>

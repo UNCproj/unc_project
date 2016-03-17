@@ -130,6 +130,32 @@ public class AdvertsListServlet extends HttpServlet {
         }
         else if (action.equals("get_adverts_attributes")) {
             String adCategoryId = request.getParameter("adCategoryIds");
+
+            try (
+                    Connection connection = DataSource.getInstance().getConnection();
+                    Statement statement = connection.createStatement()
+            ) {
+                try (ResultSet childrenTypesResults = statement.executeQuery(
+                        SQLQueriesHelper.getAllAttributes(SQLQueriesHelper.ADVERT_TYPE_ID)
+                )) {
+                    ArrayList<String[]> categories = new ArrayList<>();
+
+                    while (childrenTypesResults.next()) {
+                        categories.add(new String[] {childrenTypesResults.getString("ot_id"),
+                                childrenTypesResults.getString("ot_name")});
+                    }
+
+                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                    String categoriesJson = gson.toJson(categories, categories.getClass());
+
+                    response.setContentType("text/html; charset=UTF-8");
+                    try (PrintWriter out = response.getWriter()) {
+                        out.print(categoriesJson);
+                    }
+                }
+            } catch (SQLException | PropertyVetoException e) {
+                throw new ServletException(e);
+            }
         }
     }
 

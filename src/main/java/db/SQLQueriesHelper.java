@@ -77,7 +77,10 @@ public class SQLQueriesHelper {
                         "        aot.attr_group_id as attr_group\n" +
                         "  from  unc_objects o\n" +
                         "        left join unc_attr_object_types aot\n" +
-                        "          on o.object_type_id = aot.ot_id\n" +
+                                "          on aot.ot_id in (select ot_id" +
+                                "                             from unc_object_types\n" +
+                                "                            start with ot_id = o.object_type_id\n" +
+                                "                          connect by ot_id = prior parent_id)\n" +
                         "        left join unc_attributes a\n" +
                         "          on a.attr_id = aot.attr_id\n" +
                         "        left join unc_params p\n" +
@@ -121,7 +124,10 @@ public class SQLQueriesHelper {
                         "        aot.attr_group_id as attr_group\n" +
                         "  from  unc_objects o\n" +
                         "        left join unc_attr_object_types aot\n" +
-                        "          on o.object_type_id = aot.ot_id\n" +
+                        "          on aot.ot_id in (select ot_id" +
+                        "                             from unc_object_types\n" +
+                        "                            start with ot_id = o.object_type_id\n" +
+                        "                          connect by ot_id = prior parent_id)\n" +
                         "        left join unc_attributes a\n" +
                         "          on a.attr_id = aot.attr_id\n" +
                         "        left join unc_params p\n" +
@@ -158,7 +164,10 @@ public class SQLQueriesHelper {
                         "        aot.attr_group_id as attr_group\n" +
                         "  from  unc_objects o\n" +
                         "        left join unc_attr_object_types aot\n" +
-                        "          on o.object_type_id = aot.ot_id\n" +
+                        "          on aot.ot_id in (select ot_id" +
+                        "                             from unc_object_types\n" +
+                        "                            start with ot_id = o.object_type_id\n" +
+                        "                          connect by ot_id = prior parent_id)\n" +
                         "        left join unc_attributes a\n" +
                         "          on a.attr_id = aot.attr_id\n" +
                         "        left join unc_params p\n" +
@@ -207,7 +216,10 @@ public class SQLQueriesHelper {
                         "        aot.attr_group_id as attr_group\n" +
                         "  from  unc_objects o\n" +
                         "        left join unc_attr_object_types aot\n" +
-                        "          on o.object_type_id = aot.ot_id\n" +
+                        "          on aot.ot_id in (select ot_id" +
+                        "                             from unc_object_types\n" +
+                        "                            start with ot_id = o.object_type_id\n" +
+                        "                          connect by ot_id = prior parent_id)\n" +
                         "        left join unc_attributes a\n" +
                         "          on a.attr_id = aot.attr_id\n" +
                         "        left join unc_params p\n" +
@@ -247,7 +259,10 @@ public class SQLQueriesHelper {
                         "        end as value\n" +
                         "  from  unc_objects o\n" +
                         "        left join unc_attr_object_types aot\n" +
-                        "          on o.object_type_id = aot.ot_id\n" +
+                        "          on aot.ot_id in (select ot_id" +
+                        "                             from unc_object_types\n" +
+                        "                            start with ot_id = o.object_type_id\n" +
+                        "                          connect by ot_id = prior parent_id)\n" +
                         "        left join unc_attributes a\n" +
                         "          on a.attr_id = aot.attr_id\n" +
                         "        left join unc_params p\n" +
@@ -352,7 +367,21 @@ public class SQLQueriesHelper {
                        "from unc_attr_object_types uao " +
                        "left join unc_attributes a " +
                        "on uao.attr_id = a.attr_id " +
-                       "where uao.ot_id = " + type;
+                       "where uao.ot_id = " + type +
+                       " order by uao.attr_order nulls last";
+        return query;
+    }
+
+    static public String getAllHierarchyAttributes(String typeId) {
+        String query =  "select a.attr_name, uao.attr_group_id, uao.attr_name_ru " +
+                        "  from unc_attr_object_types uao " +
+                        "  left join unc_attributes a " +
+                        "    on uao.attr_id = a.attr_id " +
+                        " where uao.ot_id in (select ot_id " +
+                        "                       from unc_object_types " +
+                        "                      start with ot_id = " + typeId +
+                        "                    connect by ot_id = prior parent_id)" +
+                        " order by uao.attr_order nulls last";
         return query;
     }
 
@@ -400,5 +429,137 @@ public class SQLQueriesHelper {
         String query = "insert into unc_params(object_id, attr_id, date_value) values (" + id +",'3', to_date('" + param + "','yyyy:mm:dd hh24:mi:ss'))";
         return query;
     }
-    
+
+    static public String getTypeChildren(String typeId) {
+        String query =  "select  ot_id, ot_name\n" +
+                "  from  unc_object_types\n" +
+                " start  with parent_id = " + typeId + "\n" +
+                "connect by prior ot_id = parent_id";
+
+        return query;
+    }
+
+    static public String getTypeFirstLevelChildren(String typeId) {
+        String query =  "select  ot_id, ot_name\n" +
+                "  from  unc_object_types uot\n" +
+                " where  uot.parent_id = " + typeId;
+
+        return query;
+    }
+
+    static public String getAdvertsList(String[] categories, String startingNum, String count,
+                                        String sortingParam, String sortingOrder, String namePattern) {
+        StringBuilder query = new StringBuilder(
+                "select  *\n" +
+                        "  from  (\n" +
+                        "       select row_number () over (order by " +
+                        (sortingParam == null ? "object_name" : sortingOrder) +
+                        "       ) rn, adv.*\n" +
+                        "       from (\n" +
+                        "          select  object_id,\n" +
+                        "                  max(object_name) as object_name,\n" +
+                        "                  max(type) as type,\n" +
+                        "                  max(price) as price,\n" +
+                        "                  max(description) as description,\n" +
+                        "                  max(pic) as pic,\n" +
+                        "                  max(city) as city,\n" +
+                        "                  max(registration_date) as registration_date\n" +
+                        "            from  (\n" +
+                        "                  select  object_id,\n" +
+                        "                          object_name,\n" +
+                        "                          type,\n" +
+                        "                          case\n" +
+                        "                            when attr_name = 'price'\n" +
+                        "                              then attr_value\n" +
+                        "                            else\n" +
+                        "                              null\n" +
+                        "                          end as price,\n" +
+                        "                          case\n" +
+                        "                            when attr_name = 'description'\n" +
+                        "                              then attr_value\n" +
+                        "                            else\n" +
+                        "                              null\n" +
+                        "                          end as description,\n" +
+                        "                          case\n" +
+                        "                            when attr_name = 'category'\n" +
+                        "                              then attr_value\n" +
+                        "                            else\n" +
+                        "                              null\n" +
+                        "                          end as category,\n" +
+                        "                          case\n" +
+                        "                            when attr_name = 'city'\n" +
+                        "                              then attr_value\n" +
+                        "                            else\n" +
+                        "                              null\n" +
+                        "                          end as city,\n" +
+                        "                          case\n" +
+                        "                            when attr_name = 'user_pic_file'\n" +
+                        "                              then attr_value\n" +
+                        "                            else\n" +
+                        "                              null\n" +
+                        "                          end as pic,\n" +
+                        "                          case\n" +
+                        "                            when attr_name = 'registration_date'\n" +
+                        "                              then attr_value\n" +
+                        "                            else\n" +
+                        "                              null\n" +
+                        "                          end as registration_date\n" +
+                        "                    from  (\n" +
+                        "                  select  o.object_id,\n" +
+                        "                          o.object_name,\n" +
+                        "                          ot.ot_name as type,\n" +
+                        "                          a.attr_name as attr_name,\n" +
+                        "                          a.attr_type,\n" +
+                        "                          case\n" +
+                        "                            when p.value is not null\n" +
+                        "                              then p.value\n" +
+                        "                            when r.object_reference_id is not null\n" +
+                        "                              then to_char(r.object_reference_id)\n" +
+                        "                            else\n" +
+                        "                              to_char(p.date_value)\n" +
+                        "                          end as attr_value\n" +
+                        "                    from  unc_objects o\n" +
+                        "                          left join unc_attr_object_types aot\n" +
+                        "                            on aot.ot_id in (select ot_id\n" +
+                        "                                           from unc_object_types\n" +
+                        "                                          start with ot_id = o.object_type_id\n" +
+                        "                                        connect by ot_id = prior parent_id)\n" +
+                        "                          left join unc_attributes a\n" +
+                        "                            on a.attr_id = aot.attr_id\n" +
+                        "                          left join unc_params p\n" +
+                        "                            on (aot.attr_id = p.attr_id) and (o.object_id = p.object_id)\n" +
+                        "                          left join unc_references r\n" +
+                        "                            on (aot.attr_id = r.attr_id) and (o.object_id = r.object_id)\n" +
+                        "                          join unc_object_types ot\n" +
+                        "                            on ot.ot_id = o.object_type_id\n" +
+                        "                    where (o.object_type_id = 4"
+        );
+
+        if (categories != null && categories.length > 0) {
+            for (String category: categories) {
+                query.append(" or o.object_type_id = ").append(category);
+            }
+        }
+
+        query.append(")))\n")
+                .append("group by object_id\n")
+                .append("order by ")
+                .append(sortingParam == null ? "object_name" : sortingParam)
+                .append(" ")
+                .append(sortingOrder != null && sortingOrder.equals("desc") ? "desc" : "asc")
+                .append(") adv\n");
+
+        if (namePattern != null) {
+            query.append("where lower(object_name) like '%" + namePattern.toLowerCase() + "%'");
+        }
+
+        query.append(")")
+                .append(" where rn > ").append(startingNum == null ? startingNum = "0" : startingNum);
+
+        if (count != null) {
+            query.append(" and rn <= ").append(Integer.valueOf(startingNum) + Integer.valueOf(count));
+        }
+
+        return query.toString();
+    }
 }

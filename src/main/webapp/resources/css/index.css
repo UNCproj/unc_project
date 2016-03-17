@@ -9,3 +9,19 @@
     margin-left: 2px;
     vertical-align: middle;
 }
+
+.search-wrapper {
+    margin-top: 50px;
+}
+
+.search-results a {
+    color: black;
+}
+
+.search-results a .name {
+    color: #2b669a;
+}
+
+.search-results a .description {
+    height: 50px;
+}

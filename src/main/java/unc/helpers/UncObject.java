@@ -128,11 +128,12 @@ public class UncObject {
                     name = results.getString("object_name");
                 }
 
-                String currentParamName = results.getString("attr_name_ru");
+                String currentParamName = results.getString("attr_name");
                 boolean isAdded = false;
                 for (Param param: params) {
                     if (param.getName().equals(currentParamName)) {
                         param.setValue(results.getString("value"));
+                        param.setRuName(results.getString("attr_name_ru"));
                         param.setGroup(results.getString("attr_group"));
                         param.setType(results.getString("attr_type"));
                         isAdded = true;
@@ -143,6 +144,7 @@ public class UncObject {
                 if (!isAdded) {
                     params.add(new Param(currentParamName,
                                             results.getString("value"),
+                                            results.getString("attr_name_ru"),
                                             results.getString("attr_group"),
                                             results.getString("attr_type"))
                     );
@@ -161,7 +163,7 @@ public class UncObject {
                 type = results.getString("type_id");
             }
 
-            ResultSet results = statement.executeQuery(SQLQueriesHelper.getAllAttributes(type));
+            ResultSet results = statement.executeQuery(SQLQueriesHelper.getAllHierarchyAttributes(type));
 
             while (results.next()) {
                 String group = results.getString("attr_group_id");
@@ -170,7 +172,7 @@ public class UncObject {
                     attributeGroups.add(group);
                 }
 
-                params.add(new Param(results.getString("attr_name_ru"), null, group));
+                params.add(new Param(results.getString("attr_name"), results.getString("attr_name_ru"), null, group));
             }
         }
     }

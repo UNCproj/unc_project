@@ -8,6 +8,7 @@ import java.util.Date;
 public class Param {
     private String attrId;
     private String name;
+    private String ruName;
     private String value;
     private Date dateValue;
     private String group;
@@ -23,13 +24,14 @@ public class Param {
         this.value = value;
     }
 
-    public Param(String name, String value, String group) {
+    public Param(String name, String value, String ruName, String group) {
         this(name, value);
+        this.ruName = ruName;
         this.group = group;
     }
 
-    public Param(String name, String value, String group, String type) {
-        this(name, value, group);
+    public Param(String name, String value, String ruName, String group, String type) {
+        this(name, value, ruName, group);
         this.type = type;
     }
 
@@ -39,6 +41,14 @@ public class Param {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getRuName() {
+        return ruName;
+    }
+
+    public void setRuName(String ruName) {
+        this.ruName = ruName;
     }
 
     public String getValue() {

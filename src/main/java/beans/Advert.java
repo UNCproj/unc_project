@@ -13,4 +13,14 @@ public interface Advert {
     void setName(String name);
     String getDescription();
     void setDescription(String description);
+    String getCategory();
+    void setCategory(String category);
+    String getPic();
+    void setPic(String pic);
+    String getPrice();
+    void setPrice(String price);
+    String getCity();
+    void setCity(String city);
+    String getRegistrationDate();
+    void setRegistrationDate(String registrationDate);
 }

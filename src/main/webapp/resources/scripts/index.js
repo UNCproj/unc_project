@@ -100,16 +100,20 @@
                     $scope.subCategories[0] = {
                         id: 4,
                         name: 'Все категории',
-                        subCategoriesIds: $scope.categories,
+                        subCategoriesIds: [],
+                        subCategoriesNames: $scope.categories,
                         attributes: []
                     };
 
-                    $scope.subCategories[1] = {
-                        id: $scope.selectedCategoryId,
-                        name: $scope.selectedCategoryName,
-                        subCategoriesIds: [],
-                        attributes: []
-                    };
+                    if ($scope.selectedCategoryId != 4) {
+                        $scope.subCategories[1] = {
+                            id: $scope.selectedCategoryId,
+                            name: $scope.selectedCategoryName,
+                            subCategoriesIds: [],
+                            subCategoriesNames: [],
+                            attributes: []
+                        };
+                    }
 
                     $http({
                         url: 'advertsList',
