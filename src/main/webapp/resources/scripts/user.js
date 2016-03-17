@@ -45,6 +45,7 @@
                 $scope.selectedItem = item;
                 $.ajax({
                 url: "/unc_project/StatServlet/getStat",
+                async: false,
                 data: {"object_id": id, "ad_id":$scope.selectedItem.id}
                 }).done(function(visits) {
                     labels = []; data = [];
