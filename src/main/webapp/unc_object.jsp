@@ -34,14 +34,10 @@
 <html ng-app="objectSettings">
 <head>
     <c:catch var="e">
-        <c:import url="/includes/object/scripts/1.jspf" />
+        <c:import url="/includes/object/scripts/4.jspf" />
     </c:catch>
     <c:if test="${!empty e}">
-<<<<<<< HEAD
         <c:import url="/includes/object/scripts/default.jspf" />
-=======
-        <%@ include file="/includes/object/scripts/default.jspf" %>
->>>>>>> a863626d387ba488ad9fd0b3ea0ead179c72deaf
     </c:if>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title><%= currentObject.getParentType() %></title>
@@ -79,13 +75,10 @@
                          <%if ("1".equals(currentObject.getType())) {%>
                                  <li><a href="#statid" data-toggle="tab">Статистика</a></li>
                          <% } %>
-<<<<<<< HEAD
                          <%if ("4".equals(currentObject.getParentType())) {%>
                                  <li><a href="#adstatid" data-toggle="tab">Статистика</a></li>
                          <% } %>
-=======
                      <% } %>
->>>>>>> a863626d387ba488ad9fd0b3ea0ead179c72deaf
                      </ul>
                      <div class="settings tab-content" id="tab_content">
                         <% String activeSwicth1 = "active", s; %>
@@ -136,9 +129,7 @@
                                </div>
                                <div id="ifempty"></div>
                             </div>
-                        <% } %>
-<<<<<<< HEAD
-                        
+                        <% } %>                       
                         <%if ("4".equals(currentObject.getParentType())) {%>
                             <div id="adstatid" class="tab-pane fade in">
                                <h3>Статистика просмотров объявления:</h3>
@@ -152,7 +143,7 @@
                             </div>
                         <% } %>
                  </div> 
-=======
+                 
                  </div>
                  <div class="references">
                     <h3>Список ссылок</h3>
@@ -174,7 +165,6 @@
                         <% } %>
                     </ul>
                  </div>
->>>>>>> a863626d387ba488ad9fd0b3ea0ead179c72deaf
              </div>
             <c:catch var="e">
                 <c:import url="/includes/object/footers/default.jspf" />
