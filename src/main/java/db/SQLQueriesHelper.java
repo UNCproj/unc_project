@@ -395,7 +395,7 @@ public class SQLQueriesHelper {
     }
 
     static public String getAllAttributes(String type) {
-        String query = "select a.attr_name, uao.attr_group_id, uao.attr_name_ru " +
+        String query = "select a.attr_id, a.attr_name, uao.attr_group_id, uao.attr_name_ru, a.attr_type " +
                        "from unc_attr_object_types uao " +
                        "left join unc_attributes a " +
                        "on uao.attr_id = a.attr_id " +
@@ -434,8 +434,24 @@ public class SQLQueriesHelper {
         return query;
     }
 
+    static public String getParentTypeIdByObjectTypeId(String objectType) {
+        String query =  "SELECT  CONNECT_BY_ROOT uot.OT_ID as praperent\n" +
+                "FROM unc_object_types uot\n" +
+                "where uot.ot_id = " + objectType +"\n" +
+                "START WITH uot.PARENT_ID is null\n" +
+                "CONNECT BY PRIOR ot_id = parent_id";
+        return query;
+    }
+
+    static public String insertAdStat(String adId) {
+        String query =  "insert into unc_stat(ID,OBJ_ID, VISIT_DATE) values(getid, "+ adId + "," +
+                "to_date('"+new SimpleDateFormat("dd.MM.yy").format(new Date()) + "', 'DD.MM.YY')" +
+                ")";
+        return query;
+    }
+
     static public String getTypeIdByTypeName(String typeName) {
-        String query = "select ot_id as id from unc_object_types where ot_name = " + typeName;
+        String query = "select ot_id as id from unc_object_types where lower(ot_name) = '" + typeName.toLowerCase() + "'";
         return query;
     }
 
