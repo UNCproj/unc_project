@@ -1,3 +1,5 @@
+<%@ page import="beans.BeansHelper" %>
+<%@ page import="beans.UserAccountBean" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@ page import="unc.helpers.UncObject" %>
 <%@ page import="java.sql.SQLException" %>

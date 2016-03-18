@@ -1,3 +1,5 @@
+<%@ page import="beans.BeansHelper" %>
+<%@ page import="beans.UserAccountBean" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="unc.helpers.UncObject" %>
 <%@ page import="java.beans.PropertyVetoException" %>
@@ -40,58 +42,60 @@
     </c:if>
 </head>
 <body>
-<c:catch var="e">
-    <c:import url="/includes/update/headers/<%= currentObject.getType() %>.jspf" />
-</c:catch>
-<c:if test="${!empty e}">
-    <c:import url="/includes/update/headers/default.jspf" />
-</c:if>
-
-<ul class="nav nav-tabs">
-    <% for (int i = 0; i < currentObject.getAttributeGroups().size(); i++) { %>
-    <li><a href="#<%= currentObject.getAttributeGroups().get(i) %>" data-toggle="tab"><%=currentObject.getAttributeGroups().get(i)%></a></li>
-    <% } %>
-
-    <c:catch var="e">
-        <c:import url="/includes/update/headers/<%= currentObject.getType() %>.jspf" />
-    </c:catch>
-</ul>
-
-<div class="settings tab-content .col-md-3 .col-md-offset-3" ng-controller="updateController">
-    <% for (int i = 0; i < currentObject.getAttributeGroups().size(); i++) {
-        String attrGroupName = currentObject.getAttributeGroups().get(i);
-        ArrayList<Param> currentGroupParams = currentObject.getParams(attrGroupName);
-    %>
-    <div id="<%= attrGroupName %>" class="tab-pane fade in">
-        <form>
-            <% for (int j = 0; j < currentGroupParams.size(); j++) { %>
-            <c:catch var="e">
-                <c:import url="/includes/update/attr_views/<%= currentObject.getType() %>.jsp" />
-            </c:catch>
-            <c:if test="${!empty e}">
-                <c:import url="/includes/update/attr_views/default.jsp">
-                    <c:param name="attr_name" value="<%= currentGroupParams.get(j).getName()%>" />
-                    <c:param name="attr_name_ru" value="<%= currentGroupParams.get(j).getRuName()%>" />
-                    <c:param name="attr_value" value="<%= currentGroupParams.get(j).getValue()%>" />
-                    <c:param name="attr_type" value="<%= currentGroupParams.get(j).getType()%>" />
-                </c:import>
-            </c:if>
+    <div class="main">
+        <c:catch>
+            <%@ include file="/includes/update/headers/default.jsp" %>
+        </c:catch>
+        <div class="content">
+        <ul class="custom-tabs nav nav-tabs tabs">
+        <% String activeSwicth1 = "active"; %>
+        <% if (currentObject.getAttributeGroups() != null && currentObject.getAttributeGroups().size() != 0) {%>
+            <li class="active"><a href="#<%= currentObject.getAttributeGroups().get(0) %>" data-toggle="tab"><%=currentObject.getAttributeGroups().get(0)%></a></li>
+            <% for (int i = 1; i < currentObject.getAttributeGroups().size(); i++) { %>
+                <li><a href="#<%= currentObject.getAttributeGroups().get(i) %>" data-toggle="tab"><%=currentObject.getAttributeGroups().get(i)%></a></li>
             <% } %>
-            <input type="button" value="Обновить" ng-click="update()" />
-        </form>
+        <% } %>
+        </ul>
+        <div class="settings tab-content .col-md-3 .col-md-offset-3" ng-controller="updateController">
+            <% for (int i = 0; i < currentObject.getAttributeGroups().size(); i++) {
+                String attrGroupName = currentObject.getAttributeGroups().get(i);
+                ArrayList<Param> currentGroupParams = currentObject.getParams(attrGroupName);
+            %>
+            <div id="<%= attrGroupName %>" class="tab-pane fade in <%= activeSwicth1 %>">
+                <div class="table-pos">
+                    <table class="table table-params">
+                        <form>
+                            <% for (int j = 0; j < currentGroupParams.size(); j++) { %>
+                            <c:catch var="e">
+                                <c:import url="/includes/update/attr_views/<%= currentObject.getType() %>.jsp" />
+                            </c:catch>
+                            <c:if test="${!empty e}">
+                                <c:import url="/includes/update/attr_views/default.jsp">
+                                    <c:param name="attr_name" value="<%= currentGroupParams.get(j).getName()%>" />
+                                    <c:param name="attr_name_ru" value="<%= currentGroupParams.get(j).getRuName()%>" />
+                                    <c:param name="attr_value" value="<%= currentGroupParams.get(j).getValue()%>" />
+                                    <c:param name="attr_type" value="<%= currentGroupParams.get(j).getType()%>" />
+                                </c:import>
+                            </c:if>
+                            <% } %>
+                        </form>
+                    </table>
+                    <input type="button" onclick="location.href='unc_object.jsp?id=<%= request.getParameter("id") %>'" class="button-style a-outline button-update" value="Обновить" ng-click="update()" />
+                </div>
+            </div>
+            <% activeSwicth1 = ""; %>
+            <% } %>
+        </div>
+        <c:catch var="e">
+            <c:import url="/includes/update/tabs/<%= currentObject.getType() %>.jspf" />
+        </c:catch>
     </div>
-    <% } %>
-</div>
-
-<c:catch var="e">
-    <c:import url="/includes/update/tabs/<%= currentObject.getType() %>.jspf" />
-</c:catch>
-
-<c:catch var="e">
-    <c:import url="/includes/update/footers/<%= currentObject.getType() %>.jspf" />
-</c:catch>
-<c:if test="${!empty e}">
-    <c:import url="/includes/update/footers/default.jspf" />
-</c:if>
+    <c:catch var="e">
+        <c:import url="/includes/update/footers/<%= currentObject.getType() %>.jspf" />
+    </c:catch>
+    <c:catch var="e">
+                <c:import url="/includes/object/footers/default.jspf" />
+    </c:catch>
+    </div>
 </body>
 </html>

@@ -3,6 +3,8 @@
     Created on : 04.03.2016, 11:03:18
     Author     : Andrey
 --%>
+<%@ page import="beans.BeansHelper" %>
+<%@ page import="beans.UserAccountBean" %>
 <%@page import="unc.helpers.Param"%>
 <%@page import="java.util.ArrayList"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -25,6 +27,7 @@
         e.printStackTrace();
     }
     
+    ArrayList<String> listCategories = currentObject.selectCategory(currentObject.getType());
     
 %>
 <!DOCTYPE html>
@@ -34,7 +37,11 @@
         <c:import url="/includes/object/scripts/1.jspf" />
     </c:catch>
     <c:if test="${!empty e}">
+<<<<<<< HEAD
         <c:import url="/includes/object/scripts/default.jspf" />
+=======
+        <%@ include file="/includes/object/scripts/default.jspf" %>
+>>>>>>> a863626d387ba488ad9fd0b3ea0ead179c72deaf
     </c:if>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title><%= currentObject.getParentType() %></title>
@@ -47,16 +54,24 @@
 </head>
     <body>
         <div class="main">
-                 <div id="header">
-                    <ul class="menu">
-                        <li><a class="a-outline button-style" href="index.jsp">Главная</a></li>
-                    </ul>
-                    <div class="enter">
-                        <a class="button-style button-style-enter a-outline" href="reg-and-login.jsp">Войти</a>
-                    </div>
-                 </div>
+                 <c:catch>
+                       <%@ include file="/includes/object/headers/default.jsp" %>
+                 </c:catch>
                  <div class="content">
+                 <%if (!"1".equals(currentObject.getType())) {%>
+                     <div class="list-categories clearfix">
+                         <ul>
+                             <% for (int i = 0; i < listCategories.size(); i++ ) { %>
+                                <li class="list-categories-li">
+                                    <a href="#"><%= listCategories.get(i) %></a>
+                                </li>
+                             <% } %>
+                             <li class="list-categories-li"><%= currentObject.getName() %></li>
+                         </ul>
+                     </div>
+                  <% } %>
                     <ul class="custom-tabs nav nav-tabs tabs" id="tab_name">
+                    <% if (currentObject.getAttributeGroups() != null && currentObject.getAttributeGroups().size() != 0) {%>
                          <li class="active"><a href="#tab<%= currentObject.getAttributeGroups().get(0) %>" data-toggle="tab"><%= currentObject.getAttributeGroups().get(0) %></a></li>
                          <% for (int i = 1; i < currentObject.getAttributeGroups().size(); i++) { %>
                                  <li><a href="#tab<%= currentObject.getAttributeGroups().get(i) %>" data-toggle="tab"><%= currentObject.getAttributeGroups().get(i) %></a></li>
@@ -64,9 +79,13 @@
                          <%if ("1".equals(currentObject.getType())) {%>
                                  <li><a href="#statid" data-toggle="tab">Статистика</a></li>
                          <% } %>
+<<<<<<< HEAD
                          <%if ("4".equals(currentObject.getParentType())) {%>
                                  <li><a href="#adstatid" data-toggle="tab">Статистика</a></li>
                          <% } %>
+=======
+                     <% } %>
+>>>>>>> a863626d387ba488ad9fd0b3ea0ead179c72deaf
                      </ul>
                      <div class="settings tab-content" id="tab_content">
                         <% String activeSwicth1 = "active", s; %>
@@ -83,6 +102,7 @@
                                                 <c:if test="${!empty e}">
                                                     <c:import url="/includes/object/attr_views/default.jsp">
                                                         <c:param name="attr_name" value="<%= currentGroupParams.get(j).getName()%>" />
+                                                        <c:param name="attr_name_ru" value="<%= currentGroupParams.get(j).getRuName()%>" />
                                                         <c:param name="attr_value" value="<%= currentGroupParams.get(j).getValue()%>" />
                                                         <c:param name="attr_type" value="<%= currentGroupParams.get(j).getType()%>" />
                                                     </c:import>
@@ -117,6 +137,7 @@
                                <div id="ifempty"></div>
                             </div>
                         <% } %>
+<<<<<<< HEAD
                         
                         <%if ("4".equals(currentObject.getParentType())) {%>
                             <div id="adstatid" class="tab-pane fade in">
@@ -131,6 +152,29 @@
                             </div>
                         <% } %>
                  </div> 
+=======
+                 </div>
+                 <div class="references">
+                    <h3>Список ссылок</h3>
+                    <ul class="references-ul">
+                        <% ArrayList<String> listReferences = currentObject.lisrReferences(); %>
+                        <% for (int i = 0; i < listReferences.size(); i++) {
+                                UncObject object = new UncObject(listReferences.get(i), null, true); 
+                                try {
+                                    object.selectFromDB();
+                                } catch (SQLException|PropertyVetoException e) {
+                                    e.printStackTrace();
+                                }
+                                //String attrGroupName = currentObject.getAttributeGroups().get(i);
+                                //ArrayList<Param> currentGroupParams = currentObject.getParams(attrGroupName); %>
+                        <li class="references-ul-li">
+                            <a a href="unc_object.jsp?id=<%= listReferences.get(i) %>"><%= object.getName() %></a>
+                        </li>
+
+                        <% } %>
+                    </ul>
+                 </div>
+>>>>>>> a863626d387ba488ad9fd0b3ea0ead179c72deaf
              </div>
             <c:catch var="e">
                 <c:import url="/includes/object/footers/default.jspf" />
