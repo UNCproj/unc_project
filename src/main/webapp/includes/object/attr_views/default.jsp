@@ -14,10 +14,7 @@
             <c:when test="${param.attr_type.equals(\"3\")}">
                 <img src="${param.attr_value}">
             </c:when>
-            <c:when test="${param.attr_type.equals(\"4\")}">
-                ${param.attr_value}
-            </c:when>
-            <c:otherwise></c:otherwise>
+            <c:otherwise>${param.attr_value}</c:otherwise>
         </c:choose>
     </td>
 </tr>

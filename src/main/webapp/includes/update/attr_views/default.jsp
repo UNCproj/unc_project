@@ -19,7 +19,9 @@
             <c:when test="${param.attr_type.equals(\"4\")}">
                 <textarea id="${param.attr_name}">${param.attr_value}</textarea>
             </c:when>
-            <c:otherwise></c:otherwise>
+            <c:otherwise>
+                <input id="${param.attr_name}" type="text" ng-init="object.${param.attr_name}='${param.attr_value}'" ng-model="object.${param.attr_name}" />
+            </c:otherwise>
         </c:choose>
     </td>
 </tr>
