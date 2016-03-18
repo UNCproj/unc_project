@@ -70,7 +70,8 @@ public class StatServlet extends HttpServlet {
         visits = new ArrayList<VisitBean>();
         ArrayList<AdvertBean> names;
         names = new ArrayList<AdvertBean>();
-        BigInteger object_id = new BigInteger(request.getParameter("object_id"));
+        String object_id;
+        object_id = request.getParameter("object_id");
         switch (request.getServletPath()) {
             case "/StatServlet/getList": {
                 try {
@@ -83,7 +84,7 @@ public class StatServlet extends HttpServlet {
                                     "                    o.OBJECT_ID = ref.OBJECT_ID\n" +
                                     "where ref.ATTR_ID = 11 and\n" +
                                     "      ref.OBJECT_REFERENCE_ID = " + object_id +"\n"  ;
-                    
+                    //response.getWriter().println(comm);
                     Connection connection = null;
                     try {
                         connection = DataSource.getInstance().getConnection();
@@ -131,7 +132,7 @@ public class StatServlet extends HttpServlet {
                             + "                                CONNECT BY PRIOR ot_id = parent_id)\n"
                             + "                    ) and\n"
                             + "                    (\n"
-                            + "                      obj.OBJECT_ID =" + object_id + "\n"
+                            + "                      obj.OBJECT_ID =" + (object_id.toString().length()>0 ? object_id.toString() : "obj.OBJECT_ID") + "\n"
                             + "                    )\n"+"and\n"
                             + "                    (\n"
                             + "                      ref.object_id = "+ ad_id +"\n"

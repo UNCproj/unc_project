@@ -29,7 +29,7 @@
             }
             
             $.ajax({
-            url: "/unc_project/StatServlet/getList",
+            url: "/unc-project/StatServlet/getList",
             async: false,
             data: {"object_id": id}
             }).done(function(ads) {
@@ -44,7 +44,7 @@
                 console.log('query!');
                 $scope.selectedItem = item;
                 $.ajax({
-                url: "/unc_project/StatServlet/getStat",
+                url: "/unc-project/StatServlet/getStat",
                 async: false,
                 data: {"object_id": id, "ad_id":$scope.selectedItem.id}
                 }).done(function(visits) {
@@ -58,6 +58,10 @@
                 {
                     labels = ['0']; data = ['0'];
                 }
+                $scope.opts = {
+                    responsive: false,
+                    maintainAspectRatio: false
+                };
                 $scope.labels = labels;
                 $scope.series = ['Просмотров объявлений за день'];
                 $scope.data = [data];
