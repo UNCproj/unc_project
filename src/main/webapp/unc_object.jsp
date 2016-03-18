@@ -3,6 +3,8 @@
     Created on : 04.03.2016, 11:03:18
     Author     : Andrey
 --%>
+<%@ page import="beans.BeansHelper" %>
+<%@ page import="beans.UserAccountBean" %>
 <%@page import="unc.helpers.Param"%>
 <%@page import="java.util.ArrayList"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -49,14 +51,9 @@
 </head>
     <body>
         <div class="main">
-                 <div id="header">
-                    <ul class="menu">
-                        <li><a class="a-outline button-style" href="index.jsp">Главная</a></li>
-                    </ul>
-                    <div class="enter">
-                        <a class="button-style button-style-enter a-outline" href="reg-and-login.jsp">Войти</a>
-                    </div>
-                 </div>
+                 <c:catch>
+                       <%@ include file="/includes/object/headers/default.jsp" %>
+                 </c:catch>
                  <div class="content">
                  <%if (!"1".equals(currentObject.getType())) {%>
                      <div class="list-categories clearfix">
