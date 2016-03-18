@@ -1,0 +1,7 @@
+
+<script src="resources/scripts/jquery-1.12.0.min.js"></script>
+<script src="resources/scripts/angular.min.js"></script>
+<script src="resources/scripts/advertStat.js"></script>
+<script type="text/javascript" src="resources/scripts/Chart.js"></script>
+<script type="text/javascript" src="resources/scripts/angular-chart.js"></script>
+<script src="resources/scripts/bootstrap.min.js"></script>

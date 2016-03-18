@@ -3,6 +3,8 @@
     Created on : 04.03.2016, 11:03:18
     Author     : Andrey
 --%>
+<%@ page import="beans.BeansHelper" %>
+<%@ page import="beans.UserAccountBean" %>
 <%@page import="unc.helpers.Param"%>
 <%@page import="java.util.ArrayList"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -32,16 +34,15 @@
 <html ng-app="objectSettings">
 <head>
     <c:catch var="e">
-        <%@ include file="/includes/object/scripts/1.jspf" %>
+        <c:import url="/includes/object/scripts/4.jspf" />
     </c:catch>
     <c:if test="${!empty e}">
-        <%@ include file="/includes/object/scripts/default.jspf" %>
+        <c:import url="/includes/object/scripts/default.jspf" />
     </c:if>
-
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title><%= currentObject.getName() %></title>
+    <title><%= currentObject.getParentType() %></title>
     <c:catch var="e">
-        <c:import url="/includes/object/css/<%= currentObject.getType() %>.jspf" />
+        <c:import url="/includes/object/css/<%= currentObject.getParentType() %>.jspf" />
     </c:catch>
     <c:if test="${!empty e}">
         <c:import url="/includes/object/css/default.jspf" />
@@ -49,14 +50,9 @@
 </head>
     <body>
         <div class="main">
-                 <div id="header">
-                    <ul class="menu">
-                        <li><a class="a-outline button-style" href="index.jsp">Главная</a></li>
-                    </ul>
-                    <div class="enter">
-                        <a class="button-style button-style-enter a-outline" href="reg-and-login.jsp">Войти</a>
-                    </div>
-                 </div>
+                 <c:catch>
+                       <%@ include file="/includes/object/headers/default.jsp" %>
+                 </c:catch>
                  <div class="content">
                  <%if (!"1".equals(currentObject.getType())) {%>
                      <div class="list-categories clearfix">
@@ -78,6 +74,9 @@
                          <% } %>
                          <%if ("1".equals(currentObject.getType())) {%>
                                  <li><a href="#statid" data-toggle="tab">Статистика</a></li>
+                         <% } %>
+                         <%if ("4".equals(currentObject.getParentType())) {%>
+                                 <li><a href="#adstatid" data-toggle="tab">Статистика</a></li>
                          <% } %>
                      <% } %>
                      </ul>
@@ -122,15 +121,29 @@
                                          <li ng-repeat="a in subjects"><a ng-click="dropboxitemselected(a)">{{a.name}}</a></li>
                                      </ul>
                                      </div>
-                                    <canvas id="line" class="chart chart-line" chart-data="data"
+                                    <canvas id="line1" class="chart chart-line" chart-data="data" 
                                       chart-labels="labels" chart-legend="true" chart-series="series"
-                                      chart-click="onClick" height="20%" width="40%">
+                                      chart-click="onClick" chart-options="opts" width="800" height="200" >
                                     </canvas>
                                     </div>
                                </div>
                                <div id="ifempty"></div>
                             </div>
+                        <% } %>                       
+                        <%if ("4".equals(currentObject.getParentType())) {%>
+                            <div id="adstatid" class="tab-pane fade in">
+                               <h3>Статистика просмотров объявления:</h3>
+                               <div ng-controller="AdvertStatCtrl">
+                                    <canvas id="line2" class="chart chart-line" chart-data="data"
+                                      chart-labels="labels" chart-legend="true" chart-series="series"
+                                      chart-click="onClick" chart-options="opts" width="800" height="400">
+                                    </canvas>
+                                    </div>
+                               </div>
+                            </div>
                         <% } %>
+                 </div> 
+                 
                  </div>
                  <div class="references">
                     <h3>Список ссылок</h3>

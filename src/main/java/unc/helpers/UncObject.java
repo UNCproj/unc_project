@@ -18,6 +18,7 @@ import java.util.ArrayList;
 public class UncObject {
     private String id;
     private String type;
+    private String parentType;
     private String name;
     private ArrayList<Param> params;
     private ArrayList<String> attributeGroups;
@@ -187,8 +188,17 @@ public class UncObject {
                 ResultSet results = statement.executeQuery(SQLQueriesHelper.getTypeIdByObjectId(id));
                 results.next();
                 type = results.getString("type_id");
+                ResultSet results1 = statement.executeQuery(SQLQueriesHelper.getParentTypeIdByObjectTypeId(type));
+                results1.next();
+                parentType = ""+results1.getInt("praperent");
+                
             }
-
+            
+            if (parentType.equals(SQLQueriesHelper.ADVERT_TYPE_ID)){
+                statement.execute(SQLQueriesHelper.insertAdStat(id));
+                connection.commit();
+            }
+            
             ResultSet results = statement.executeQuery(SQLQueriesHelper.getAllHierarchyAttributes(type));
 
             while (results.next()) {
@@ -200,7 +210,10 @@ public class UncObject {
 
                 params.add(new Param(results.getString("attr_name"), results.getString("attr_name_ru"), null, group));
             }
+            statement.close();
+            connection.close();
         }
+        
     }
     
     public boolean isAdvert() throws SQLException, IOException, PropertyVetoException {
@@ -224,7 +237,11 @@ public class UncObject {
     public String getId() {
         return id;
     }
-
+    
+    public String getParentType() {
+        return parentType;
+    }
+    
     public String getType() {
         return type;
     }

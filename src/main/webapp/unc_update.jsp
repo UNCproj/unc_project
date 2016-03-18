@@ -1,3 +1,5 @@
+<%@ page import="beans.BeansHelper" %>
+<%@ page import="beans.UserAccountBean" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="unc.helpers.UncObject" %>
 <%@ page import="java.beans.PropertyVetoException" %>
@@ -41,14 +43,9 @@
 </head>
 <body>
     <div class="main">
-        <div id="header">
-            <ul class="menu">
-                <li><a class="a-outline button-style" href="index.jsp">Главная</a></li>
-            </ul>
-            <div class="enter">
-                <a class="button-style button-style-enter a-outline" href="reg-and-login.jsp">Войти</a>
-            </div>
-        </div>
+        <c:catch>
+            <%@ include file="/includes/update/headers/default.jsp" %>
+        </c:catch>
         <div class="content">
         <ul class="custom-tabs nav nav-tabs tabs">
         <% String activeSwicth1 = "active"; %>
