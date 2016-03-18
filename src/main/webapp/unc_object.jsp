@@ -25,6 +25,7 @@
         e.printStackTrace();
     }
     
+    ArrayList<String> listCategories = currentObject.selectCategory(currentObject.getType());
     
 %>
 <!DOCTYPE html>
@@ -34,7 +35,7 @@
         <%@ include file="/includes/object/scripts/1.jspf" %>
     </c:catch>
     <c:if test="${!empty e}">
-        <%@ include file="/includes/object/scripts/1.jspf" %>
+        <%@ include file="/includes/object/scripts/default.jspf" %>
     </c:if>
 
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -45,9 +46,6 @@
     <c:if test="${!empty e}">
         <c:import url="/includes/object/css/default.jspf" />
     </c:if>
-    <script type="text/javascript" src="resources/scripts/jquery-1.12.0.min.js"></script>
-    <script type="text/javascript" src="resources/scripts/angular.min.js"></script>
-    <script type="text/javascript" src="resources/scripts/bootstrap.min.js"></script>
 </head>
     <body>
         <div class="main">
@@ -60,7 +58,20 @@
                     </div>
                  </div>
                  <div class="content">
+                 <%if (!"1".equals(currentObject.getType())) {%>
+                     <div class="list-categories clearfix">
+                         <ul>
+                             <% for (int i = 0; i < listCategories.size(); i++ ) { %>
+                                <li class="list-categories-li">
+                                    <a href="#"><%= listCategories.get(i) %></a>
+                                </li>
+                             <% } %>
+                             <li class="list-categories-li"><%= currentObject.getName() %></li>
+                         </ul>
+                     </div>
+                  <% } %>
                     <ul class="custom-tabs nav nav-tabs tabs" id="tab_name">
+                    <% if (currentObject.getAttributeGroups() != null && currentObject.getAttributeGroups().size() != 0) {%>
                          <li class="active"><a href="#tab<%= currentObject.getAttributeGroups().get(0) %>" data-toggle="tab"><%= currentObject.getAttributeGroups().get(0) %></a></li>
                          <% for (int i = 1; i < currentObject.getAttributeGroups().size(); i++) { %>
                                  <li><a href="#tab<%= currentObject.getAttributeGroups().get(i) %>" data-toggle="tab"><%= currentObject.getAttributeGroups().get(i) %></a></li>
@@ -68,6 +79,7 @@
                          <%if ("1".equals(currentObject.getType())) {%>
                                  <li><a href="#statid" data-toggle="tab">Статистика</a></li>
                          <% } %>
+                     <% } %>
                      </ul>
                      <div class="settings tab-content" id="tab_content">
                         <% String activeSwicth1 = "active", s; %>
@@ -84,6 +96,7 @@
                                                 <c:if test="${!empty e}">
                                                     <c:import url="/includes/object/attr_views/default.jsp">
                                                         <c:param name="attr_name" value="<%= currentGroupParams.get(j).getName()%>" />
+                                                        <c:param name="attr_name_ru" value="<%= currentGroupParams.get(j).getRuName()%>" />
                                                         <c:param name="attr_value" value="<%= currentGroupParams.get(j).getValue()%>" />
                                                         <c:param name="attr_type" value="<%= currentGroupParams.get(j).getType()%>" />
                                                     </c:import>
@@ -118,7 +131,27 @@
                                <div id="ifempty"></div>
                             </div>
                         <% } %>
-                 </div> 
+                 </div>
+                 <div class="references">
+                    <h3>Список ссылок</h3>
+                    <ul class="references-ul">
+                        <% ArrayList<String> listReferences = currentObject.lisrReferences(); %>
+                        <% for (int i = 0; i < listReferences.size(); i++) {
+                                UncObject object = new UncObject(listReferences.get(i), null, true); 
+                                try {
+                                    object.selectFromDB();
+                                } catch (SQLException|PropertyVetoException e) {
+                                    e.printStackTrace();
+                                }
+                                //String attrGroupName = currentObject.getAttributeGroups().get(i);
+                                //ArrayList<Param> currentGroupParams = currentObject.getParams(attrGroupName); %>
+                        <li class="references-ul-li">
+                            <a a href="unc_object.jsp?id=<%= listReferences.get(i) %>"><%= object.getName() %></a>
+                        </li>
+
+                        <% } %>
+                    </ul>
+                 </div>
              </div>
             <c:catch var="e">
                 <c:import url="/includes/object/footers/default.jspf" />

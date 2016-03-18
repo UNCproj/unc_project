@@ -103,6 +103,38 @@ public class SQLQueriesHelper {
         String queryString = query.toString();
         return queryString;
     }
+    
+    static public String selectCategories(String objectTypeId) {
+        StringBuffer query = new StringBuffer("SELECT  OT_NAME\n" +
+                        "  FROM  UNC_OBJECT_TYPES\n" +
+                        "  where PARENT_ID is not null\n" +
+                        "  CONNECT BY PRIOR PARENT_ID = OT_ID\n" +
+                        "  START WITH OT_ID = ");
+        query.append(objectTypeId);
+        query.append(" ORDER BY PARENT_ID");
+        String queryString = query.toString();
+        return queryString;
+    }
+    
+    static public String isAdvert(String objectTypeId) {
+        StringBuffer query = new StringBuffer("SELECT  OT_ID\n" +
+                        "  FROM  UNC_OBJECT_TYPES\n" +
+                        "  where PARENT_ID is null\n" +
+                        "  CONNECT BY PRIOR PARENT_ID = OT_ID\n" +
+                        "  START WITH OT_ID = ");
+        query.append(objectTypeId);
+        String queryString = query.toString();
+        return queryString;
+    }
+    
+    static public String getListReferences(String objectId) {
+        StringBuffer query = new StringBuffer("select  OBJECT_ID\n" +
+                        "  from  unc_references\n" +
+                        "  where OBJECT_REFERENCE_ID = ");
+        query.append(objectId);
+        String queryString = query.toString();
+        return queryString;
+    }
 
     static public String selectFullObjectInformationByName(String objectName) {
         StringBuffer query = new StringBuffer(

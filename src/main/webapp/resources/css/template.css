@@ -98,6 +98,7 @@ a:hover {
     outline : none;
     transition: all 1s ease 0s;
     color: #DCDCDC;
+    clear: both
 }
 
 .button-style {
@@ -117,4 +118,41 @@ a:hover {
 
 .button-style-enter {
     width: 100%;
+}
+
+.list-categories {
+    padding: 10px;
+}
+
+.clearfix:after {    
+   content:"";
+   display:block;
+   clear: both;
+}
+
+.list-categories-li {
+    float: left;
+    list-style: none;
+}
+
+.list-categories-li::after {
+    content: ">";
+    padding-left: 2px;
+    padding-right: 4px;
+}
+.list-categories-li:last-child::after {
+    content: "";
+}
+
+.references {
+    margin-left: 20px;
+
+}
+
+.references-ul {
+    list-style-type: none;
+}
+
+.references-ul-li {
+    margin : 10px 10px;
 }

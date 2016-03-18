@@ -67,6 +67,19 @@ public class UncObject {
             connection.commit();
         }
     }
+    
+    public ArrayList<String> lisrReferences()  throws IOException, SQLException, PropertyVetoException {
+        try(Connection connection = DataSource.getInstance().getConnection();
+            Statement statement = connection.createStatement())
+        {
+            ArrayList<String> list = new ArrayList<>();
+            ResultSet results = statement.executeQuery(SQLQueriesHelper.getListReferences(id));
+            while (results.next()) {
+                list.add(results.getString("OBJECT_ID"));
+            }
+            return list;
+        }
+    }
 
     public void updateInDB() throws PropertyVetoException, SQLException, IOException {
         try(Connection connection = DataSource.getInstance().getConnection();
@@ -152,6 +165,19 @@ public class UncObject {
             }
         }
     }
+    
+    public ArrayList<String> selectCategory(String type) throws IOException, SQLException, PropertyVetoException {
+        try(Connection connection = DataSource.getInstance().getConnection();
+            Statement statement = connection.createStatement())
+        {
+            ArrayList<String> list = new ArrayList<>();
+            ResultSet results = statement.executeQuery(SQLQueriesHelper.selectCategories(type));
+            while (results.next()) {
+                list.add(results.getString("OT_NAME"));
+            }
+            return list;
+        }
+    }
 
     public void loadAttributesListFromDB() throws PropertyVetoException, SQLException, IOException {
         try(Connection connection = DataSource.getInstance().getConnection();
@@ -174,6 +200,24 @@ public class UncObject {
 
                 params.add(new Param(results.getString("attr_name"), results.getString("attr_name_ru"), null, group));
             }
+        }
+    }
+    
+    public boolean isAdvert() throws SQLException, IOException, PropertyVetoException {
+        try(Connection connection = DataSource.getInstance().getConnection();
+            Statement statement = connection.createStatement())
+        {
+
+            ResultSet results = statement.executeQuery(SQLQueriesHelper.isAdvert(type));
+
+            while (results.next()) {
+                String id = results.getString("OT_ID");
+
+                if ("4".equals(id)) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
