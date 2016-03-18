@@ -1,0 +1,11 @@
+<div ng-switch on="attrType">
+    <div ng-switch-when="5">
+        {{attrName}}: от <input type="text"/> до <input type="text"/>
+    </div>
+    <div ng-switch-when="6">
+        {{attrName}}: <input type="text"/>
+    </div>
+    <div ng-switch-default>
+        Name: {{attrName}} Type: {{attrType}}
+    </div>
+</div>

@@ -1,4 +1,14 @@
 (function() {
+    $.urlParam = function(name){
+        var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+
+        if (results == null) {
+            return -1;
+        }
+
+        return results[1] || -1;
+    };
+
     var app = angular.module('mainPage', []);
 
     app.controller('searchController', ['$scope', '$http',
@@ -22,7 +32,8 @@
                 url: 'advertsList',
                 method: 'POST',
                 params: {
-                    "action": "get_first_lvl_categories"
+                    action: "get_first_lvl_categories",
+                    adCategoryId: "4"
                 }
             })
                 .success(function(data) {
@@ -93,6 +104,8 @@
                 window.location = "unc_object.jsp?id=" + advId;
             };
 
+
+            //advanced search methods
             $scope.setAdvanced = function() {
                 $scope.isAdvanced = !$scope.isAdvanced;
 
@@ -100,46 +113,133 @@
                     $scope.subCategories[0] = {
                         id: 4,
                         name: 'Все категории',
-                        subCategoriesIds: [],
-                        subCategoriesNames: $scope.categories,
+                        subCategories: $scope.categories,
                         attributes: []
                     };
+
+                    $http({
+                        url: 'advertsList',
+                        method: 'POST',
+                        params: {
+                            "action": "get_adverts_attributes",
+                            "adCategoryId": 4
+                        }
+                    })
+                        .success(function (data) {
+                            $scope.subCategories[0].attributes = data;
+                        });
+
 
                     if ($scope.selectedCategoryId != 4) {
                         $scope.subCategories[1] = {
                             id: $scope.selectedCategoryId,
                             name: $scope.selectedCategoryName,
-                            subCategoriesIds: [],
-                            subCategoriesNames: [],
+                            subCategories: [],
                             attributes: []
                         };
+
+
+                        $http({
+                            url: 'advertsList',
+                            method: 'POST',
+                            params: {
+                                "action": "get_first_lvl_categories",
+                                "adCategoryId": $scope.selectedCategoryId
+                            }
+                        })
+                            .success(function (data) {
+                                $scope.subCategories[1].subCategories = data;
+                            });
+
+                        $http({
+                            url: 'advertsList',
+                            method: 'POST',
+                            params: {
+                                "action": "get_adverts_attributes",
+                                "adCategoryId": $scope.selectedCategoryId
+                            }
+                        })
+                            .success(function (data) {
+                                $scope.subCategories[1].attributes = data;
+                            });
                     }
-
-                    $http({
-                        url: 'advertsList',
-                        method: 'POST',
-                        params: {
-                            "action": "get_first_lvl_categories",
-                            "adCategoryId": $scope.selectedCategoryId
-                        }
-                    })
-                        .success(function(data) {
-                            $scope.subCategories[1].subCategoriesIds = data;
-                        });
-
-                    $http({
-                        url: 'advertsList',
-                        method: 'POST',
-                        params: {
-                            "action": "get_first_lvl_categories",
-                            "adCategoryId": $scope.selectedCategoryId
-                        }
-                    })
-                        .success(function(data) {
-                            $scope.subCategories[1].subCategoriesIds = data;
-                        });
                 }
             }
+
+            $scope.selectSubCategoryInAdvancedSearch = function(id, name) {
+
+            }
+        }
+    ]);
+
+    app.directive('attributeView', function() {
+        return {
+            restrict: 'E',
+            scope: {
+                attrName: "=name",
+                attrType: "=type"
+            },
+            templateUrl: 'directives/attribute-view.html'
+        };
+    });
+
+    app.controller('categoriesController', ['$scope', '$http',
+        function($scope, $http) {
+            $scope.categoryToShow = {
+                id: -1,
+                name: "",
+                adverts: [],
+                subCategories: []
+            };
+
+            $scope.enteredCategories = [];
+
+            var catName = $.urlParam('categoryName');
+
+            $scope.loadCategory = function(id, name) {
+                var params = {"action": "get_first_lvl_categories"}
+
+                if (id != -1) {
+                    params.adCategoryId = id
+                }
+                else {
+                    params.adCategoryName = name
+                }
+
+                $http({
+                    url: 'advertsList',
+                    method: 'POST',
+                    params: params
+                })
+                    .success(function (data) {
+                        $scope.categoryToShow.id = id;
+                        $scope.categoryToShow.name = name;
+                        $scope.categoryToShow.subCategories = data;
+                        //window.history.pushState("", "", 'index.jsp?categoryName=' + name);
+
+                        params.action = "get_adverts";
+
+                        $http({
+                            url: 'advertsList',
+                            method: 'POST',
+                            params: params
+                        })
+                            .success(function (data) {
+                                $scope.categoryToShow.adverts = data;
+                            });
+
+                        var subcatIndex;
+                        if (subcatIndex = $scope.enteredCategories.indexOf(name) > -1) {
+                            $scope.enteredCategories = $scope.enteredCategories.slice(0, subcatIndex + 1);
+                        }
+                        else {
+                            $scope.enteredCategories.push(name);
+                        }
+                    });
+            };
+
+            $scope.loadCategory(catName === -1 ? 4 : -1,
+                catName === -1 ? "Все объявления" : catName);
         }
     ]);
 

@@ -25,3 +25,17 @@
 .search-results a .description {
     height: 50px;
 }
+
+.content:after {
+    content: " ";
+    display: block;
+    height: 0;
+    clear: both;
+}
+
+.categories:after {
+     content: " ";
+     display: block;
+     height: 0;
+     clear: both;
+ }

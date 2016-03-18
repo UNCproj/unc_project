@@ -1,6 +1,7 @@
 <%@ page import="beans.BeansHelper" %>
 <%@ page import="beans.UserAccountBean" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <html ng-app="mainPage">
 <head>
     <title>unc_project | Главная</title>
@@ -16,23 +17,45 @@
 <body>
     <div class="main">
         <div id="header">
+            <ul class="menu">
+                <li><a class="a-outline button-style" href="index.jsp">Главная</a></li>
+            </ul>
             <%
                 UserAccountBean accountBean = (UserAccountBean)session.getAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY);
                 if (accountBean != null && accountBean.isLoggedIn()) {
             %>
-                <a href="${pageContext.request.contextPath}/unc_object.jsp?id=${userAccount.getId()}}">Личный кабинет</a>
-                <a href="${pageContext.request.contextPath}/logout">Выйти из профиля</a>
+                <div class="enter-login clearfix">
+                    <ul class="enter-login-ul">
+                        <li class="private-office">
+                            <a class="private-office button-style a-outline" href="${pageContext.request.contextPath}/unc_object.jsp?id=${userAccount.getId()}">Личный кабинет</a>
+                        </li>
+                        <li>
+                            <a class="button-style a-outline" href="${pageContext.request.contextPath}/logout">Выйти</a>
+                        </li>
+                    </ul>
+                </div>
             <%} else {%>
-                <ul class="menu">
-                    <li><a class="a-outline button-style" href="index.jsp">Главная</a></li>
-                </ul>
+
                 <div class="enter">
                     <a class="button-style button-style-enter a-outline" href="reg-and-login.jsp">Войти</a>
                 </div>
             <%}%>
         </div>
+        <div class="list-categories clearfix" ng-controller="categoriesController as catCtrl">
+            <ul>
+                <li class="list-categories-li">
+                    <a href="#">Главная</a>
+                </li>
+                <li class="list-categories-li" ng-repeat="enteredCat in enteredCategories">
+                    <a href="#">{{enteredCat}}</a>
+                </li>
+            </ul>
+        </div>
         <div class="content">
+
+            <%--Поиск--%>
             <div class="search-wrapper col-md-6 col-md-offset-3" ng-controller="searchController as searchCtrl">
+                <%--Форма поиска--%>
                 <form class="search-form" novalidate>
                     <div class="input-group">
                         <span class="input-group-addon">
@@ -57,6 +80,8 @@
                             </button>
                         </div>
                     </div>
+
+                    <%--Расширенный поиск--%>
                     <div class="input-group">
                         <label ng-click="setAdvanced()">
                             <span ng-class="isAdvanced ? 'caret' : 'caret-right'"></span>
@@ -65,10 +90,24 @@
                     </div>
                     <div class="input-group" ng-show="isAdvanced">
                         <div class="sub-category" ng-repeat="subCat in subCategories">
-                            <h3 class="sub-category-title">{{subCat.name}}</h3>
+                            <%--<h3 class="sub-category-title">{{subCat.name}}</h3>--%>
+                            <div class="subcategory-attributes" ng-repeat="attr in subCat.attributes">
+                                <attribute-view name="attr[1]" type="attr[2]"></attribute-view>
+                            </div>
+
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">SomeCat <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li ng-repeat="subSubCat in subCat.subCategories">
+                                    <a ng-click="selectSubCategoryInAdvancedSearch(cat[0], cat[1])" href="#">{{subSubCat[1]}}</a>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </form>
+
+                <%--Результаты поиска--%>
                 <img src="resources/img/ajax-loader.gif" class="loading-bar col-md-2 col-md-offset-5" ng-hide="resultsLoaded" />
                 <br />
                 <div class="search-results-wrapper">
@@ -88,18 +127,35 @@
                     <div ng-if="pagesCount > 0"></div>
                         <ul class="pagination">
                             <li ng-repeat="advPage in getPages() track by $index" ng-class="{active: $index == activePageNum}">
-                                <a href="#" ng-click="makePageActive($index)">{{$index + 1}}</a>
+                                <a href="" ng-click="makePageActive($index)">{{$index + 1}}</a>
                             </li>
                         </ul>
                 </div>
             </div>
-            <br />
+
+            <%--Последние объявления--%>
             <div class="lastAdded col-md-4 col-md-offset-4" ng-controller="lastAddedController as laCtrl">
                 <h2>Последние объявления</h2>
                 <img src="resources/img/ajax-loader.gif" class="loading-bar col-md-2 col-md-offset-5" ng-hide="loaded" />
                 <br />
                 <div ng-repeat="adv in lastAdverts">
                     <div>{{adv.name}}</div>
+                </div>
+            </div>
+
+            <%--Категории объявлений--%>
+            <div class="categories col-md-4 col-md-offset-4" ng-controller="categoriesController as catCtrl">
+                <h2>Объявления по категориям</h2>
+                <span class="glyphicon glyphicon-chevron-left"
+                      ng-click="loadCategory(enteredCategories[enteredCategories.length - 2] == 'Все объявления' ? 4 :-1,
+                                             enteredCategories[enteredCategories.length - 2])"></span>
+                <h3>{{categoryToShow.name}}</h3>
+                <div class="sub-category" ng-repeat="subCat in categoryToShow.subCategories"
+                     ng-click="loadCategory(subCat[0], subCat[1])">
+                    <a href="">{{subCat[1]}}</a>
+                </div>
+                <div class="advert-in-category" ng-repeat="adv in categoryToShow.adverts">
+                    {{adv.name}}
                 </div>
             </div>
         </div>

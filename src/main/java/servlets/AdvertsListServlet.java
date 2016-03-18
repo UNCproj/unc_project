@@ -36,11 +36,31 @@ public class AdvertsListServlet extends HttpServlet {
         if (action.equals("get_adverts")) {
 
             String adCategoryId = request.getParameter("adCategoryId");
+            String adCategoryName = request.getParameter("adCategoryName");
             String adsStartingNum = request.getParameter("adsStartingNum");
             String adsCount = request.getParameter("adsCount");
             String sortingParam = request.getParameter("sortingParam");
             String sortingOrder = request.getParameter("sortingOrder");
             String adNamePattern = request.getParameter("adNamePattern");
+
+            try (
+                    Connection connection = DataSource.getInstance().getConnection();
+                    Statement statement = connection.createStatement()
+            ) {
+                if (adCategoryId == null) {
+                    adCategoryName = request.getParameter("adCategoryName");
+
+                    try (
+                            ResultSet adCatIdResults = statement.executeQuery(
+                                    SQLQueriesHelper.getTypeIdByTypeName(adCategoryName)
+                            )) {
+                        adCatIdResults.next();
+                        adCategoryId = adCatIdResults.getString("id");
+                    }
+                }
+            } catch (SQLException|PropertyVetoException e) {
+                throw new ServletException(e);
+            }
 
             ArrayList<AdvertBean> adverts = getAdverts(adCategoryId, adsStartingNum, adsCount, sortingParam,
                     sortingOrder, adNamePattern);
@@ -83,12 +103,28 @@ public class AdvertsListServlet extends HttpServlet {
             }
         }
         else if (action.equals("get_first_lvl_categories")) {
+            String adCategoryId = request.getParameter("adCategoryId");
+
             try (
                     Connection connection = DataSource.getInstance().getConnection();
                     Statement statement = connection.createStatement()
             ) {
+                if (adCategoryId == null) {
+                    String adCategoryName = request.getParameter("adCategoryName");
+
+                    try (
+                        ResultSet adCatIdResults = statement.executeQuery(
+                            SQLQueriesHelper.getTypeIdByTypeName(adCategoryName)
+                    )) {
+                        adCatIdResults.next();
+                        adCategoryId = adCatIdResults.getString("id");
+                    }
+                }
+
                 try (ResultSet childrenTypesResults = statement.executeQuery(
-                        SQLQueriesHelper.getTypeFirstLevelChildren(SQLQueriesHelper.ADVERT_TYPE_ID)
+                        SQLQueriesHelper.getTypeFirstLevelChildren(adCategoryId != null ?
+                                                                    adCategoryId :
+                                                                    SQLQueriesHelper.ADVERT_TYPE_ID)
                 )) {
                     ArrayList<String[]> categories = new ArrayList<>();
 
@@ -129,28 +165,33 @@ public class AdvertsListServlet extends HttpServlet {
             }
         }
         else if (action.equals("get_adverts_attributes")) {
-            String adCategoryId = request.getParameter("adCategoryIds");
+            String adCategoryId = request.getParameter("adCategoryId");
 
             try (
                     Connection connection = DataSource.getInstance().getConnection();
                     Statement statement = connection.createStatement()
             ) {
-                try (ResultSet childrenTypesResults = statement.executeQuery(
-                        SQLQueriesHelper.getAllAttributes(SQLQueriesHelper.ADVERT_TYPE_ID)
+                try (ResultSet attrResults = statement.executeQuery(
+                        SQLQueriesHelper.getAllAttributes(adCategoryId == null ? SQLQueriesHelper.ADVERT_TYPE_ID : adCategoryId)
                 )) {
-                    ArrayList<String[]> categories = new ArrayList<>();
+                    ArrayList<String[]> attributes = new ArrayList<>();
 
-                    while (childrenTypesResults.next()) {
-                        categories.add(new String[] {childrenTypesResults.getString("ot_id"),
-                                childrenTypesResults.getString("ot_name")});
+                    while (attrResults.next()) {
+                        attributes.add(
+                                new String[] {
+                                        attrResults.getString("attr_name"),
+                                        attrResults.getString("attr_name_ru"),
+                                        attrResults.getString("attr_type")
+                                }
+                        );
                     }
 
                     Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                    String categoriesJson = gson.toJson(categories, categories.getClass());
+                    String attrJson = gson.toJson(attributes, attributes.getClass());
 
                     response.setContentType("text/html; charset=UTF-8");
                     try (PrintWriter out = response.getWriter()) {
-                        out.print(categoriesJson);
+                        out.print(attrJson);
                     }
                 }
             } catch (SQLException | PropertyVetoException e) {
