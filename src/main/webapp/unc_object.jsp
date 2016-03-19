@@ -142,9 +142,6 @@
                                </div>
                             </div>
                         <% } %>
-                 </div> 
-                 
-                 </div>
                  <div class="references">
                     <h3>Список ссылок</h3>
                     <ul class="references-ul">
@@ -165,7 +162,7 @@
                         <% } %>
                     </ul>
                  </div>
-             </div>
+            </div>
             <c:catch var="e">
                 <c:import url="/includes/object/footers/default.jspf" />
             </c:catch>
