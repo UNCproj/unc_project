@@ -337,7 +337,7 @@ public class SQLQueriesHelper {
 
     static public String insertObject(String id, String type, String name) {
         String query = "insert into unc_objects(object_id, object_type_id, object_name) values(" +
-                id + "," + type + "'" + name + "')";
+                id + "," + type + ",'" + name + "')";
 
         return query;
     }
@@ -365,7 +365,7 @@ public class SQLQueriesHelper {
                 attrId + ", " +
                 (value == null ? "null" : "'" + value + "'") + ", " +
                 (value == null ? "to_date('" + df.format(dateValue) + "', 'yyyy-MM-dd HH24:mi:ss')" : "null") + ")";
-
+        System.out.println(query);
         return query;
     }
 
@@ -395,12 +395,15 @@ public class SQLQueriesHelper {
     }
 
     static public String getAllAttributes(String type) {
-        String query = "select a.attr_id, a.attr_name, uao.attr_group_id, uao.attr_name_ru, a.attr_type " +
-                       "from unc_attr_object_types uao " +
-                       "left join unc_attributes a " +
-                       "on uao.attr_id = a.attr_id " +
-                       "where uao.ot_id = " + type +
-                       " order by uao.attr_order nulls last";
+        String query =  "select * " +
+                "  from unc_attr_object_types uao " +
+                "  left join unc_attributes a " +
+                "    on uao.attr_id = a.attr_id " +
+                " where uao.ot_id in (select ot_id " +
+                "                       from unc_object_types " +
+                "                      start with ot_id = " + type +
+                "                    connect by ot_id = prior parent_id)" +
+                " order by uao.attr_order nulls last";
         return query;
     }
 
@@ -609,5 +612,258 @@ public class SQLQueriesHelper {
         }
 
         return query.toString();
+    }
+    static public String findIdNamed (String name){
+        String query = "select object_id\n" +
+                "  from unc_objects\n" +
+                " where object_name = '"+name+"'";
+        return query;
+    }
+    public static String selectTypes(String type){
+        String query = "select ot_name " +
+                "from unc_object_types " +
+                "where parent_id = ( " +
+                "                    select ot_id " +
+                "                    from unc_object_types " +
+                "                    where ot_name='" + type + "' " +
+                "                  ) " +
+                "order by ot_id ";
+        return query;
+    }
+    public static String selectTypes(String type1, String type2, String type3, String type4){
+        String query = "";
+        if(type1!=null && type2==null && type3==null && type4==null) {
+            query = "select t2.ot_name, " +
+                    "(select count(*) " +
+                    "from unc_object_types t1 " +
+                    "left join unc_object_types t2 " +
+                    "on t2.PARENT_ID=t1.OT_ID " +
+                    "where t1.ot_name = '" + type1 + "' " +
+                    "group by t2.parent_id " +
+                    ") as sizeSelect " +
+                    "from unc_object_types t1 " +
+                    "left join unc_object_types t2 " +
+                    "on t2.PARENT_ID=t1.OT_ID " +
+                    "where t1.ot_name = '" + type1 + "'" +
+                    "order by t2.ot_id";
+        }
+        if(type1!=null && type2!=null && type3==null && type4==null){
+            query = "select t3.ot_name, " +
+                    "(select count(*) " +
+                    "from unc_object_types t1 " +
+                    "left join unc_object_types t2 " +
+                    "on t2.PARENT_ID=t1.OT_ID " +
+                    "left join unc_object_types t3 " +
+                    "on t3.PARENT_ID=t2.OT_ID " +
+                    "where t1.ot_name = '" + type1 + "' and " +
+                    "t2.ot_name = '" + type2 + "' " +
+                    "group by t3.parent_id " +
+                    ") as sizeSelect " +
+                    "from unc_object_types t1 " +
+                    "left join unc_object_types t2 " +
+                    "on t2.PARENT_ID=t1.OT_ID " +
+                    "left join unc_object_types t3 " +
+                    "on t3.PARENT_ID=t2.OT_ID " +
+                    "where t1.ot_name = '" + type1 + "' and " +
+                    "t2.ot_name = '" + type2 + "'" +
+                    "order by t3.ot_id";
+        }
+        if(type1!=null && type2!=null && type3!=null && type4==null){
+            query = "select t4.ot_name, " +
+                    "(select count(*) " +
+                    "from unc_object_types t1 " +
+                    "left join unc_object_types t2 " +
+                    "on t2.PARENT_ID=t1.OT_ID " +
+                    "left join unc_object_types t3 " +
+                    "on t3.PARENT_ID=t2.OT_ID " +
+                    "left join unc_object_types t4 " +
+                    "on t4.PARENT_ID=t3.OT_ID " +
+                    "where t1.ot_name = '" + type1 + "' and " +
+                    "t2.ot_name = '" + type2 + "' and " +
+                    "t3.ot_name = '" + type3 + "' " +
+                    "group by t4.parent_id " +
+                    ") as sizeSelect " +
+                    "from unc_object_types t1 " +
+                    "left join unc_object_types t2 " +
+                    "on t2.PARENT_ID=t1.OT_ID " +
+                    "left join unc_object_types t3 " +
+                    "on t3.PARENT_ID=t2.OT_ID " +
+                    "left join unc_object_types t4 " +
+                    "on t4.PARENT_ID=t3.OT_ID " +
+                    "where t1.ot_name = '" + type1 + "' and " +
+                    "t2.ot_name = '" + type2 + "' and " +
+                    "t3.ot_name = '" + type3 + "'" +
+                    "order by t4.ot_id";
+        }
+        return query;
+    }
+    static public String newMessage(String id, String text, String senderId, String recipientId){
+        String query = "insert into unc_messages(id_message, text_message, date_message,id_sender,id_recipient) values (" +
+                id + ",'" + text +"',systimestamp,"+senderId+","+recipientId+")";
+        return query;
+    }
+    static public String outputMessages(String lastId,String senderId, String recipientId){
+        if(lastId==null || lastId.equals("") || lastId.equals("undefined")){
+            String query = "select m.TEXT_MESSAGE,\n" +
+                    "        m.DATE_MESSAGE,\n" +
+                    "        m.ID_MESSAGE,\n" +
+                    "        o.OBJECT_NAME \n" +
+                    "  from unc_messages m\n" +
+                    " join UNC_OBJECTS o \n" +
+                    "          on o.OBJECT_ID=m.ID_SENDER "+
+                    "where" +
+                    "(m.id_sender = "+senderId+" and m.id_recipient="+recipientId+") or"+
+                    "(m.id_sender = "+recipientId+" and m.id_recipient="+senderId+")"+
+                    " order by m.date_message";
+            return query;
+        }else {
+            String query = "select m.TEXT_MESSAGE,\n" +
+                    "        m.DATE_MESSAGE,\n" +
+                    "        m.ID_MESSAGE,\n" +
+                    "        o.OBJECT_NAME \n" +
+                    "  from unc_messages m\n" +
+                    " join UNC_OBJECTS o \n" +
+                    "          on o.OBJECT_ID=m.ID_SENDER "+
+                    " where m.date_message>(\n" +
+                    "  select um.date_message\n" +
+                    "  from unc_messages um\n" +
+                    "  where um.id_message=" + lastId + "\n" +
+                    " )\n" +
+                    " and ((m.id_sender = "+senderId+" and m.id_recipient="+recipientId+") or"+
+                    "(m.id_sender = "+recipientId+" and m.id_recipient="+senderId+"))"+
+                    " order by m.date_message";
+            return query;
+        }
+    }
+    public static String selectAttrs(String type, String type1, String type2, String type3, String type4) {
+        String query = "";
+
+        query = "select a.attr_id, aot.attr_group_id, aot.attr_order, a.attr_name, aot.attr_name_ru, a.attr_type, aot.ot_id  " +
+                "from unc_attr_object_types aot  " +
+                "left join unc_attributes a  " +
+                "on aot.attr_id = a.attr_id  ";
+        if (type != null) {
+            query += "where aot.ot_id in ( " +
+                    "(select ot.ot_id " +
+                    "from unc_object_types ot " +
+                    "where ot.ot_name='" + type + "') ";
+            if (type1 != null) {
+                query += "union " +
+                        "(select ot1.ot_id " +
+                        "from unc_object_types ot " +
+                        "left join unc_object_types ot1 " +
+                        "on ot1.parent_id=ot.ot_id " +
+                        "where ot.ot_name='" + type + "'  " +
+                        "and ot1.ot_name='" + type1 + "') ";
+                if (type2 != null) {
+                    query += "union " +
+                            "(select ot2.ot_id " +
+                            "from unc_object_types ot " +
+                            "left join unc_object_types ot1 " +
+                            "on ot1.parent_id=ot.ot_id " +
+                            "left join unc_object_types ot2 " +
+                            "on ot2.parent_id=ot1.ot_id " +
+                            "where ot.ot_name='" + type + "'  " +
+                            "and ot1.ot_name='" + type1 + "' " +
+                            "and ot2.ot_name='" + type2 + "') ";
+                    if (type3 != null) {
+                        query += "union " +
+                                "(select ot3.ot_id " +
+                                "from unc_object_types ot " +
+                                "left join unc_object_types ot1 " +
+                                "on ot1.parent_id=ot.ot_id  " +
+                                "left join unc_object_types ot2 " +
+                                "on ot2.parent_id=ot1.ot_id " +
+                                "left join unc_object_types ot3 " +
+                                "on ot3.parent_id=ot2.ot_id " +
+                                "where ot.ot_name='" + type + "'  " +
+                                "and ot1.ot_name='" + type1 + "' " +
+                                "and ot2.ot_name='" + type2 + "' " +
+                                "and ot3.ot_name='" + type3 + "') ";
+                        if (type4 != null) {
+                            query += "union " +
+                                    "(select ot4.ot_id " +
+                                    "from unc_object_types ot " +
+                                    "left join unc_object_types ot1 " +
+                                    "on ot1.parent_id=ot.ot_id " +
+                                    "left join unc_object_types ot2 " +
+                                    "on ot2.parent_id=ot1.ot_id " +
+                                    "left join unc_object_types ot3 " +
+                                    "on ot3.parent_id=ot2.ot_id " +
+                                    "left join unc_object_types ot4 " +
+                                    "on ot4.parent_id=ot3.ot_id " +
+                                    "where ot.ot_name='" + type + "'  " +
+                                    "and ot1.ot_name='" + type1 + "' " +
+                                    "and ot2.ot_name='" + type2 + "' " +
+                                    "and ot3.ot_name='" + type3 + "' " +
+                                    "and ot4.ot_name='" + type4 + "') ";
+                        }
+                    }
+                }
+            }
+            query+=" ) order by attr_order, attr_id ";
+        }
+        System.out.println(query);
+        return query;
+    }
+    public static String selectChildTypeIdByTypeNames(String type, String type1, String type2, String type3, String type4){
+        String query = "";
+        if(type!=null && type1!=null && type2!=null && type3==null && type4==null){
+            query = "select t2.ot_id " +
+                    "from  unc_object_types t " +
+                    "left join unc_object_types t1 " +
+                    "on t1.parent_id = t.ot_id " +
+                    "left join unc_object_types t2 " +
+                    "on t2.parent_id = t1.ot_id " +
+                    "where t.ot_name = '" + type + "' and " +
+                    "t1.ot_name = '" + type1 + "' and " +
+                    "t2.ot_name = '" + type2 + "'";
+        }
+        if(type!=null && type1!=null && type2!=null && type3!=null && type4==null){
+            query = "select t3.ot_id " +
+                    "from  unc_object_types t " +
+                    "left join unc_object_types t1 " +
+                    "on t1.parent_id = t.ot_id " +
+                    "left join unc_object_types t2 " +
+                    "on t2.parent_id = t1.ot_id " +
+                    "left join unc_object_types t3 " +
+                    "on t3.parent_id = t2.ot_id " +
+                    "where t.ot_name = '" + type + "' and " +
+                    "t1.ot_name = '" + type1 + "' and " +
+                    "t2.ot_name = '" + type2 + "' and " +
+                    "t3.ot_name = '" + type3 + "' ";
+        }
+        if(type!=null && type1!=null && type2!=null && type3!=null && type4!=null){
+            query = "select t4.ot_id " +
+                    "from  unc_object_types t " +
+                    "left join unc_object_types t1 " +
+                    "on t1.parent_id = t.ot_id " +
+                    "left join unc_object_types t2 " +
+                    "on t2.parent_id = t1.ot_id " +
+                    "left join unc_object_types t3 " +
+                    "on t3.parent_id = t2.ot_id " +
+                    "left join unc_object_types t4 " +
+                    "on t4.parent_id = t3.ot_id " +
+                    "where t.ot_name = '" + type + "' and " +
+                    "t1.ot_name = '" + type1 + "' and " +
+                    "t2.ot_name = '" + type2 + "' and " +
+                    "t3.ot_name = '" + type3 + "' and " +
+                    "t4.ot_name = '" + type4 + "' ";
+        }
+        System.out.println(query);
+        return query;
+    }
+    public static String insertRegDateById(String id){
+        String query = "insert into unc_params(object_id, attr_id, value, date_value, lv_id) values (" +
+                id +","+ REG_DATE_ATTR_ID +", null, sysdate, null)";
+        return query;
+    }
+    static public String outputUsers(String id){
+        String query = "select object_name\n" +
+                "  from unc_objects \n" +
+                "  where object_type_id=1 and\n" +
+                "        object_id !=  "+id+"\n" +
+                " order by object_name";
+        return query;
     }
 }

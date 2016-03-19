@@ -22,6 +22,7 @@ public class UncObject {
     private String name;
     private ArrayList<Param> params;
     private ArrayList<String> attributeGroups;
+    private String userId;
 
     public UncObject() {
         params = new ArrayList<>();
@@ -32,6 +33,23 @@ public class UncObject {
         this();
         this.id = id;
         this.name = name;
+    }
+
+    public UncObject (String type){
+        this();
+        try(Connection connection = DataSource.getInstance().getConnection();
+            Statement statement = connection.createStatement()){
+            ResultSet results = statement.executeQuery(SQLQueriesHelper.getTypeIdByTypeName(type));
+            results.next();
+            this.type = results.getString("id");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (PropertyVetoException e) {
+            e.printStackTrace();
+        }
+//        this.type = type; //Название типа
     }
 
     public UncObject(String id, String name, boolean isNeedLoadAllAttributes) {
@@ -45,6 +63,16 @@ public class UncObject {
         }
     }
 
+    public UncObject(String id, String name, String typeId, String userId){
+        this.id = id;
+        this.name = name;
+        this.type = typeId;
+        attributeGroups = new ArrayList<>();
+        params = new ArrayList<>();
+        this.type = typeId;
+        this.userId = userId;
+    }
+
     public void insertIntoDB() throws PropertyVetoException, SQLException, IOException {
         try(Connection connection = DataSource.getInstance().getConnection();
             Statement statement = connection.createStatement()) {
@@ -53,6 +81,22 @@ public class UncObject {
             results.next();
             id = results.getString("id");
             statement.executeUpdate(SQLQueriesHelper.insertObject(id, type, name));
+
+            if(userId!=null){
+                Statement statementReference = connection.createStatement();
+                statementReference.executeUpdate(SQLQueriesHelper.newReference(id, userId, SQLQueriesHelper.USERS_ADVERT_ATTR_ID));
+                Statement statementAllAttrId = connection.createStatement();
+                ResultSet resultsAllAttrId = statementAllAttrId.executeQuery(SQLQueriesHelper.getAllAttributes(type));
+                while(resultsAllAttrId.next()){
+                    for(Param p :params){
+                        if(p.getName().equals(resultsAllAttrId.getString("attr_name"))){
+                            p.setAttrId(resultsAllAttrId.getString("attr_id"));
+                        }
+                    }
+                }
+                Statement statementRegDate = connection.createStatement();
+                statementRegDate.executeUpdate(SQLQueriesHelper.insertRegDateById(id));
+            }
 
             for (Param param : params) {
                 if (param.isReference()) {
@@ -194,7 +238,7 @@ public class UncObject {
                 
             }
             
-            if (parentType.equals(SQLQueriesHelper.ADVERT_TYPE_ID)){
+            if (parentType!=null && parentType.equals(SQLQueriesHelper.ADVERT_TYPE_ID) && id!=null){
                 statement.execute(SQLQueriesHelper.insertAdStat(id));
                 connection.commit();
             }

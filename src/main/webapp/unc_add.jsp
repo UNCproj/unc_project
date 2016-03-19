@@ -1,5 +1,3 @@
-<%@ page import="beans.BeansHelper" %>
-<%@ page import="beans.UserAccountBean" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@ page import="unc.helpers.UncObject" %>
 <%@ page import="java.sql.SQLException" %>
@@ -14,7 +12,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
     String objectType = request.getParameter("type");
-    UncObject currentObject = new UncObject(null, null, objectType);
+    UncObject currentObject = new UncObject(objectType);
+
+    if (!currentObject.getType().equals("4")){
+        response.sendRedirect("jsp404.jsp");
+    }
 
     try {
         currentObject.loadAttributesListFromDB();
@@ -22,24 +24,22 @@
         e.printStackTrace();
     }
     ArrayList<Param> params = currentObject.getParams();
-//    for(Param p: params){
-//        out.println(p.getName() + ":" + p.getNameRU() + ":" + p.getOrder() + ":" + p.getType());
-//    }
 %>
 
-<html ng-app="default">
+<html ng-app="add">
 <head>
-    <title>Страница добавления</title>
-    <script type="text/javascript" src="resources/scripts/ng-flow-standalone.min.js"></script>
+
+        <title>Новое объявление</title>
+
     <c:catch var="e">
-        <c:import url="/includes/add/scripts/<%= currentObject.getTypeName() %>.jspf" />
+        <c:import url="/includes/add/scripts/<%= currentObject.getType() %>.jspf" />
     </c:catch>
     <c:if test="${!empty e}">
         <c:import url="/includes/add/scripts/default.jspf" />
     </c:if>
 
     <c:catch var="e">
-        <c:import url="/includes/add/css/<%= currentObject.getTypeName() %>.jspf" />
+        <c:import url="/includes/add/css/<%= currentObject.getType() %>.jspf" />
     </c:catch>
     <c:if test="${!empty e}">
         <c:import url="/includes/add/css/default.jspf" />
@@ -48,21 +48,10 @@
 
 <body>
 
-<%--<%if (currentObject.getTypeName().equals("advert")){%>--%>
-    <%--<div class="page-header">--%>
-        <%--<h1>Новое объявление</h1>--%>
-    <%--</div>--%>
-<%--<%}else{%>--%>
-    <%--<div class="page-header">--%>
-        <%--<h1>Страница добавления</h1>--%>
-    <%--</div>--%>
-<%--<%}%>--%>
-
 <ul class="nav nav-tabs">
     <% for (int i = 0; i < currentObject.getAttributeGroups().size(); i++) { %>
-    <%--<li><a href="#<%= currentObject.getAttributeGroups().get(i) %>" data-toggle="tab"><%=currentObject.getAttributeGroups().get(i)%></a></li>--%>
     <li><a href="#<%= currentObject.getAttributeGroups().get(i) %>" data-toggle="tab">
-        <%if(currentObject.getTypeName().equals("advert")){%>
+        <%if(currentObject.getType().equals("4")){%>
             Новое объявление
         <%}else{%>
             <%=currentObject.getAttributeGroups().get(i)%>
@@ -75,7 +64,11 @@
     </c:catch>
 </ul>
 
-<div class="settings tab-content .col-md-3 .col-md-offset-3" ng-controller="addController">
+<div class="col-md-2" id="left-col"></div>
+
+<div class="col-md-8" id="center-col">
+
+<div class="settings tab-content" ng-controller="addController">
 
     <% for (int i = 0; i < currentObject.getAttributeGroups().size(); i++) {
         String attrGroupName = currentObject.getAttributeGroups().get(i);
@@ -86,72 +79,31 @@
 
         <form enctype="multipart/form-data">
 
-
-            <% for (int j = 0; j < currentGroupParams.size(); j++) {
-                if(j==2 && currentObject.getTypeName().equals("advert")){%>
-                    <label>Название</label>
-                    <input type="text" ng-model="object.name">
-                <%}%>
-            <%if(j==0 && currentObject.getTypeName().equals("advert")){%>
-
-            <div id="category">
-            <label>Категория</label>
-            <select ng-model="object.type1" ng-change="loadTypes('type1')" id="type1">
-                <option disabled value="">--Выберите--</option>
+            <div id="category" class="col-md-12">
+            <label class="col-md-12 category-label">Выберите категорию</label>
+                <div class="col-md-3 list-group" id="category-div-1">
             <%Connection connection = null;
             try{
                 connection = DataSource.getInstance().getConnection();
                 Statement statement = connection.createStatement();
                 ResultSet resultSet = statement.executeQuery(SQLQueriesHelper.selectTypes("advert"));
-                while (resultSet.next()){
-                    %><option value="<%=resultSet.getString("ot_name")%>"><%=resultSet.getString("ot_name")%></option>
+                while (resultSet.next()){%>
+                    <a class="list-group-item a-category"><%=resultSet.getString("ot_name")%></a>
                 <%
                 }
             }finally {
                 connection.close();
             }%>
-            </select>
-                    <select ng-model="object.type2" ng-change="loadTypes('type2')" id="type2"></select>
-                    <select ng-model="object.type3" ng-change="loadTypes('type3')" id="type3"></select>
-                    <select ng-model="object.type4" ng-change="loadTypes('type4')" id="type4"></select>
                 </div>
-                <%--<label>Категория</label>--%>
-            <%--<div id="category">--%>
-                <%--<select ng-model="object.category" onclick="loadSel()">--%>
-                    <%--<option disabled value="">--...--</option>--%>
-                    <%--<option value="1">1</option>--%>
-                    <%--<option value="2">2</option>--%>
-                <%--</select>--%>
-            <%--</div>--%>
+                <div class="col-md-3 list-group" id="category-div-2"></div>
+                <div class="col-md-3 list-group" id="category-div-3"></div>
+                <div class="col-md-3 list-group" id="category-div-4"></div>
+                </div>
+                <div class="col-md-12 attributes"></div>
             <%}%>
-            <c:catch var="e">
-                <c:import url="/includes/add/attr_views/<%= currentObject.getTypeName() %>.jsp" />
-            </c:catch>
-
-            <c:if test="${!empty e}">
-
-                <c:import url="/includes/add/attr_views/default.jsp">
-
-                    <c:param name="attr_name" value="<%= currentGroupParams.get(j).getName()%>" />
-                    <c:param name="attr_name_ru" value="<%= currentGroupParams.get(j).getNameRU()%>" />
-                    <c:param name="attr_type" value="<%= currentGroupParams.get(j).getType()%>" />
-
-                </c:import>
-
-            </c:if>
-
-            <% } %>
-            <div flow-init="{target: '/unc-project/upload', testChunks:false}"
-                flow-file-added="fileAdded($file, $event, $flow)"
-                flow-complete="complete()"
-                flow-name="uploader.flow">
-            <%--<input type="button" value="Создать" ng-click="add()" />--%>
-            <input type="button" value="Создать" ng-click="add()"/>
-            </div>
         </form>
-    <%--</div>--%>
-    <% } %>
-</div>
+    <%--<% } %>--%>
+
 
 <c:catch var="e">
     <c:import url="/includes/add/tabs/<%= currentObject.getType() %>.jspf" />
@@ -163,5 +115,9 @@
 <c:if test="${!empty e}">
     <c:import url="/includes/update/footers/default.jspf" />
 </c:if>
+    </div>
+    </div>
+    </div>
+    <div class="col-md-2" id="right-col"></div>
 </body>
 </html>
