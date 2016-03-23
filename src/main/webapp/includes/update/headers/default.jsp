@@ -1,4 +1,4 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
 <div id="header">
     <ul class="menu">
             <li><a class="a-outline button-style" href="index.jsp">Главная</a></li>

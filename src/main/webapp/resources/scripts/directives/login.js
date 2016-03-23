@@ -18,6 +18,17 @@
                 }
             });
         };
+        
+        this.vk = function() {
+           vk_log($http, this, function (data) {
+                if (data["logged"] == "true") {
+                    window.location = "/unc-project/index";
+                }
+                else {
+                    context.isLogInFailed = true;
+                }
+            }) 
+        };
     }])
         .directive('loginForm', function(){
             return {
@@ -35,6 +46,19 @@
             params: {
                 'login': context.login,
                 'pass': context.pass
+            }
+        })
+            .success(function(data) {
+                context.isLogging = false;
+                onSuccess(data);
+            });
+    }
+    
+    function vk_log($http, context, onSuccess){
+        $http({
+            url: '/unc-project/vklogin',
+            method: 'GET',
+            params: {
             }
         })
             .success(function(data) {
