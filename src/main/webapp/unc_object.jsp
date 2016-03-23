@@ -8,7 +8,7 @@
 <%@page import="unc.helpers.Param"%>
 <%@page import="java.util.ArrayList"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="unc.helpers.UncObject" %>
 <%@ page import="java.beans.PropertyVetoException" %>
 <%@ page import="java.sql.SQLException" %>

@@ -1,2 +1,7 @@
 <link rel="stylesheet" type="text/css" href="/unc-project/resources/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="/unc-project/resources/css/add.css">
+<link rel="stylesheet" href="/unc-project/resources/css/index.css" />
+<link rel="stylesheet" href="/unc-project/resources/css/template.css" />
+<link rel="stylesheet" type="text/css" href="/unc-project/resources/css/params.css">
+
+

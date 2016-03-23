@@ -132,6 +132,9 @@
                         </ul>
                 </div>
             </div>
+            <div class="col-md-3">
+                <p>Лучшие объявления</p>
+            </div>
 
             <%--Последние объявления--%>
             <div class="lastAdded col-md-4 col-md-offset-4" ng-controller="lastAddedController as laCtrl">
