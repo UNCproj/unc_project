@@ -19,6 +19,7 @@
         <div id="header">
             <ul class="menu">
                 <li><a class="a-outline button-style" href="index.jsp">Главная</a></li>
+                <li><a class="a-outline button-style" href="unc_add.jsp?type=advert" style="width: 110%">Новое объявление</a></li>
             </ul>
             <%
                 UserAccountBean accountBean = (UserAccountBean)session.getAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY);
@@ -132,8 +133,13 @@
                         </ul>
                 </div>
             </div>
-            <div class="col-md-3">
-                <p>Лучшие объявления</p>
+
+            <%--VIP объявления--%>
+            <div ng-controller="vipAdvertsController">
+                <div class="col-md-3" id="vip-adverts">
+                    <p>Лучшие объявления</p>
+
+                </div>
             </div>
 
             <%--Последние объявления--%>

@@ -358,6 +358,7 @@ public class SQLQueriesHelper {
 
     static public String insertParam(BigDecimal object_id, String attrId, String value, Date dateValue)
     {
+        System.out.println("object_id" +object_id+"attrId"+attrId+"value"+value+"dateValue"+dateValue);
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         String query = "insert into unc_params(object_id, attr_id, value, date_value) values(" +
@@ -365,6 +366,10 @@ public class SQLQueriesHelper {
                 attrId + ", " +
                 (value == null ? "null" : "'" + value + "'") + ", " +
                 (value == null ? "to_date('" + df.format(dateValue) + "', 'yyyy-MM-dd HH24:mi:ss')" : "null") + ")";
+        if(attrId.equals("20")){
+            query = "insert into unc_params(object_id, attr_id, value, date_value) values(" + object_id + ", " +
+                    attrId + ", '" + value + "', systimestamp)";
+        }
         System.out.println(query);
         return query;
     }
@@ -695,6 +700,7 @@ public class SQLQueriesHelper {
                     "t3.ot_name = '" + type3 + "'" +
                     "order by t4.ot_id";
         }
+        System.out.println(query);
         return query;
     }
     static public String newMessage(String id, String text, String senderId, String recipientId){
@@ -864,6 +870,56 @@ public class SQLQueriesHelper {
                 "  where object_type_id=1 and\n" +
                 "        object_id !=  "+id+"\n" +
                 " order by object_name";
+        return query;
+    }
+    static public String selectVipAdverts(String size){
+        String query = "select * " +
+                "from ( " +
+                "select * " +
+                "from ( " +
+                "select o.object_id, " +
+                "o.object_name, " +
+                "p2.VALUE " +
+                "from unc_objects o " +
+                "left join unc_params p " +
+                "on o.object_id=p.object_id " +
+                "left join unc_params p2 " +
+                "on p.object_id=p2.object_id " +
+                "where p.attr_id=20 and  " +
+                "p2.attr_id=10 and  " +
+                "p.date_value+7>systimestamp ) " +
+                "ORDER BY dbms_random.value ) " +
+                "WHERE rownum <" + size;
+        return query;
+    }
+    static public String selectVipAdverts(String size, String type){
+        String query = "select * " +
+                "from ( " +
+                "select * " +
+                "from ( " +
+                "select o.object_id, " +
+                "o.object_name, " +
+                "p2.VALUE " +
+                "from unc_objects o " +
+                "left join unc_params p " +
+                "on o.object_id=p.object_id " +
+                "left join unc_params p2 " +
+                "on p.object_id=p2.object_id " +
+                "where p.attr_id=20 and " +
+                "p2.attr_id=10 and " +
+                "p.date_value+7>systimestamp and " +
+                "o.object_type_id in ( " +
+                "select  ot_id " +
+                "from  unc_object_types " +
+                "start  with ot_id = ( " +
+                "select ot_id " +
+                "from unc_object_types " +
+                "where OT_NAME='" + type + "' " +
+                ") " +
+                "connect by prior ot_id = parent_id " +
+                ")) " +
+                "ORDER BY dbms_random.value ) " +
+                "WHERE rownum <" + size;
         return query;
     }
 }
