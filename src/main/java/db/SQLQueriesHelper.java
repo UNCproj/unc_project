@@ -866,4 +866,12 @@ public class SQLQueriesHelper {
                 " order by object_name";
         return query;
     }
+    
+    static public String getIdByName(String name){
+        String query = "select object_id\n" +
+                "  from unc_objects \n" +
+                "  where object_name="+name+" and\n" +
+                " order by object_name";
+        return query;
+    }
 }

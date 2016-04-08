@@ -6,6 +6,7 @@
 package unc.helpers;
 
 import java.math.BigInteger;
+import java.util.List;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
@@ -29,6 +30,7 @@ public class VkOauthLogin {
     private String redirectURI;
     private String code;
     private String authKey;
+    OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
     
     public VkOauthLogin(String redirectURI) throws OAuthSystemException{
         this.redirectURI = redirectURI;

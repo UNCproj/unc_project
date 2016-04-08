@@ -55,15 +55,6 @@
     }
     
     function vk_log($http, context, onSuccess){
-        $http({
-            url: '/unc-project/vklogin',
-            method: 'GET',
-            params: {
-            }
-        })
-            .success(function(data) {
-                context.isLogging = false;
-                onSuccess(data);
-            });
+        window.location.replace("/unc-project/vklogin")
     }
 })();
