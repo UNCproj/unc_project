@@ -126,6 +126,22 @@ public class SQLQueriesHelper {
         String queryString = query.toString();
         return queryString;
     }
+    static public String setVipAdvert(String id_advert) {
+        StringBuffer query = new StringBuffer("update UNC_PARAMS\n" +
+                        "  SET VALUE = 'Gold',\n" +
+                        "      DATE_VALUE = sysdate\n" +
+                        "  where ATTR_ID = 20 and OBJECT_ID = ");
+        query.append(id_advert);
+        String queryString = query.toString();
+        return queryString;
+    }
+    
+    static public String isVip(String objectId) {
+        StringBuffer query = new StringBuffer("select VALUE from UNC_PARAMS where ATTR_ID = 20 and OBJECT_ID = ");
+        query.append(objectId);
+        String queryString = query.toString();
+        return queryString;
+    }
     
     static public String getListReferences(String objectId) {
         StringBuffer query = new StringBuffer("select  OBJECT_ID\n" +
@@ -175,6 +191,10 @@ public class SQLQueriesHelper {
 
         String queryString = query.toString();
         return queryString;
+    }
+    
+    static public String selectAllaboutUser(){
+        return "";
     }
 
     static public String selectFullObjectInformationById(String[] typesIds, String[] ids) {

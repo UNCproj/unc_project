@@ -11,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by Денис on 24.02.2016.
@@ -71,6 +73,53 @@ public class UncObject {
         params = new ArrayList<>();
         this.type = typeId;
         this.userId = userId;
+    }
+    
+    public boolean isVip() throws IOException, SQLException, PropertyVetoException {
+        try(Connection connection = DataSource.getInstance().getConnection();
+            Statement statement = connection.createStatement())
+        {
+            ResultSet results = statement.executeQuery(SQLQueriesHelper.isVip(id));
+            while (results.next()) {
+                String id = results.getString("VALUE");
+                if ("Gold".equals(id)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+    
+    public void vipAdvert(String id_advert) throws SQLException, IOException, PropertyVetoException {
+        try(Connection connection = DataSource.getInstance().getConnection();
+            Statement statement = connection.createStatement())
+        {
+            statement.executeUpdate(SQLQueriesHelper.setVipAdvert(id_advert));
+            connection.commit();
+        }
+    }
+    
+    public String MD5(String[] mass) throws NoSuchAlgorithmException{
+        //params
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < mass.length; i++) {
+            sb.append(mass[i]);
+            if (i != mass.length - 1) {
+                sb.append(":");
+            }
+        }
+        String result = sb.toString();
+    	
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        md.update(result.getBytes());
+        
+        byte byteData[] = md.digest();
+        sb = new StringBuffer();
+        for (int i = 0; i < byteData.length; i++) {
+            sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+        }
+     
+        return sb.toString();
     }
 
     public void insertIntoDB() throws PropertyVetoException, SQLException, IOException {

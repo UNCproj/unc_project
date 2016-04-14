@@ -1,0 +1,13 @@
+<%
+    String sMrchLogin = "UNC-objavlenija";
+    String sMrchPass1 = "VoSO6r17j0sRbryq9BLm";
+    //String sMrchPass2 = "n8DcTF8ogp410TZQqJgI";
+    String nInvId = "100";
+    String sDesc = "Test payment ROBOKASSA";
+    String sOutSum = "1.00";
+    String sCulture = "ru";
+    String sEncoding = "utf-8";
+    String shp_id_a = currentObject.getId();
+    String crc = currentObject.MD5(new String[] {sMrchLogin, sOutSum, nInvId, sMrchPass1, "shp_id_a="+shp_id_a});
+%>
+<script language=JavaScript src='https://auth.robokassa.ru/Merchant/PaymentForm/FormMS.js?MerchantLogin=<%= sMrchLogin%>&OutSum=<%= sOutSum%>&InvoiceID=<%= nInvId%>&Description=<%= sDesc%>&shp_id_a=<%= shp_id_a%>&isTest=1&SignatureValue=<%= crc%>'></script>;

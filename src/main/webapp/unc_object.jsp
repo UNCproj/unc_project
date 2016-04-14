@@ -30,9 +30,11 @@
     ArrayList<String> listCategories = currentObject.selectCategory(currentObject.getType());
     
 %>
+
 <!DOCTYPE html>
 <html ng-app="objectSettings">
 <head>
+    <script type="text/javascript" src="jshash-2.2/md5.js"></script>
     <c:catch var="e">
         <c:import url="/includes/object/scripts/4.jspf" />
     </c:catch>
@@ -142,6 +144,14 @@
                                </div>
                             </div>
                         <% } %>
+                        <% UserAccountBean accountBean = (UserAccountBean)session.getAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY); %>
+                        <%if ("4".equals(currentObject.getParentType()) && accountBean != null && accountBean.isLoggedIn() && !currentObject.isVip()) {%>
+                        <div>
+                            <c:catch var="e">
+                                <c:import url="/includes/object/scripts/robokassa.jspf" />
+                            </c:catch>
+                        </div>
+                        <%}%>
                  <div class="references">
                     <h3>Список ссылок</h3>
                     <ul class="references-ul">
@@ -158,7 +168,6 @@
                         <li class="references-ul-li">
                             <a a href="unc_object.jsp?id=<%= listReferences.get(i) %>"><%= object.getName() %></a>
                         </li>
-
                         <% } %>
                     </ul>
                  </div>
