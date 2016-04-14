@@ -15,13 +15,13 @@
     String objectType = request.getParameter("type");
     UncObject currentObject = new UncObject(objectType);
 
-    if (!currentObject.getType().equals("4")) {
+    if (!currentObject.getType().equals("4")){
         response.sendRedirect("jsp404.jsp");
     }
 
     try {
         currentObject.loadAttributesListFromDB();
-    } catch (SQLException | PropertyVetoException e) {
+    } catch (SQLException |PropertyVetoException e) {
         e.printStackTrace();
     }
     ArrayList<Param> params = currentObject.getParams();
@@ -30,20 +30,20 @@
 <html ng-app="add">
 <head>
 
-    <title>Новое объявление</title>
+        <title>Новое объявление</title>
 
     <c:catch var="e">
-        <c:import url="/includes/add/scripts/<%= currentObject.getType() %>.jspf"/>
+        <c:import url="/includes/add/scripts/<%= currentObject.getType() %>.jspf" />
     </c:catch>
     <c:if test="${!empty e}">
-        <c:import url="/includes/add/scripts/default.jspf"/>
+        <c:import url="/includes/add/scripts/default.jspf" />
     </c:if>
 
     <c:catch var="e">
-        <c:import url="/includes/add/css/<%= currentObject.getType() %>.jspf"/>
+        <c:import url="/includes/add/css/<%= currentObject.getType() %>.jspf" />
     </c:catch>
     <c:if test="${!empty e}">
-        <c:import url="/includes/add/css/default.jspf"/>
+        <c:import url="/includes/add/css/default.jspf" />
     </c:if>
 </head>
 
@@ -51,23 +51,17 @@
 <div class="main">
 
     <c:catch>
-        <%@ include file="/includes/add/headers/default.jsp" %>
+        <%@ include file="/includes/object/headers/default.jsp" %>
     </c:catch>
-    <div class="list-categories clearfix" >
-        <ul>
-            <li class="list-categories-li">
-                <a href="index.jsp">Главная</a>
-            </li>
-            <li class="list-categories-li">
-                <a href="">Новое объявление</a>
-            </li>
-        </ul>
-    </div>
     <div class="content">
         <ul class="nav nav-tabs">
-            <li><a href="#1" data-toggle="tab" style="border: 0px">
-                <%if (currentObject.getType().equals("4")) {%>
-                Новое объявление
+            <% for (int i = 0; i < currentObject.getAttributeGroups().size(); i++) { %>
+            <li><a href="#<%= currentObject.getAttributeGroups().get(i) %>" data-toggle="tab">
+                <%if(currentObject.getType().equals("4")){%>
+                    Новое объявление
+                <%}else{%>
+                    <%=currentObject.getAttributeGroups().get(i)%>
+                <%}%>
             </a></li>
             <% } %>
         </ul>
@@ -75,9 +69,9 @@
         <div class="settings tab-content" ng-controller="addController">
 
 
-            <%
-                String attrGroupName = currentObject.getAttributeGroups().get(0);
-//                ArrayList<Param> currentGroupParams = currentObject.getParams(attrGroupName);
+            <% for (int i = 0; i < currentObject.getAttributeGroups().size(); i++) {
+                String attrGroupName = currentObject.getAttributeGroups().get(i);
+                ArrayList<Param> currentGroupParams = currentObject.getParams(attrGroupName);
             %>
 
             <div id="<%= attrGroupName %>" class="tab-pane fade in">
@@ -87,33 +81,32 @@
                         <div id="category" class="col-md-12">
                             <label class="col-md-12 category-label">Выберите категорию</label>
                             <div class="col-md-3 list-group" id="category-div-1">
-                                <%
-                                    Connection connection = null;
-                                    try {
-                                        connection = DataSource.getInstance().getConnection();
-                                        Statement statement = connection.createStatement();
-                                        ResultSet resultSet = statement.executeQuery(SQLQueriesHelper.selectTypes("advert"));
-                                        while (resultSet.next()) {
-                                %>
-                                <a class="list-group-item a-category"><%=resultSet.getString("ot_name")%></a>
-                                <%
-                                        }
-                                    } finally {
-                                        connection.close();
-                                    }%>
+                                <%Connection connection = null;
+                                try{
+                                    connection = DataSource.getInstance().getConnection();
+                                    Statement statement = connection.createStatement();
+                                    ResultSet resultSet = statement.executeQuery(SQLQueriesHelper.selectTypes("advert"));
+                                    while (resultSet.next()){%>
+                                        <a class="list-group-item a-category"><%=resultSet.getString("ot_name")%></a>
+                                    <%
+                                    }
+                                }finally {
+                                    connection.close();
+                                }%>
                             </div>
                             <div class="col-md-3 list-group" id="category-div-2"></div>
                             <div class="col-md-3 list-group" id="category-div-3"></div>
                             <div class="col-md-3 list-group" id="category-div-4"></div>
                         </div>
                         <div class="col-md-12 attributes"></div>
+                                <%}%>
                     </form>
-                </div>
+                 </div>
             </div>
         </div>
     </div>
     <c:catch>
-        <c:import url="/includes/object/footers/default.jspf"/>
+        <c:import url="/includes/object/footers/default.jspf" />
     </c:catch>
 </div>
 

@@ -7,7 +7,7 @@
     <title>unc_project | Register</title>
     <link rel="stylesheet" type="text/css" href="resources/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="resources/css/common.css">
-
+    
     <script type="text/javascript" src="resources/scripts/jquery-1.12.0.min.js"></script>
     <script type="text/javascript" src="resources/scripts/angular.min.js"></script>
     <script type="text/javascript" src="resources/scripts/directives/login.js"></script>

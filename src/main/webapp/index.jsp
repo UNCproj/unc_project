@@ -133,6 +133,9 @@
                         </ul>
                 </div>
             </div>
+            <div class="col-md-3">
+                <p>Лучшие объявления</p>
+            </div>
 
             <%--VIP объявления--%>
             <div ng-controller="vipAdvertsController">

@@ -35,6 +35,9 @@ public class RegistrationServlet extends HttpServlet {
         String pass = request.getParameter("pass");
         String retypePass = request.getParameter("retypePass");
         String email = request.getParameter("email");
+        String avatar = request.getParameter("ava");
+        String fname = request.getParameter("fname");
+        String sname = request.getParameter("sname");
         UserRegistrationValidationBean registrationValidationBean =
                 new UserRegistrationValidationBean(login, pass, retypePass, email);
         String constrViolationsJSON = registrationValidationBean.validate();
@@ -76,7 +79,13 @@ public class RegistrationServlet extends HttpServlet {
                 statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.EMAIL_ATTR_ID, email, null));
 
                 statement3 = connection.createStatement();
-                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.USER_PIC_FILE_ATTR_ID, getInitParameter("default.userpic"), null));
+                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.USER_PIC_FILE_ATTR_ID, avatar.equals("") ? getInitParameter("default.userpic"):avatar, null));
+                
+                statement3 = connection.createStatement();
+                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.FIRST_NAME_ATTR_ID, fname.equals("") ? getInitParameter("default.userpic"):fname, null));
+                
+                statement3 = connection.createStatement();
+                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.SURNAME_ATTR_ID, sname.equals("") ? getInitParameter("default.userpic"):sname, null));
 
                 connection.commit();
             } catch (Exception e) {
