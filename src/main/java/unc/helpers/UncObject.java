@@ -296,8 +296,8 @@ public class UncObject {
 
             while (results.next()) {
                 String group = results.getString("attr_group_id");
-
-                if (!attributeGroups.contains(group)) {
+                
+                if ((!attributeGroups.contains(group))&&(group!=null)) {
                     attributeGroups.add(group);
                 }
 

@@ -10,4 +10,4 @@
     String shp_id_a = currentObject.getId();
     String crc = currentObject.MD5(new String[] {sMrchLogin, sOutSum, nInvId, sMrchPass1, "shp_id_a="+shp_id_a});
 %>
-<script language=JavaScript src='https://auth.robokassa.ru/Merchant/PaymentForm/FormMS.js?MerchantLogin=<%= sMrchLogin%>&OutSum=<%= sOutSum%>&InvoiceID=<%= nInvId%>&Description=<%= sDesc%>&shp_id_a=<%= shp_id_a%>&isTest=1&SignatureValue=<%= crc%>'></script>;
+<script language=JavaScript src='https://auth.robokassa.ru/Merchant/PaymentForm/FormMS.js?MerchantLogin=<%= sMrchLogin%>&OutSum=<%= sOutSum%>&InvoiceID=<%= nInvId%>&Description=<%= sDesc%>&shp_id_a=<%= shp_id_a%>&isTest=1&SignatureValue=<%= crc%>'></script>
