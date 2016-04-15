@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,6 +32,8 @@ public class RegistrationServlet extends HttpServlet {
             throws IOException, ServletException
     {
         PrintWriter out = response.getWriter();
+        response.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding("UTF-8");
         String login = request.getParameter("login");
         String pass = request.getParameter("pass");
         String retypePass = request.getParameter("retypePass");
@@ -41,7 +44,6 @@ public class RegistrationServlet extends HttpServlet {
         UserRegistrationValidationBean registrationValidationBean =
                 new UserRegistrationValidationBean(login, pass, retypePass, email);
         String constrViolationsJSON = registrationValidationBean.validate();
-
         if (registrationValidationBean.isValid()) {
             Connection connection = null;
             Statement statement1 = null;
@@ -79,13 +81,13 @@ public class RegistrationServlet extends HttpServlet {
                 statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.EMAIL_ATTR_ID, email, null));
 
                 statement3 = connection.createStatement();
-                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.USER_PIC_FILE_ATTR_ID, avatar.equals("") ? getInitParameter("default.userpic"):avatar, null));
+                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.USER_PIC_FILE_ATTR_ID, avatar.equals("") ? "":avatar, null));
                 
                 statement3 = connection.createStatement();
-                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.FIRST_NAME_ATTR_ID, fname.equals("") ? getInitParameter("default.userpic"):fname, null));
+                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.FIRST_NAME_ATTR_ID, fname.equals("") ? "":fname, null));
                 
                 statement3 = connection.createStatement();
-                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.SURNAME_ATTR_ID, sname.equals("") ? getInitParameter("default.userpic"):sname, null));
+                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.SURNAME_ATTR_ID, sname.equals("") ? "":sname, null));
 
                 connection.commit();
             } catch (Exception e) {

@@ -13,6 +13,7 @@ import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -125,18 +126,23 @@ public class VkLoginServlet extends HttpServlet {
                 response.getWriter().println();
                 UserAccountBean ub = (UserAccountBean) request.getSession().getAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY);
                 response.getWriter().println(ub.getId()+" "+ub.getLogin()+" "+ub.getUserPicFile());
+                response.getWriter().println("admin="+ub.isIsAdmin());
+                response.getWriter().println("moder="+ub.isIsModer());
                 response.sendRedirect("/unc-project/unc_object.jsp?id="+ub.getId());
             }
             else{
+                response.setCharacterEncoding("UTF-8");
+                request.setCharacterEncoding("UTF-8");
                 response.sendRedirect("/unc-project/registration"
                         +"?email="+authToken.getParam("email")
                         +"&login="+user_id
                         +"&pass="+authToken.getAccessToken()
                         +"&retypePass="+authToken.getAccessToken()
                         +"&ava="+avatar.replace('"', ' ')
-                        +"&fname="+fname
-                        +"&sname="+sname
+                        +"&fname="+URLEncoder.encode(fname,"UTF-8")
+                        +"&sname="+URLEncoder.encode(sname,"UTF-8")
                         );
+                
             }
             
         }
@@ -177,7 +183,7 @@ public class VkLoginServlet extends HttpServlet {
         return jn;
     }
     
-    boolean login(HttpServletRequest request, String login, String email, String userPicFile ) throws ServletException{
+    boolean login(HttpServletRequest request, String login, String email, String userPicFile ) throws ServletException, PropertyVetoException, SQLException, IOException{
             BigDecimal userId = null;
             Connection connection = null;
             Statement selectObjInfoStatement = null;
@@ -221,6 +227,7 @@ public class VkLoginServlet extends HttpServlet {
             userAccountBean.initialize(userId.toString(), login,
                     "",
                     email, userPicFile, true, new Date());
+            userAccountBean.updateAllInfo();
             request.getSession().setAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY, userAccountBean);
             return true;
     }

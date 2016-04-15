@@ -15,18 +15,22 @@
             };
             app.controller("LineCtrl", function ($scope) {
             var id = getUrlParameter('id');
+            //console.log("id="+id);
             var labels = [];
             var data = [];
             var adverts = [];
             
-            $scope.isExistData = function isExistData(){
-                if ((data.length === 0)&&(adverts.length===0)){
+            function isExistData(){
+                console.log("check!");
+                if ((data.length === 0)&&(adverts.length === 0)){
                     $('#ifempty').html('У вас пока что нет объявлений.');
                     return false;
                 }
                 $('#ifempty').html('');
                 return true;
-            }
+            };
+            
+            $scope.isExistData = isExistData();
             
             $.ajax({
             url: "/unc-project/StatServlet/getList",
@@ -42,6 +46,8 @@
             
             $scope.dropboxitemselected = function (item) {
                 console.log('query!');
+                if (!$scope.isExistData) { return; }
+                console.log('query1!'+$scope.isExistData);
                 $scope.selectedItem = item;
                 $.ajax({
                 url: "/unc-project/StatServlet/getStat",
@@ -53,7 +59,7 @@
                         labels.push(visit.date);
                         data.push(visit.count);
                     });
-                
+                console.log('query1!');
                 if (labels.length == 0) 
                 {
                     labels = ['0']; data = ['0'];
@@ -76,4 +82,8 @@
                         console.log(points, evt);
             };
             }); 
+            
+            app.controller("ModerCtrl", function ($scope){
+               console.log("moder ready!"); 
+            });
 })();

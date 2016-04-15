@@ -13,11 +13,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Logger;
 
 /**
  * Created by Денис on 24.02.2016.
  */
 public class UncObject {
+    public final Logger log = Logger.getLogger("unc_log");
     private String id;
     private String type;
     private String parentType;
@@ -296,8 +298,7 @@ public class UncObject {
 
             while (results.next()) {
                 String group = results.getString("attr_group_id");
-
-                if (!attributeGroups.contains(group)) {
+                if ((!attributeGroups.contains(group))&&(group!=null)) {
                     attributeGroups.add(group);
                 }
 
@@ -368,9 +369,11 @@ public class UncObject {
 
         for (Param param: params) {
             for (String groupName: groupsNames) {
-                if (param.getGroup().equals(groupName)) {
-                    paramsInCurrentGroups.add(param);
-                    break;
+                if (param.getGroup()!=null){
+                    if (param.getGroup().equals(groupName)) {
+                        paramsInCurrentGroups.add(param);
+                        break;
+                    }
                 }
             }
         }
@@ -380,5 +383,15 @@ public class UncObject {
 
     public ArrayList<String> getAttributeGroups() {
         return attributeGroups;
+    }
+    
+    public Param getParam(String name){
+        ArrayList<Param> prms = getParams();
+        for (Param p : prms){
+            if (p.getName().equals(name)){
+                return p;
+            }
+        }
+        return null;
     }
 }

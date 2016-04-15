@@ -4,6 +4,7 @@ import beans.BeansHelper;
 import beans.UserAccountBean;
 import db.DataSource;
 import db.SQLQueriesHelper;
+import java.beans.PropertyVetoException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,6 +19,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Денис on 15.12.2015.
@@ -26,7 +29,7 @@ import java.util.Date;
 @WebServlet(name = "loginServlet", urlPatterns = "/login")
 public class LoginServlet extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         boolean isLoggedIn = logIn(request.getParameter("login"), request.getParameter("pass"));
         PrintWriter out;
         StringBuffer responseJSON = new StringBuffer("{");
@@ -97,6 +100,13 @@ public class LoginServlet extends HttpServlet {
             userAccountBean.initialize(userId.toString(), request.getParameter("login"),
                     String.valueOf(request.getParameter("pass").hashCode()),
                     email, userPicFile, isLoggedIn, new Date());
+            try {
+                userAccountBean.updateAllInfo();
+            } catch (PropertyVetoException ex) {
+                Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
             request.getSession().setAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY, userAccountBean);
         }
 

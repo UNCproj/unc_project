@@ -18,6 +18,8 @@ public class SQLQueriesHelper {
     static public final String ADVERT_TYPE_ID = "4";
 
     static public final String LOGIN_ATTR = "login";
+    static public final String MODER_ATTR = "is_moderator";
+    static public final String ADMIN_ATTR = "is_admin";
     static public final String PASSWORD_ATTR = "password";
     static public final String REG_DATE_ATTR = "registration_date";
     static public final String LAST_VISIT_DATE_ATTR = "last_visit_date";
@@ -36,7 +38,7 @@ public class SQLQueriesHelper {
     static public final String COUNTRY_ATTR = "country";
     static public final String ADDITIONAL_INFO_ATTR = "additional_info";
     static public final String BOOKMARK_ATTR = "bookmark";
-
+    
     static public final String LOGIN_ATTR_ID = "1";
     static public final String PASSWORD_ATTR_ID = "2";
     static public final String REG_DATE_ATTR_ID = "3";

@@ -3,6 +3,7 @@
     Created on : 04.03.2016, 11:03:18
     Author     : Andrey
 --%>
+<%@page import="org.jboss.logging.Logger"%>
 <%@ page import="beans.BeansHelper" %>
 <%@ page import="beans.UserAccountBean" %>
 <%@page import="unc.helpers.Param"%>
@@ -14,6 +15,7 @@
 <%@ page import="java.sql.SQLException" %>
 <%@ page import="java.net.URL" %>
 <%
+    Logger log = Logger.getLogger("unc_obj_log");
     String objectId = request.getParameter("id");
     UncObject currentObject = new UncObject(objectId, null, true);
     
@@ -27,8 +29,15 @@
         e.printStackTrace();
     }
     
+    
+    Param prm = currentObject.getParam("is_invalid");
+    if ((prm!=null)&&(prm.getValue()!=null)&&(prm.getValue().equals("true"))){
+        response.sendRedirect("jsp404.jsp");   
+    }
     ArrayList<String> listCategories = currentObject.selectCategory(currentObject.getType());
     
+
+    UserAccountBean user = (UserAccountBean)request.getSession().getAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY);
 %>
 
 <!DOCTYPE html>
@@ -112,8 +121,8 @@
                          <%if ("1".equals(currentObject.getType())) {%>
                             <div id="statid" class="tab-pane fade in">
                                <h3>Статистика просмотров объявлений:</h3>
-                               <div ng-controller="LineCtrl">
-                                    <div id = "dropdown1" action="" class="tab-pane fade in" >
+                               <div ng-controller="LineCtrl" >
+                                    <div id = "dropdown1" action="" class="tab-pane fade in" ng-show="isExistData">
                                         <div class="dropdown">
                                      <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                          {{selectedItem.name}}
@@ -144,14 +153,35 @@
                                </div>
                             </div>
                         <% } %>
-                        <% UserAccountBean accountBean = (UserAccountBean)session.getAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY); %>
-                        <%if ("4".equals(currentObject.getParentType()) && accountBean != null && accountBean.isLoggedIn() && !currentObject.isVip()) {%>
+                        <%if ("4".equals(currentObject.getParentType()) && user != null && user.isLoggedIn() && !currentObject.isVip()) {%>
                         <div>
-                            <c:catch var="e">
-                                <c:import url="/includes/object/scripts/robokassa.jspf" />
-                            </c:catch>
+                            <%
+                            String sMrchLogin = "UNC-objavlenija";
+    String sMrchPass1 = "VoSO6r17j0sRbryq9BLm";
+    //String sMrchPass2 = "n8DcTF8ogp410TZQqJgI";
+    String nInvId = "100";
+    String sDesc = "Test payment ROBOKASSA";
+    String sOutSum = "1.00";
+    String sCulture = "ru";
+    String sEncoding = "utf-8";
+    String shp_id_a = currentObject.getId();
+    String crc = currentObject.MD5(new String[] {sMrchLogin, sOutSum, nInvId, sMrchPass1, "shp_id_a="+shp_id_a});
+    %>
+    <script language=JavaScript src='https://auth.robokassa.ru/Merchant/PaymentForm/FormMS.js?MerchantLogin=<%= sMrchLogin%>&OutSum=<%= sOutSum%>&InvoiceID=<%= nInvId%>&Description=<%= sDesc%>&shp_id_a=<%= shp_id_a%>&isTest=1&SignatureValue=<%= crc%>'></script>;
+
                         </div>
-                        <%}%>
+                        <%}%>  
+                        <div ng-controller="ModerCtrl">
+                        <%
+                            if ((user != null)&&user.isIsModer()&&("4".equals(currentObject.getParentType()))) {                          
+                        %>
+                        
+                            123
+                        
+                        <%
+                        }
+                        %>
+                        </div>
                  <div class="references">
                     <h3>Список ссылок</h3>
                     <ul class="references-ul">
