@@ -7,6 +7,8 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -35,6 +37,10 @@ public class RobokassaFail extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
                 String id_advert = request.getParameter("shp_id_a");
                 response.sendRedirect("/unc-project/unc_object.jsp?id=" + id_advert); 
+        }
+        catch (Exception e){
+            Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+            response.sendRedirect("/error.jsp");
         }
     }
 

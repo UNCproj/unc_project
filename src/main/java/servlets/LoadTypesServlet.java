@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet(name = "LoadTypesServlet", urlPatterns = "/loadTypes")
 public class LoadTypesServlet extends HttpServlet {
@@ -61,15 +63,17 @@ public class LoadTypesServlet extends HttpServlet {
             System.out.println(gson.toJson(arrStr));
 
             out.println(gson.toJson(arrStr));
-        } catch (SQLException e) {
+        } catch (SQLException | PropertyVetoException e) {
             e.printStackTrace();
-        } catch (PropertyVetoException e) {
-            e.printStackTrace();
+            Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+            response.sendRedirect("/error.jsp");
         } finally {
             try {
                 connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
+                Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                response.sendRedirect("/error.jsp");
             }
         }
 

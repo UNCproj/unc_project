@@ -43,6 +43,10 @@ public class RobokassaSuccess extends HttpServlet {
                 advert.vipAdvert(id_advert);
                 response.sendRedirect("/unc-project/unc_object.jsp?id=" + id_advert); 
         }
+        catch (Exception e){
+            Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+            response.sendRedirect("/error.jsp");
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -21,6 +21,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet(name = "LoadAttrsServlet", urlPatterns = "/loadAttrs")
 public class LoadAttrsServlet extends HttpServlet {
@@ -61,13 +63,19 @@ public class LoadAttrsServlet extends HttpServlet {
             out.println(gson.toJson(arr));
         } catch (SQLException e) {
             e.printStackTrace();
+                Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                response.sendRedirect("/error.jsp");
         } catch (PropertyVetoException e) {
             e.printStackTrace();
+                Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                response.sendRedirect("/error.jsp");
         } finally {
             try {
                 connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
+                Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                response.sendRedirect("/error.jsp");
             }
         }
 

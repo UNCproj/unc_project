@@ -39,11 +39,13 @@
         e.printStackTrace();
     } catch (PropertyVetoException e) {
         e.printStackTrace();
+        response.sendRedirect("error.jsp");
     } finally {
         try {
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
+            response.sendRedirect("error.jsp");
         }
     }
 %>

@@ -22,6 +22,8 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet(name = "chatSubscribeServlet", urlPatterns = "/chatSubscribe")
 public class chatSubscribeServlet extends HttpServlet {
@@ -83,17 +85,20 @@ public class chatSubscribeServlet extends HttpServlet {
 
             out.println(gson.toJson(messagesArray));
 
-        } catch (SQLException e) {
+        } catch (SQLException | PropertyVetoException e) {
             e.printStackTrace();
-        } catch (PropertyVetoException e) {
-            e.printStackTrace();
+            Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+            response.sendRedirect("/error.jsp");
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+            response.sendRedirect("/error.jsp");
         } finally {
             try {
                 connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
+                Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                response.sendRedirect("/error.jsp");
             }
         }
     }

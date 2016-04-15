@@ -20,13 +20,15 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Денис on 18.01.2016.
  */
 @WebServlet(urlPatterns = "/bookmarks")
 public class BookmarksServlet extends HttpServlet {
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         UserAccountBean user = (UserAccountBean)request.getSession().getAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY);
         ArrayList<AdvertBean> adverts = new ArrayList<>();
         Connection connection = null;
@@ -81,14 +83,18 @@ public class BookmarksServlet extends HttpServlet {
             }
         }
         catch (Exception e) {
-            throw new ServletException(e);
+            //throw new ServletException(e);
+            Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+            response.sendRedirect("/error.jsp");
         }
         finally {
             try {
                 connection.close();
             }
             catch (Exception e) {
-                throw new ServletException(e);
+                //throw new ServletException(e);
+                Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                response.sendRedirect("/error.jsp");
             }
         }
 
@@ -97,7 +103,9 @@ public class BookmarksServlet extends HttpServlet {
             response.getWriter().print(responseJSON);
         }
         catch (IOException e) {
-            throw new ServletException(e);
+            //throw new ServletException(e);
+            Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+            response.sendRedirect("/error.jsp");
         }
     }
 }

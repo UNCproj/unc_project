@@ -23,6 +23,7 @@
         currentObject.loadAttributesListFromDB();
     } catch (SQLException |PropertyVetoException e) {
         e.printStackTrace();
+        response.sendRedirect("error.jsp");
     }
     ArrayList<Param> params = currentObject.getParams();
 %>
@@ -90,6 +91,9 @@
                                         <a class="list-group-item a-category"><%=resultSet.getString("ot_name")%></a>
                                     <%
                                     }
+                                catch (Exception e){
+                                    response.sendRedirect("error.jsp");
+                                }
                                 }finally {
                                     connection.close();
                                 }%>

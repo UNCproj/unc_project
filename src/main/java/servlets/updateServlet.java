@@ -11,6 +11,8 @@ import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Денис on 26.02.2016.
@@ -38,8 +40,12 @@ public class updateServlet extends HttpServlet {
             obj.updateInDB();
         } catch (PropertyVetoException e) {
             e.printStackTrace();
+            Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+            response.sendRedirect("/error.jsp");
         } catch (SQLException e) {
             e.printStackTrace();
+            Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+            response.sendRedirect("/error.jsp");
         }
     }
 

@@ -21,6 +21,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet(name = "LoadVipAdverts", urlPatterns = "/load-vip-adverts")
 public class LoadVipAdverts extends HttpServlet {
@@ -49,15 +51,17 @@ public class LoadVipAdverts extends HttpServlet {
             }
 
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (PropertyVetoException e) {
-            e.printStackTrace();
+        } catch (SQLException | PropertyVetoException e) {
+            //e.printStackTrace();
+            Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+            response.sendRedirect("/error.jsp");
         }finally {
             try {
                 connection.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
+                Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                response.sendRedirect("/error.jsp");
             }
         }
         PrintWriter out = response.getWriter();

@@ -20,6 +20,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Денис on 05.02.2016.
@@ -28,7 +30,7 @@ import java.util.Hashtable;
 @WebServlet(name = "AccountSettingsServlet", urlPatterns = "/accountSettings")
 public class AccountSettingsServlet extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String settingsGroup = request.getParameter("settingsGroup");
         if (settingsGroup == null) {
             //TODO:logging
@@ -118,7 +120,9 @@ public class AccountSettingsServlet extends HttpServlet {
                 isSettingsChanged = true;
             } catch (Exception e) {
                 //TODO: logging
-                throw new ServletException(e);
+                Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                response.sendRedirect("/error.jsp");
+                //throw new ServletException(e);
             }
         }
 
@@ -131,7 +135,9 @@ public class AccountSettingsServlet extends HttpServlet {
             }
         }
         catch (IOException e) {
-            throw new ServletException(e);
+            Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+            response.sendRedirect("/error.jsp");
+            //throw new ServletException(e);
         }
     }
 

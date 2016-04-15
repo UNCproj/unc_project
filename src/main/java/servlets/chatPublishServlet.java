@@ -18,6 +18,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet(name = "chatPublishServlet", urlPatterns = "/chatPublish")
 public class chatPublishServlet extends HttpServlet {
@@ -57,13 +59,19 @@ public class chatPublishServlet extends HttpServlet {
 
             } catch (SQLException e) {
                 e.printStackTrace();
+                Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                response.sendRedirect("/error.jsp");
             } catch (PropertyVetoException e) {
                 e.printStackTrace();
+                Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                response.sendRedirect("/error.jsp");
             } finally {
                 try {
                     connection.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
+                    Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                    response.sendRedirect("/error.jsp");
                 }
             }
         }

@@ -19,6 +19,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Возможные значения параметра action:
@@ -59,7 +61,9 @@ public class AdvertsListServlet extends HttpServlet {
                     }
                 }
             } catch (SQLException|PropertyVetoException e) {
-                throw new ServletException(e);
+                //throw new ServletException(e);
+                Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                response.sendRedirect("/error.jsp");
             }
 
             ArrayList<AdvertBean> adverts = getAdverts(adCategoryId, adsStartingNum, adsCount, sortingParam,
@@ -99,7 +103,9 @@ public class AdvertsListServlet extends HttpServlet {
                     }
                 }
             } catch (SQLException | PropertyVetoException e) {
-                throw new ServletException(e);
+                //throw new ServletException(e);
+                Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                response.sendRedirect("/error.jsp");
             }
         }
         else if (action.equals("get_first_lvl_categories")) {
@@ -142,7 +148,9 @@ public class AdvertsListServlet extends HttpServlet {
                     }
                 }
             } catch (SQLException | PropertyVetoException e) {
-                throw new ServletException(e);
+                //throw new ServletException(e);
+                Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                response.sendRedirect("/error.jsp");
             }
         }
         else if (action.equals("get_adverts_count")) {
@@ -195,7 +203,9 @@ public class AdvertsListServlet extends HttpServlet {
                     }
                 }
             } catch (SQLException | PropertyVetoException e) {
-                throw new ServletException(e);
+                //throw new ServletException(e);
+                Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                response.sendRedirect("/error.jsp");
             }
         }
     }
@@ -242,7 +252,7 @@ public class AdvertsListServlet extends HttpServlet {
                 }
             }
         } catch (SQLException | PropertyVetoException e) {
-            throw new ServletException(e);
+            Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
         }
 
         return adverts;

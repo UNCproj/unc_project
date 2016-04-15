@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet(name = "AddServlet", urlPatterns = "/uncadd")
 public class AddServlet extends HttpServlet {
@@ -50,8 +52,10 @@ public class AddServlet extends HttpServlet {
             objectType = resultSet.getString("ot_id");
         } catch (SQLException e) {
             e.printStackTrace();
+            response.sendRedirect("/error.jsp");
         } catch (PropertyVetoException e) {
             e.printStackTrace();
+            response.sendRedirect("/error.jsp");
         }
 
         UncObject obj = new UncObject(null, objectName, objectType, userId);
@@ -73,8 +77,12 @@ public class AddServlet extends HttpServlet {
             obj.insertIntoDB();
         } catch (PropertyVetoException e) {
             e.printStackTrace();
+            Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+            response.sendRedirect("/error.jsp");
         } catch (SQLException e) {
             e.printStackTrace();
+            Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+            response.sendRedirect("/error.jsp");
         }
 
     }

@@ -22,6 +22,7 @@
         currentObject.selectFromDB();
     } catch (SQLException|PropertyVetoException e) {
         e.printStackTrace();
+        response.sendRedirect("error.jsp");
     }
 %>
 <html ng-app="default">

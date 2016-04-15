@@ -2,6 +2,7 @@ package servlets;
 
 import beans.BeansHelper;
 import beans.UserAccountBean;
+import java.beans.PropertyVetoException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,6 +10,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
 
 /**
  * Created by Денис on 05.02.2016.
@@ -36,8 +41,10 @@ public class AccountServlet extends HttpServlet {
             try {
                 userAccount.preparePersonalInfo();
             }
-            catch (Exception e) {
-                throw new ServletException(e);
+            catch (PropertyVetoException | IOException | SQLException e) {
+                Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                resp.sendRedirect("/error.jsp");
+                //throw new ServletException(e);
             }
 
             req.getRequestDispatcher("/accountSettings.jsp").forward(req, resp);

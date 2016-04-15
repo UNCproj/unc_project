@@ -25,6 +25,7 @@
         currentObject.selectFromDB();
     } catch (SQLException|PropertyVetoException e) {
         e.printStackTrace();
+        response.sendRedirect("error.jsp");
     }
     
     ArrayList<String> listCategories = currentObject.selectCategory(currentObject.getType());
@@ -162,6 +163,7 @@
                                     object.selectFromDB();
                                 } catch (SQLException|PropertyVetoException e) {
                                     e.printStackTrace();
+                                    response.sendRedirect("error.jsp");
                                 }
                                 //String attrGroupName = currentObject.getAttributeGroups().get(i);
                                 //ArrayList<Param> currentGroupParams = currentObject.getParams(attrGroupName); %>

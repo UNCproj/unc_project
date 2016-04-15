@@ -16,6 +16,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet(name = "RegistrationServlet", urlPatterns = "/registration")
 public class RegistrationServlet extends HttpServlet {
@@ -94,10 +96,12 @@ public class RegistrationServlet extends HttpServlet {
                         connection.rollback();
                 }
                 catch (SQLException rbe) {
-                    throw new ServletException(rbe);
+                    Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, rbe);
+                    response.sendRedirect("/error.jsp");
                 }
-
-                throw new ServletException(e);
+                Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                response.sendRedirect("/error.jsp");
+                //throw new ServletException(e);
             }
             finally {
                 try {
@@ -114,7 +118,9 @@ public class RegistrationServlet extends HttpServlet {
                         statement3.close();
                 }
                 catch (Exception e) {
-                    throw new ServletException(e);
+                    Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                    response.sendRedirect("/error.jsp");
+                    //throw new ServletException(e);
                 }
             }
         }

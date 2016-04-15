@@ -18,6 +18,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Денис on 15.12.2015.
@@ -26,16 +28,18 @@ import java.util.Date;
 @WebServlet(name = "loginServlet", urlPatterns = "/login")
 public class LoginServlet extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         boolean isLoggedIn = logIn(request.getParameter("login"), request.getParameter("pass"));
-        PrintWriter out;
+        PrintWriter out = null;
         StringBuffer responseJSON = new StringBuffer("{");
 
         try {
             out = response.getWriter();
         }
         catch (IOException e) {
-            throw new ServletException(e);
+            //throw new ServletException(e);
+            Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+            response.sendRedirect("/error.jsp");
         }
 
         if (isLoggedIn) {
@@ -75,7 +79,9 @@ public class LoginServlet extends HttpServlet {
                         SQLQueriesHelper.updateParam(userId, SQLQueriesHelper.LAST_VISIT_DATE_ATTR_ID, null, new Date()));
             }
             catch (Exception e) {
-                throw new ServletException(e);
+                //throw new ServletException(e);
+                Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                response.sendRedirect("/error.jsp");
             }
             finally {
                 try {
@@ -89,7 +95,9 @@ public class LoginServlet extends HttpServlet {
                         updateLastLoginDateStatement.close();
                 }
                 catch (SQLException e) {
-                    throw new ServletException(e);
+                    //throw new ServletException(e);
+                    Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                    response.sendRedirect("/error.jsp");
                 }
             }
 
@@ -131,7 +139,7 @@ public class LoginServlet extends HttpServlet {
                 }
             }
         } catch (Exception e) {
-            throw new ServletException(e);
+            Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
         }
 
         return false;

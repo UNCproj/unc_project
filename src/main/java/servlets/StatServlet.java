@@ -88,8 +88,9 @@ public class StatServlet extends HttpServlet {
                     Connection connection = null;
                     try {
                         connection = DataSource.getInstance().getConnection();
-                    } catch (PropertyVetoException ex) {
-                        Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (PropertyVetoException e) {
+                        Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                        response.sendRedirect("/error.jsp");
                     }
                     Statement st = connection.createStatement();
                     ResultSet resultSet = st.executeQuery(comm);
@@ -104,7 +105,8 @@ public class StatServlet extends HttpServlet {
                     response.setCharacterEncoding("UTF-8");
                     response.getWriter().write(jsonvis);
                 } catch (SQLException e) {
-                    throw new ServletException(e.getMessage(), e);
+                    Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                    response.sendRedirect("/error.jsp");
                 }
                 break;
             }
@@ -148,8 +150,9 @@ public class StatServlet extends HttpServlet {
                     Connection connection = null;
                     try {
                         connection = DataSource.getInstance().getConnection();
-                    } catch (PropertyVetoException ex) {
-                        Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (PropertyVetoException e) {
+                        Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
+                        response.sendRedirect("/error.jsp");
                     }
                     Statement st = connection.createStatement();
                     ResultSet resultSet = st.executeQuery(comm);

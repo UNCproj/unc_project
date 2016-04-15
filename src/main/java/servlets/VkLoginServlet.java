@@ -199,6 +199,7 @@ public class VkLoginServlet extends HttpServlet {
                         SQLQueriesHelper.updateParam(userId, SQLQueriesHelper.LAST_VISIT_DATE_ATTR_ID, null, new Date()));
             }
             catch (Exception e) {
+                Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, e);
                 throw new ServletException(e);
             }
             finally {
