@@ -136,16 +136,30 @@ $(function(){
                     params: attrs
                 })
                     .success(function (data) {
-                        $("div.attributes").append('<div class="col-md-12"><label class="attr-label width-full">Введите название<input type="text" class="form-control  width-full" ng-model="object.name" id="name"></label></div>');
+
+                        $("div.attributes").append('<table class="table table-params"><tbody></tbody></table>');
+
+                        $("div.attributes table.table-params tbody").append(
+                            '<tr>' +
+                                '<td>' +
+                                    'Название' +
+                                '</td>' +
+                                '<td>' +
+                                    '<input type="text" ng-model="object.name" id="name">' +
+                                '</td>' +
+                            '</tr>');
+
                         $scope.arrAttr=[];
+
                         for(var i=0; i<data.length;i++){
                             $scope.arrAttr[$scope.arrAttrIndex] = data[i].attrName;
                             $scope.arrAttrIndex++;
                             $scope.createAttr(data[i].attrName,data[i].attrNameRu,data[i].attrType);
                         }
-                        $("div.attributes").append('<div class="col-md-12">' +
-                            '<button type="button" class="btn btn-default btn-lg width-full" id="btn-load">' +
-                            'Создать</button></div>');
+
+                        $("div.table-pos div.attributes").append(
+                            '<input type="button" class="button-style a-outline button-update" value="Добавить" id="btn-load"' +
+                            'onclick="location.href=\'index.jsp\'">');
 
 
                         $("#btn-load").on('click',function(){
@@ -180,38 +194,62 @@ $(function(){
 
             $scope.createAttr = function(a_name, a_ru_name, a_type){
                 if(a_type==1){
-                    $("div.attributes").append('' +
-                        '<div class="col-md-12"><label class="attr-label width-full">'
-                        +a_ru_name+
-                        '<input type="text" class="form-control width-full" ng-model="object.'+a_name+'" id="'+a_name+'"/>' +
-                        '</label></div>');
+                    $("div.attributes table.table-params tbody").append(
+                        '<tr>' +
+                            '<td>' +
+                                a_ru_name+
+                            '</td>'+
+                            '<td>' +
+                                '<input type="text" ng-model="object.'+a_name+'" id="'+a_name+'"/>' +
+                            '</td>'+
+                        '</tr>'
+                    );
                 }else if(a_type==3){
-                    $("div.attributes").append('' +
-                        '<div class="col-md-12"><label class="attr-label">'
-                        +a_ru_name+
-                        '<input type="file" ng-model="object.'+a_name+'" multiple="multiple" id="'+a_name+'"/>' +
-                        '</label></div>');
+                    $("div.attributes table.table-params tbody").append(
+                        '<tr>' +
+                            '<td>' +
+                                a_ru_name+
+                            '</td>'+
+                            '<td>' +
+                                '<input type="file" ng-model="object.'+a_name+'" multiple="multiple" id="'+a_name+'"/>' +
+                            '</td>'+
+                        '</tr>'
+                    );
                 }else if(a_type==4){
-
-                    $("div.attributes").append('' +
-                        '<div class="col-md-12"><label class="attr-label width-full">'
-                        +a_ru_name+
-                        '<textarea ng-model="object.'+a_name+'" rows="10" class="form-control width-full" id="'+a_name+'"></textarea>' +
-                        '</label></div>');
+                    $("div.attributes table.table-params tbody").append(
+                        '<tr>' +
+                            '<td>' +
+                                a_ru_name+
+                            '</td>'+
+                            '<td>' +
+                                '<textarea ng-model="object.'+a_name+'" rows="5" id="'+a_name+'"></textarea>' +
+                            '</td>'+
+                        '</tr>'
+                    );
                 }else if(a_type==5){
-                    $("div.attributes").append('' +
-                        '<div class="col-md-12"><label class="attr-label width-full">'
-                        +a_ru_name+
-                        '<input type="number" class="form-control width-full" ng-model="object.'+a_name+'" id="'+a_name+'"/>' +
-                        '</label></div>');
+                    $("div.attributes table.table-params tbody").append(
+                        '<tr>' +
+                            '<td>' +
+                                a_ru_name+
+                            '</td>'+
+                            '<td>' +
+                                '<input type="number" ng-model="object.'+a_name+'" id="'+a_name+'"/>' +
+                            '</td>'+
+                        '</tr>'
+                    );
                 }else if(a_type==6){
-                    $("div.attributes").append('' +
-                        '<div class="col-md-12"><label class="attr-label width-full">'
-                        +a_ru_name+
-                        '<select id="'+a_name+'" ng-model="object.'+a_name+'" class="form-control width-full" required ng-options="n for n in '+a_name+'">' +
-                        '<option disabled value=""></option>' +
-                        '</select>' +
-                        '</label></div>');
+                    $("div.attributes table.table-params tbody").append(
+                        '<tr>' +
+                            '<td>' +
+                                a_ru_name +
+                            '</td>'+
+                            '<td>' +
+                                '<select id="'+a_name+'" ng-model="object.'+a_name+'" required ng-options="n for n in '+a_name+'">' +
+                                    '<option disabled value="">Выберите город</option>' +
+                                '</select>' +
+                            '</td>'+
+                        '</tr>'
+                    );
                     if(a_name=='city') {
                         for (var i = 0; i < $scope.city.length; i++) {
                             $("div.attributes select#city").append('<option value="' + $scope.city[i] + '">'+$scope.city[i]+'</option>');

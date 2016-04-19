@@ -16,6 +16,9 @@ import java.io.IOException;
 public class LogoutServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getSession().setAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY, null);
+        request.getSession().setAttribute(BeansHelper.VK_TOKEN, null);
+        request.getSession().setAttribute(BeansHelper.VK_AUTHORIZATION_KEY, null);
+        request.getSession().setAttribute(BeansHelper.VK_CODE, null);
         response.sendRedirect("/unc-project/index");
     }
 }

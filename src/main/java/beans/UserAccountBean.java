@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import db.DataSource;
 import db.SQLQueriesHelper;
+import java.util.logging.Logger;
 
 /**
  * Created by Денис on 15.12.2015.
@@ -20,6 +21,7 @@ import db.SQLQueriesHelper;
 @Stateful
 @Local
 public class UserAccountBean implements UserAccount {
+    public final Logger log = Logger.getLogger("uab_log");
     private String id;
     private String login;
     private String password;
@@ -34,8 +36,9 @@ public class UserAccountBean implements UserAccount {
     private String city = null;
     private String country = null;
     private String additionalInfo = null;
-
     private boolean isLoggedIn = false;
+    private boolean isModer=false;
+    private boolean isAdmin=false;
 
     @Override
     public void initialize(String id, String login, String password, String email, String userPicFile, boolean isLoggedIn, Date currentLoginDate) {
@@ -48,6 +51,10 @@ public class UserAccountBean implements UserAccount {
         lastLoginDate = currentLoginDate;
     }
 
+    
+    public void loadPermissions(){
+        
+    }
     @Override
     public String getId() { return this.id; };
 
@@ -204,7 +211,6 @@ public class UserAccountBean implements UserAccount {
         ResultSet results = statement.executeQuery(SQLQueriesHelper.selectFullObjectInformationById(
                 new String[]{ SQLQueriesHelper.USER_TYPE_ID },
                 new String[]{ id }));
-
         while (results.next()) {
             if (results.getString("attr_name").equals(SQLQueriesHelper.LOGIN_ATTR)) {
                 this.login = results.getString("value");
@@ -214,6 +220,12 @@ public class UserAccountBean implements UserAccount {
                 this.email = results.getString("value");
             } else if (results.getString("attr_name").equals(SQLQueriesHelper.USER_PIC_FILE_ATTR)) {
                 this.userPicFile = results.getString("value");
+            } else if (results.getString("attr_name").equals(SQLQueriesHelper.MODER_ATTR)){
+                if (results.getString("value") != null)
+                this.isModer = results.getString("value").equals("true");
+            } else if (results.getString("attr_name").equals(SQLQueriesHelper.ADMIN_ATTR)){
+                if (results.getString("value") != null)
+                this.isAdmin = results.getString("value").equals("true");
             }
         }
     }
@@ -250,5 +262,19 @@ public class UserAccountBean implements UserAccount {
                 this.additionalInfo = results.getString("value");
             }
         }
+    }
+
+    /**
+     * @return the isModer
+     */
+    public boolean isIsModer() {
+        return isModer;
+    }
+
+    /**
+     * @return the isAdmin
+     */
+    public boolean isIsAdmin() {
+        return isAdmin;
     }
 }

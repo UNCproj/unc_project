@@ -361,4 +361,32 @@
             };
         }
     ]);
+    app.controller('vipAdvertsController', ['$scope', '$http',
+        function($scope, $http){
+
+            $scope.vipAdvertsType = decodeURI($.urlParam('advert'));
+
+
+
+            $scope.loadVipAdverts = function(){
+                console.log("Началась загрузка вип объявлений");
+                console.log($scope.vipAdvertsType);
+                $http({
+                    url: 'load-vip-adverts',
+                    method: 'POST',
+                    params: {
+                        "type": $scope.vipAdvertsType
+                    }
+                })
+                    .success(function(data) {
+                        for (var i=0; i<data.length;i++){
+                            $("div#vip-adverts").append('<a href="/unc-project/unc_object.jsp?id=' + data[i].id + '">'
+                            + data[i].name +'</a><p>' + data[i].price + '</p>');
+                        }
+                    });
+            };
+            $scope.loadVipAdverts();
+        }
+    ]);
 })();
+

@@ -65,6 +65,7 @@ public class AddServlet extends HttpServlet {
             }
 
             String paramValue = request.getParameter(paramName);
+
             obj.setParam(paramName, paramValue);
         }
 

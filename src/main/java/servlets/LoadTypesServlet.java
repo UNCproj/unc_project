@@ -24,7 +24,6 @@ import java.util.Enumeration;
 @WebServlet(name = "LoadTypesServlet", urlPatterns = "/loadTypes")
 public class LoadTypesServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("Сработал LoadTypesServlet");
         request.setCharacterEncoding("utf-8");
         response.setCharacterEncoding("utf-8");
         response.setContentType("text/html");
@@ -34,23 +33,28 @@ public class LoadTypesServlet extends HttpServlet {
         String type3 = request.getParameter("type3");
         String type4 = request.getParameter("type4");
 
+        System.out.println(type1);
+        System.out.println(type2);
+        System.out.println(type3);
+        System.out.println(type4);
+
         PrintWriter out = response.getWriter();
 
         Connection connection = null;
-        try{
+        try {
             connection = DataSource.getInstance().getConnection();
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(SQLQueriesHelper.selectTypes(type1, type2, type3, type4));
-            String [] arrStr = null;
-            if(resultSet.next()){
+            String[] arrStr = null;
+            if (resultSet.next()) {
                 Integer sizeInteger = Integer.valueOf(resultSet.getString("sizeselect"));
                 int size = (int) sizeInteger;
                 int i = 0;
                 arrStr = new String[size];
                 do {
-                    arrStr[i]=resultSet.getString("ot_name");
+                    arrStr[i] = resultSet.getString("ot_name");
                     i++;
-                }while (resultSet.next());
+                } while (resultSet.next());
             }
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();

@@ -3,4 +3,5 @@
 <script src="/unc-project/resources/scripts/bootstrap.min.js"></script>
 <script src="/unc-project/resources/scripts/default.js"></script>
 <script src="/unc-project/resources/scripts/add.js"></script>
+<script src="/unc-project/resources/scripts/index.js"></script>
 
