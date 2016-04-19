@@ -2,12 +2,12 @@ package beans;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import java.util.HashMap;
 
 /**
  * Created by Денис on 18.01.2016.
  */
 @Stateless
-@Local
 public class AdvertBean implements Advert {
     private String id;
     private String name;
@@ -17,12 +17,14 @@ public class AdvertBean implements Advert {
     private String price;
     private String city;
     private String registrationDate;
+    private HashMap<String, String> additionalAttributesMap;
 
     public AdvertBean() {
-
+        additionalAttributesMap = new HashMap<>();
     }
 
     public AdvertBean(String id, String name) {
+        this();
         this.id = id;
         this.name = name;
     }
@@ -90,7 +92,7 @@ public class AdvertBean implements Advert {
 
     @Override
     public void setPrice(String price) {
-        this.price = price;
+        this.price = ("000000000000000" + price).substring(price.length());
     }
 
     @Override
@@ -111,5 +113,15 @@ public class AdvertBean implements Advert {
     @Override
     public void setRegistrationDate(String registrationDate) {
         this.registrationDate = registrationDate;
+    }
+
+    @Override
+    public String getAdditionalAttribute(String name) {
+        return additionalAttributesMap.get(name);
+    }
+
+    @Override
+    public void setAdditionalAttribute(String name, String value) {
+        additionalAttributesMap.put(name, value);
     }
 }

@@ -1,11 +1,25 @@
 package servlets;
 
-import beans.AdvertBean;
+import beans.AdvertsSearch;
+import beans.AdvertsSearchBean;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import db.DataSource;
 import db.SQLQueriesHelper;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.unit.Fuzziness;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.node.Node;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.sort.SortOrder;
 
+import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -14,189 +28,54 @@ import javax.servlet.http.HttpServletResponse;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
+import java.util.*;
+
+import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 /**
  * Возможные значения параметра action:
  * get_adverts - получить список объявлений с заданными параметрами
+ * get_adverts_autocomplete - получить список объявлений с параметрами для автодополнения
  * get_all_categories - получить список всех категорий (дети заданного типа и всех его потомков)
  * get_first_lvl_categories - получить список главных категорий (дети заданного типа)
  * get_adverts_count - получить количество объявлений с заданными параметрами
  * get_adverts_attributes - получить атрибуты заданного типа объявлений
+ * get_attributes_autocomplete - получить автодополнение для атрибута
+ * get_parent_categories - получить иерархию категорий от advert до заданного типа
  */
 @WebServlet(name = "AdvertsListServlet", urlPatterns = "/advertsList")
 public class AdvertsListServlet extends HttpServlet {
+    @EJB
+    private AdvertsSearch searchBean;
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
 
-        if (action.equals("get_adverts")) {
-
-            String adCategoryId = request.getParameter("adCategoryId");
-            String adCategoryName = request.getParameter("adCategoryName");
-            String adsStartingNum = request.getParameter("adsStartingNum");
-            String adsCount = request.getParameter("adsCount");
-            String sortingParam = request.getParameter("sortingParam");
-            String sortingOrder = request.getParameter("sortingOrder");
-            String adNamePattern = request.getParameter("adNamePattern");
-
-            try (
-                    Connection connection = DataSource.getInstance().getConnection();
-                    Statement statement = connection.createStatement()
-            ) {
-                if (adCategoryId == null) {
-                    adCategoryName = request.getParameter("adCategoryName");
-
-                    try (
-                            ResultSet adCatIdResults = statement.executeQuery(
-                                    SQLQueriesHelper.getTypeIdByTypeName(adCategoryName)
-                            )) {
-                        adCatIdResults.next();
-                        adCategoryId = adCatIdResults.getString("id");
-                    }
-                }
-            } catch (SQLException|PropertyVetoException e) {
-                throw new ServletException(e);
+        try {
+            if (action.equals("get_adverts")) {
+                getAdverts(request, response);
+            } else if (action.equals("get_adverts_autocomplete")) {
+                getAdvertsAutocomplete(request, response);
+            } else if (action.equals("get_all_categories")) {
+                getAllCategories(request, response);
+            } else if (action.equals("get_first_lvl_categories")) {
+                getFirstLevelCategories(request, response);
+            } else if (action.equals("get_adverts_count")) {
+                getAdvertsCount(request, response);
+            } else if (action.equals("get_adverts_attributes")) {
+                getAdvertsAttributes(request, response);
+            } else if (action.equals("get_attributes_autocomplete")) {
+                getAttributesAutocomplete(request, response);
+            }else if (action.equals("get_parent_categories")) {
+                getParentCategories(request, response);
             }
-
-            ArrayList<AdvertBean> adverts = getAdverts(adCategoryId, adsStartingNum, adsCount, sortingParam,
-                    sortingOrder, adNamePattern);
-
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            String advListJson = gson.toJson(adverts, adverts.getClass());
-
-            response.setContentType("text/html; charset=UTF-8");
-            try (PrintWriter out = response.getWriter()) {
-                out.print(advListJson);
-            }
-        }
-        else if (action.equals("get_all_categories")) {
-            try (
-                    Connection connection = DataSource.getInstance().getConnection();
-                    Statement statement = connection.createStatement()
-            ) {
-                try (ResultSet childrenTypesResults = statement.executeQuery(
-                        SQLQueriesHelper.getTypeChildren(SQLQueriesHelper.ADVERT_TYPE_ID)
-                )) {
-                    ArrayList<String> categoriesIds = new ArrayList<>();
-                    ArrayList<String> categoriesNames = new ArrayList<>();
-
-                    while (childrenTypesResults.next()) {
-                        categoriesIds.add(childrenTypesResults.getString("ot_id"));
-                        categoriesNames.add(childrenTypesResults.getString("ot_name"));
-                    }
-
-                    ArrayList<String>[] jsonWrapper = new ArrayList[]{categoriesIds, categoriesNames};
-                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                    String categoriesJson = gson.toJson(jsonWrapper, jsonWrapper.getClass());
-
-                    response.setContentType("text/html; charset=UTF-8");
-                    try (PrintWriter out = response.getWriter()) {
-                        out.print(categoriesJson);
-                    }
-                }
-            } catch (SQLException | PropertyVetoException e) {
-                throw new ServletException(e);
-            }
-        }
-        else if (action.equals("get_first_lvl_categories")) {
-            String adCategoryId = request.getParameter("adCategoryId");
-
-            try (
-                    Connection connection = DataSource.getInstance().getConnection();
-                    Statement statement = connection.createStatement()
-            ) {
-                if (adCategoryId == null) {
-                    String adCategoryName = request.getParameter("adCategoryName");
-
-                    try (
-                        ResultSet adCatIdResults = statement.executeQuery(
-                            SQLQueriesHelper.getTypeIdByTypeName(adCategoryName)
-                    )) {
-                        adCatIdResults.next();
-                        adCategoryId = adCatIdResults.getString("id");
-                    }
-                }
-
-                try (ResultSet childrenTypesResults = statement.executeQuery(
-                        SQLQueriesHelper.getTypeFirstLevelChildren(adCategoryId != null ?
-                                                                    adCategoryId :
-                                                                    SQLQueriesHelper.ADVERT_TYPE_ID)
-                )) {
-                    ArrayList<String[]> categories = new ArrayList<>();
-
-                    while (childrenTypesResults.next()) {
-                        categories.add(new String[] {childrenTypesResults.getString("ot_id"),
-                                childrenTypesResults.getString("ot_name")});
-                    }
-
-                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                    String categoriesJson = gson.toJson(categories, categories.getClass());
-
-                    response.setContentType("text/html; charset=UTF-8");
-                    try (PrintWriter out = response.getWriter()) {
-                        out.print(categoriesJson);
-                    }
-                }
-            } catch (SQLException | PropertyVetoException e) {
-                throw new ServletException(e);
-            }
-        }
-        else if (action.equals("get_adverts_count")) {
-            String adCategoryId = request.getParameter("adCategoryId");
-            String adsStartingNum = request.getParameter("adsStartingNum");
-            String adsCount = request.getParameter("adsCount");
-            String sortingParam = request.getParameter("sortingParam");
-            String sortingOrder = request.getParameter("sortingOrder");
-            String adNamePattern = request.getParameter("adNamePattern");
-
-            Integer foundedAdsCount = getAdverts(adCategoryId, adsStartingNum, adsCount, sortingParam,
-                    sortingOrder, adNamePattern).size();
-
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            String advListJson = gson.toJson(foundedAdsCount, foundedAdsCount.getClass());
-
-            response.setContentType("text/html; charset=UTF-8");
-            try (PrintWriter out = response.getWriter()) {
-                out.print(advListJson);
-            }
-        }
-        else if (action.equals("get_adverts_attributes")) {
-            String adCategoryId = request.getParameter("adCategoryId");
-
-            try (
-                    Connection connection = DataSource.getInstance().getConnection();
-                    Statement statement = connection.createStatement()
-            ) {
-                try (ResultSet attrResults = statement.executeQuery(
-                        SQLQueriesHelper.getAllAttributes(adCategoryId == null ? SQLQueriesHelper.ADVERT_TYPE_ID : adCategoryId)
-                )) {
-                    ArrayList<String[]> attributes = new ArrayList<>();
-
-                    while (attrResults.next()) {
-                        attributes.add(
-                                new String[] {
-                                        attrResults.getString("attr_name"),
-                                        attrResults.getString("attr_name_ru"),
-                                        attrResults.getString("attr_type")
-                                }
-                        );
-                    }
-
-                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                    String attrJson = gson.toJson(attributes, attributes.getClass());
-
-                    response.setContentType("text/html; charset=UTF-8");
-                    try (PrintWriter out = response.getWriter()) {
-                        out.print(attrJson);
-                    }
-                }
-            } catch (SQLException | PropertyVetoException e) {
-                throw new ServletException(e);
-            }
+        } catch (SQLException | PropertyVetoException e) {
+            throw new ServletException(e);
         }
     }
 
@@ -204,47 +83,211 @@ public class AdvertsListServlet extends HttpServlet {
         doPost(request, response);
     }
 
-    private ArrayList<AdvertBean> getAdverts(String adCategoryId, String adsStartingNum, String adsCount,
-                                             String sortingParam, String sortingOrder, String adNamePattern)
-            throws ServletException, IOException {
-        ArrayList<AdvertBean> adverts = new ArrayList<>();
+    private void getAdverts(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, PropertyVetoException, SQLException {
+        String adCategoryId = request.getParameter("adCategoryId");
+        String adCategoryName = request.getParameter("adCategoryName");
+        String adsStartingNum = request.getParameter("adsStartingNum");
+        String adsCount = request.getParameter("adsCount");
+        String sortingParam = request.getParameter("sortingParam");
+        String sortingOrder = request.getParameter("sortingOrder");
+        String adNamePattern = request.getParameter("adNamePattern");
+        String[] additionalAttributes = request.getParameterValues("additionalAttributes");
 
-        try (
-                Connection connection = DataSource.getInstance().getConnection();
-                Statement statement = connection.createStatement()
-        ) {
-            try (ResultSet childrenTypesResults = statement.executeQuery(SQLQueriesHelper.getTypeChildren(adCategoryId))) {
-                ArrayList<String> categories = new ArrayList<>();
+        QueryBuilder query =
+                QueryBuilders.boolQuery()
+                        .should(QueryBuilders.matchPhraseQuery("name", adNamePattern)
+                                .fuzziness(Fuzziness.TWO))
+                        .should(QueryBuilders.matchPhraseQuery("description", adNamePattern)
+                                .fuzziness(Fuzziness.TWO));
 
-                while (childrenTypesResults.next()) {
-                    categories.add(childrenTypesResults.getString("ot_id"));
-                }
-
-                try (
-                        ResultSet advListResults = statement.executeQuery(
-                                SQLQueriesHelper.getAdvertsList(categories.toArray(new String[0]),
-                                        adsStartingNum, adsCount, sortingParam, sortingOrder, adNamePattern)
-                        )
-                ) {
-                    while (advListResults.next()) {
-                        AdvertBean adv = new AdvertBean();
-
-                        adv.setId(advListResults.getString("object_id"));
-                        adv.setName(advListResults.getString("object_name"));
-                        adv.setDescription(advListResults.getString(SQLQueriesHelper.DESCRIPTION_ATTR));
-                        adv.setCity(advListResults.getString(SQLQueriesHelper.CITY_ADVERT_ATTR));
-                        adv.setPic(advListResults.getString("pic"));
-                        adv.setPrice(advListResults.getString(SQLQueriesHelper.PRICE_ADVERT_ATTR));
-                        adv.setRegistrationDate(advListResults.getString(SQLQueriesHelper.REG_DATE_ATTR));
-
-                        adverts.add(adv);
-                    }
-                }
-            }
-        } catch (SQLException | PropertyVetoException e) {
-            throw new ServletException(e);
+        if (adNamePattern == null || adNamePattern.equals("")) {
+            query = null;
         }
 
-        return adverts;
+        SearchResponse searchResponse = searchBean.advertsSearch(query, adCategoryId, adCategoryName, sortingParam,
+                sortingOrder, additionalAttributes, adsStartingNum, adsCount);
+
+        SearchHit[] searchHits = searchResponse.getHits().getHits();
+
+        ArrayList<Map<String, Object>> foundedAdverts = new ArrayList<>();
+
+        for (SearchHit res : searchHits) {
+            Map<String, Object> mappedRes = res.getSource();
+            foundedAdverts.add(mappedRes);
+        }
+
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String advListJson = gson.toJson(foundedAdverts, foundedAdverts.getClass());
+
+        response.setContentType("text/html; charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            out.print(advListJson);
+        }
+    }
+
+    private void getAdvertsAutocomplete(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, PropertyVetoException, SQLException {
+        String adCategoryId = request.getParameter("adCategoryId");
+        String adCategoryName = request.getParameter("adCategoryName");
+        String adsStartingNum = request.getParameter("adsStartingNum");
+        String adsCount = request.getParameter("adsCount");
+        String sortingParam = request.getParameter("sortingParam");
+        String sortingOrder = request.getParameter("sortingOrder");
+        String adNamePattern = request.getParameter("adNamePattern");
+        String additionalAttributes[] = request.getParameterValues("additionalAttributes");
+
+        QueryBuilder query = QueryBuilders.matchPhrasePrefixQuery("name", adNamePattern).maxExpansions(10);
+
+        SearchResponse searchResponse = searchBean.advertsSearch(query, adCategoryId, adCategoryName, sortingParam,
+                sortingOrder, additionalAttributes, adsStartingNum, adsCount);
+
+        SearchHit[] searchHits = searchResponse.getHits().getHits();
+
+        Set<String> foundedTitles = new HashSet<>();
+
+        for (SearchHit res: searchHits) {
+            Map<String, Object> mappedRes = res.getSource();
+            foundedTitles.add((String)mappedRes.get("name"));
+        }
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String advListJson = gson.toJson(foundedTitles, foundedTitles.getClass());
+
+        response.setContentType("text/html; charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            out.print(advListJson);
+        }
+    }
+
+    private void getAllCategories(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, PropertyVetoException, SQLException {
+        ArrayList<String>[] allCategories = searchBean.getAllCategories();
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String categoriesJson = gson.toJson(allCategories, allCategories.getClass());
+
+        response.setContentType("text/html; charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            out.print(categoriesJson);
+        }
+    }
+
+    private void getFirstLevelCategories(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, PropertyVetoException, SQLException {
+        String adCategoryId = request.getParameter("adCategoryId");
+        String adCategoryName = request.getParameter("adCategoryName");
+
+        ArrayList<String[]> categories = searchBean.getFirstLevelCategories(adCategoryId,adCategoryName);
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String categoriesJson = gson.toJson(categories, categories.getClass());
+
+        response.setContentType("text/html; charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            out.print(categoriesJson);
+        }
+    }
+
+    private void getAdvertsCount(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, PropertyVetoException, SQLException {
+        String adCategoryId = request.getParameter("adCategoryId");
+        String adCategoryName = request.getParameter("adCategoryName");
+        String adsCount = request.getParameter("adsCount");
+        String sortingParam = request.getParameter("sortingParam");
+        String sortingOrder = request.getParameter("sortingOrder");
+        String adNamePattern = request.getParameter("adNamePattern");
+        String[] additionalAttributes = request.getParameterValues("additionalAttributes");
+
+        QueryBuilder query =
+                QueryBuilders.boolQuery()
+                        .should(QueryBuilders.matchPhraseQuery("name", adNamePattern)
+                                .fuzziness(Fuzziness.TWO))
+                        .should(QueryBuilders.matchPhraseQuery("description", adNamePattern)
+                                .fuzziness(Fuzziness.TWO));
+
+        if (adNamePattern == null || adNamePattern.equals("")) {
+            query = null;
+        }
+
+        SearchResponse searchResponse = searchBean.advertsSearch(query, adCategoryId, adCategoryName, sortingParam,
+                sortingOrder, additionalAttributes, null, adsCount);
+
+        Integer foundedAdsCount = searchResponse.getHits().getHits().length;
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String advListJson = gson.toJson(foundedAdsCount, foundedAdsCount.getClass());
+
+        response.setContentType("text/html; charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            out.print(advListJson);
+        }
+    }
+
+    private void getAdvertsAttributes(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, PropertyVetoException, SQLException {
+        String adCategoryId = request.getParameter("adCategoryId");
+
+        ArrayList<String[]> attributes = searchBean.getAttributes(adCategoryId);
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String attrJson = gson.toJson(attributes, attributes.getClass());
+
+        response.setContentType("text/html; charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            out.print(attrJson);
+        }
+    }
+
+    private void getAttributesAutocomplete(HttpServletRequest request, HttpServletResponse response)
+            throws PropertyVetoException, IOException, SQLException {
+        String adCategoryId = request.getParameter("adCategoryId");
+        String adCategoryName = request.getParameter("adCategoryName");
+        String adsStartingNum = request.getParameter("adsStartingNum");
+        String adsCount = request.getParameter("adsCount");
+        String sortingParam = request.getParameter("sortingParam");
+        String sortingOrder = request.getParameter("sortingOrder");
+        String attrName = request.getParameter("attrName");
+        String attrValuePattern = request.getParameter("attrValuePattern");
+        String additionalAttributes[] = request.getParameterValues("additionalAttributes");
+
+        QueryBuilder query = QueryBuilders.matchPhrasePrefixQuery(attrName, attrValuePattern).maxExpansions(10);
+
+        SearchResponse searchResponse = searchBean.advertsSearch(query, adCategoryId, adCategoryName, sortingParam,
+                sortingOrder, additionalAttributes, adsStartingNum, adsCount);
+
+        SearchHit[] searchHits = searchResponse.getHits().getHits();
+
+        Set<String> foundedTitles = new HashSet<>();
+
+        for (SearchHit res: searchHits) {
+            Map<String, Object> mappedRes = res.getSource();
+            foundedTitles.add((String)mappedRes.get(attrName));
+        }
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String advListJson = gson.toJson(foundedTitles, foundedTitles.getClass());
+
+        response.setContentType("text/html; charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            out.print(advListJson);
+        }
+    }
+
+    private void getParentCategories(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, PropertyVetoException, SQLException {
+        String adCategoryId = request.getParameter("adCategoryId");
+        String adCategoryName = request.getParameter("adCategoryName");
+
+        ArrayList<String> parentsCategories = searchBean.getParentCategories(adCategoryId, adCategoryName);
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String categoriesJson = gson.toJson(parentsCategories, parentsCategories.getClass());
+
+        response.setContentType("text/html; charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            out.print(categoriesJson);
+        }
     }
 }

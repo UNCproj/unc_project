@@ -1,6 +1,7 @@
 package beans;
 
 import javax.ejb.Local;
+import java.util.ArrayList;
 
 /**
  * Created by Денис on 18.01.2016.
@@ -23,4 +24,6 @@ public interface Advert {
     void setCity(String city);
     String getRegistrationDate();
     void setRegistrationDate(String registrationDate);
+    String getAdditionalAttribute(String name);
+    void setAdditionalAttribute(String name, String value);
 }

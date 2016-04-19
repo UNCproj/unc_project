@@ -237,6 +237,12 @@
       <artifactId>commons-lang</artifactId>
       <version>2.3</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.elasticsearch</groupId>
+      <artifactId>elasticsearch</artifactId>
+      <version>2.2.1</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -261,8 +267,8 @@
         <artifactId>wildfly-maven-plugin</artifactId>
         <version>${version.wildfly.maven.plugin}</version>
         <configuration>
-          <hostname>54.174.120.172</hostname>
-          <port>9990</port>
+          <hostname>25.130.2.254</hostname>
+          <port>8050</port>
           <username>unc-user</username>
           <password>pass123</password>
         </configuration>
@@ -288,8 +294,10 @@
             <version>1.0.1.Final</version>
             <configuration>
               <jbossHome>/usr/local/wildfly-8.0.0.Final</jbossHome>
-              <hostname>127.0.0.1</hostname>
+              <hostname>25.108.44.213</hostname>
               <port>8050</port>
+              <username>unc-user</username>
+              <password>pass123</password>
             </configuration>
           </plugin>
         </plugins>

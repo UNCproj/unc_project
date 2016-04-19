@@ -510,6 +510,7 @@ public class SQLQueriesHelper {
                         "          select  object_id,\n" +
                         "                  max(object_name) as object_name,\n" +
                         "                  max(type) as type,\n" +
+                        "                  max(type_id) as type_id,\n" +
                         "                  max(price) as price,\n" +
                         "                  max(description) as description,\n" +
                         "                  max(pic) as pic,\n" +
@@ -518,6 +519,7 @@ public class SQLQueriesHelper {
                         "            from  (\n" +
                         "                  select  object_id,\n" +
                         "                          object_name,\n" +
+                        "                          type_id,\n" +
                         "                          type,\n" +
                         "                          case\n" +
                         "                            when attr_name = 'price'\n" +
@@ -558,6 +560,7 @@ public class SQLQueriesHelper {
                         "                    from  (\n" +
                         "                  select  o.object_id,\n" +
                         "                          o.object_name,\n" +
+                        "                          ot.ot_id as type_id,\n" +
                         "                          ot.ot_name as type,\n" +
                         "                          a.attr_name as attr_name,\n" +
                         "                          a.attr_type,\n" +
