@@ -237,18 +237,17 @@
       <artifactId>commons-lang</artifactId>
       <version>2.3</version>
     </dependency>
-<<<<<<< HEAD
 
     <dependency>
       <groupId>org.elasticsearch</groupId>
       <artifactId>elasticsearch</artifactId>
       <version>2.2.1</version>
     </dependency>
-=======
+
     <dependency>
-	<groupId>org.apache.oltu.oauth2</groupId>
-	<artifactId>org.apache.oltu.oauth2.client</artifactId>
-	<version>1.0.1</version>
+        <groupId>org.apache.oltu.oauth2</groupId>
+        <artifactId>org.apache.oltu.oauth2.client</artifactId>
+        <version>1.0.1</version>
     </dependency>
     
     <dependency>
@@ -256,8 +255,6 @@
 	<artifactId>jackson-mapper-lgpl</artifactId>
 	<version>1.9.13</version>
     </dependency>
-
->>>>>>> 4be8e991857e652875ebab07da8361bb3f944289
   </dependencies>
 
   <build>
@@ -309,7 +306,7 @@
             <version>1.0.1.Final</version>
             <configuration>
               <jbossHome>/usr/local/wildfly-8.0.0.Final</jbossHome>
-              <hostname>25.108.44.213</hostname>
+              <hostname>vinokurov2.no-ip.biz</hostname>
               <port>8050</port>
               <username>unc-user</username>
               <password>pass123</password>

@@ -23,19 +23,21 @@
     } catch (SQLException|PropertyVetoException e) {
         e.printStackTrace();
     }
+
+    request.setAttribute("currentObjectType", currentObject.getType());
 %>
 <html ng-app="default">
 <head>
     <title>update | <%= currentObject.getName() %></title>
     <c:catch var="e">
-        <c:import url="/includes/update/scripts/<%= currentObject.getType() %>.jspf" />
+        <c:import url="/includes/update/scripts/${currentObjectType}.jspf" />
     </c:catch>
     <c:if test="${!empty e}">
         <c:import url="/includes/update/scripts/default.jspf" />
     </c:if>
 
     <c:catch var="e">
-        <c:import url="/includes/update/css/<%= currentObject.getType() %>.jspf" />
+        <c:import url="/includes/update/css/${currentObjectType}.jspf" />
     </c:catch>
     <c:if test="${!empty e}">
         <c:import url="/includes/update/css/default.jspf" />
@@ -67,7 +69,7 @@
                         <form>
                             <% for (int j = 0; j < currentGroupParams.size(); j++) { %>
                             <c:catch var="e">
-                                <c:import url="/includes/update/attr_views/<%= currentObject.getType() %>.jsp" />
+                                <c:import url="/includes/update/attr_views/${currentObjectType}.jsp" />
                             </c:catch>
                             <c:if test="${!empty e}">
                                 <c:import url="/includes/update/attr_views/default.jsp">
@@ -87,12 +89,9 @@
             <% } %>
         </div>
         <c:catch var="e">
-            <c:import url="/includes/update/tabs/<%= currentObject.getType() %>.jspf" />
+            <c:import url="/includes/update/tabs/${currentObjectType}.jspf" />
         </c:catch>
     </div>
-    <c:catch var="e">
-        <c:import url="/includes/update/footers/<%= currentObject.getType() %>.jspf" />
-    </c:catch>
     <c:catch var="e">
                 <c:import url="/includes/object/footers/default.jspf" />
     </c:catch>

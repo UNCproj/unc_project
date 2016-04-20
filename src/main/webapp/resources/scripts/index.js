@@ -207,6 +207,12 @@
 
     app.controller('attributesController', ['$scope', '$http',
         function($scope, $http) {
+            $scope.isCollapsed = true;
+
+            $scope.changeCollapsed = function() {
+                $scope.isCollapsed = !$scope.isCollapsed;
+            };
+
             $scope.$watch('selectedCategory.id', function() {
                 $http({
                     url: 'advertsList',

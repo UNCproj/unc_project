@@ -1,48 +1,63 @@
-package schedule.tasks;
+package beans;
 
-import beans.Advert;
-import beans.AdvertBean;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import db.DataSource;
 import db.SQLQueriesHelper;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
 
-import javax.servlet.ServletException;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+
 import java.beans.PropertyVetoException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import static org.elasticsearch.node.NodeBuilder.*;
+import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 /**
- * Created by Денис on 21.03.2016.
+ * Created by Денис on 10.04.2016.
  */
-public class IndexAdvertsTask implements Runnable {
+@Startup
+@Singleton
+public class ElasticSearchManager {
+    private Node node;
+    private Client client;
 
-    private boolean isIndexed = false;
-
-    @Override
-    public void run() {
-        indexAdverts();
+    @PostConstruct
+    private void createClientInstance() {
+        this.node = createNode();
+        this.client = this.node.client();
+        reindex();
     }
 
-    public void indexAdverts() {
-        Node node = nodeBuilder()
-                .settings(Settings.settingsBuilder().put("http.enabled", false))
-                .client(true)
-                .node();
+    @PreDestroy
+    private void cleanUpResources() {
+        this.client.close();
+        this.node.close();
+    }
 
-        Client client = node.client();
+    public Client getClient() {
+        return client;
+    }
 
+    public void reindex() {
+        deleteIndex();
+        createIndex();
+    }
+
+    public void createIndex() {
         ArrayList<AdvertBean> indexingAdverts = new ArrayList<>();
 
         try {
@@ -63,15 +78,16 @@ public class IndexAdvertsTask implements Runnable {
             String id = response.getId();
             id.charAt(0);
         }
-
-        isIndexed = true;
-        node.close();
     }
 
-    public boolean isIndexed() {
-        return isIndexed;
+    public void deleteIndex() {
+        DeleteIndexResponse delete = client.admin()
+                .indices()
+                .delete(
+                        new DeleteIndexRequest("_all")
+                )
+                .actionGet();
     }
-
 
     private ArrayList<AdvertBean> getAdverts(String adCategoryId, String adsStartingNum, String adsCount,
                                              String sortingParam, String sortingOrder, String adNamePattern)
@@ -114,5 +130,16 @@ public class IndexAdvertsTask implements Runnable {
         }
 
         return adverts;
+    }
+
+    private Node createNode() {
+        return nodeBuilder()
+                .settings(
+                        Settings.settingsBuilder()
+                                .put("http.enabled", false)
+                                .put("path.home", "C:\\elasticsearch-2.2.1")
+                )
+                .client(true)
+                .node();
     }
 }

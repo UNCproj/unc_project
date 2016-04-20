@@ -14,21 +14,22 @@
         <param-value>/var</param-value>
     </context-param>
 
+    <context-param>
+        <param-name>default.userpic</param-name>
+        <param-value>/var/img/user-pics/default.png</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>default.advert.image</param-name>
+        <param-value>/var/img/adverts/default.png</param-value>
+    </context-param>
+
     <servlet>
         <servlet-name>UploadServlet</servlet-name>
         <servlet-class>servlets.UploadServlet</servlet-class>
         <multipart-config>
             <location>C:\var\tmp</location>
         </multipart-config>
-    </servlet>
-
-    <servlet>
-        <servlet-name>RegistrationServlet</servlet-name>
-        <servlet-class>servlets.RegistrationServlet</servlet-class>
-        <init-param>
-            <param-name>default.userpic</param-name>
-            <param-value>/var/img/user-pics/default.png</param-value>
-        </init-param>
     </servlet>
 
     <servlet-mapping>

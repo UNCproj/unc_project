@@ -2,22 +2,18 @@ package beans;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.annotations.SerializedName;
 import com.google.gson.internal.LinkedTreeMap;
-import com.google.gson.reflect.TypeToken;
 import db.DataSource;
 import db.SQLQueriesHelper;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.index.mapper.StrictDynamicMappingException;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.jboss.as.clustering.ManagedScheduledExecutorService;
-import schedule.tasks.IndexAdvertsTask;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -40,8 +36,7 @@ import java.util.stream.Collectors;
 @Stateless
 public class AdvertsSearchBean implements AdvertsSearch {
     @EJB
-    private ESClientsProvider esClientsProvider;
-    private ManagedScheduledExecutorService executorService;
+    private ElasticSearchManager elasticSearchManager;
 
     @Override
     public SearchResponse advertsSearch(QueryBuilder query,
@@ -59,7 +54,7 @@ public class AdvertsSearchBean implements AdvertsSearch {
             advertsTypes.add(adCategoryId);
         }
 
-        Client client = esClientsProvider.getClient();
+        Client client = elasticSearchManager.getClient();
 
         SearchRequestBuilder searchRequestBuilder = client.prepareSearch("adverts")
                 .setSearchType(SearchType.DEFAULT);
@@ -234,12 +229,6 @@ public class AdvertsSearchBean implements AdvertsSearch {
                 return parentsCategories;
             }
         }
-    }
-
-    @Override
-    public void runIndexer() {
-        IndexAdvertsTask indexAdvertsTask = new IndexAdvertsTask();
-        executorService.scheduleAtFixedRate(indexAdvertsTask, 0L, 6L, TimeUnit.HOURS);
     }
 
     private ArrayList<String> getSubCategories(String adCategoryId) throws PropertyVetoException, SQLException, IOException {

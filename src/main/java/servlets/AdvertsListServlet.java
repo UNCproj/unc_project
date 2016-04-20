@@ -211,8 +211,14 @@ public class AdvertsListServlet extends HttpServlet {
             query = null;
         }
 
-        SearchResponse searchResponse = searchBean.advertsSearch(query, adCategoryId, adCategoryName, sortingParam,
-                sortingOrder, additionalAttributes, null, adsCount);
+        SearchResponse searchResponse = null;
+        try {
+            searchResponse = searchBean.advertsSearch(query, adCategoryId, adCategoryName, sortingParam,
+                    sortingOrder, additionalAttributes, null, adsCount);
+        }
+        catch (Exception e) {
+            e.getMessage();
+        }
 
         Integer foundedAdsCount = searchResponse.getHits().getHits().length;
 

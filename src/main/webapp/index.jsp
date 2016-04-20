@@ -130,7 +130,10 @@
                                 <div class="panel-heading">
                                     <h4 class="panel-title">
                                         <a data-toggle="collapse" href="#attrCollapse">
-                                            <span ng-class="{caret-right}">Атрибуты</span>
+                                            <span ng-class="{caret-right:isCollapsed}"
+                                                  ng-click="changeCollapsed()">
+                                                Атрибуты
+                                            </span>
                                         </a>
                                     </h4>
                                 </div>
@@ -200,6 +203,9 @@
                         <ul class="search-results list-group" ng-if="foundedAds.length">
                             <li class="list-group-item" ng-repeat="adv in foundedAds">
                                 <a href="" ng-click="redirToAdvertPage(adv.id)">
+                                    <div class="img">
+                                        <img width="500" height="500" src="{{adv.image}}" alt="${initParam.get("default.advert.image")}}">
+                                    </div>
                                     <div class="name">
                                         <h3>{{adv.name}}</h3>
                                     </div>

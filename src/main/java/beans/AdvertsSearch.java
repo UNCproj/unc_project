@@ -24,6 +24,4 @@ public interface AdvertsSearch {
     ArrayList<String[]> getAttributes(String adCategoryId) throws IOException, SQLException, PropertyVetoException;
     ArrayList<String[]> getFirstLevelCategories(String adCategoryId, String adCategoryName) throws SQLException, IOException, PropertyVetoException;
     ArrayList<String> getParentCategories(String adCategoryId, String adCategoryName) throws SQLException, IOException, PropertyVetoException;
-
-    void runIndexer();
 }
