@@ -8,7 +8,9 @@ import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.node.Node;
 
 import javax.annotation.PostConstruct;
@@ -18,6 +20,8 @@ import javax.ejb.Startup;
 
 import java.beans.PropertyVetoException;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,20 +36,19 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 @Startup
 @Singleton
 public class ElasticSearchManager {
-    private Node node;
     private Client client;
 
     @PostConstruct
-    private void createClientInstance() {
-        this.node = createNode();
-        this.client = this.node.client();
+    private void createClientInstance() throws UnknownHostException {
+        client = TransportClient.builder().build().addTransportAddress(
+                new InetSocketTransportAddress(InetAddress.getByName("vinokurov2.no-ip.biz"), 9300)
+        );
         reindex();
     }
 
     @PreDestroy
     private void cleanUpResources() {
         this.client.close();
-        this.node.close();
     }
 
     public Client getClient() {
