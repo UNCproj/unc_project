@@ -164,14 +164,17 @@ public class UncObject {
         }
     }
     
-    public ArrayList<String> lisrReferences()  throws IOException, SQLException, PropertyVetoException {
+    public ArrayList<String[]> lisrReferences()  throws IOException, SQLException, PropertyVetoException {
         try(Connection connection = DataSource.getInstance().getConnection();
             Statement statement = connection.createStatement())
         {
-            ArrayList<String> list = new ArrayList<>();
+            ArrayList<String[]> list = new ArrayList<>();
             ResultSet results = statement.executeQuery(SQLQueriesHelper.getListReferences(id));
             while (results.next()) {
-                list.add(results.getString("OBJECT_ID"));
+                String[] mass = new String[2];
+                mass[0] = results.getString("OBJECT_ID");
+                mass[1] = results.getString("OBJECT_NAME");
+                list.add(mass);
             }
             return list;
         }

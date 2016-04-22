@@ -12,6 +12,23 @@ and open the template in the editor.
     margin-right: 100px;
 }
 
+.attr-center{
+    text-align: center;
+    vertical-align: middle !important;
+}
+
+.img {
+    max-height: 400px;
+    max-width: 300px;
+    height: auto;
+    width: auto;
+}
+
+.graph-pos {
+    margin-left: 100px;
+    margin-right: 100px;
+}
+
 .table-params {
     border-collapse: initial;
 }
@@ -33,6 +50,20 @@ table {
     border-spacing: 0;
 }
 
+
+.custom-tabs li a {
+    background: #DCDCDC !important;
+    transition: background 0.3s;
+    color: #000
+}
+
+.custom-tabs .active a {
+    background: #FFF !important;
+}
+
+.button-update:focus, .button-update:hover {    
+    color: #23527c
+}
 
 .custom-tabs li a {
     background: #DCDCDC !important;

@@ -1,23 +1,14 @@
 package servlets;
 
-import beans.AdvertsSearch;
+import beans.AdvertsManager;
 import beans.AdvertsSearchBean;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import db.DataSource;
-import db.SQLQueriesHelper;
-import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.node.Node;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.sort.SortOrder;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
@@ -28,14 +19,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Type;
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.*;
-
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Возможные значения параметра action:
@@ -51,7 +39,9 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 @WebServlet(name = "AdvertsListServlet", urlPatterns = "/advertsList")
 public class AdvertsListServlet extends HttpServlet {
     @EJB
-    private AdvertsSearch searchBean;
+    private AdvertsSearchBean searchBean;
+    @EJB
+    private AdvertsManager advertsManagerBean;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
@@ -163,7 +153,7 @@ public class AdvertsListServlet extends HttpServlet {
 
     private void getAllCategories(HttpServletRequest request, HttpServletResponse response)
             throws IOException, PropertyVetoException, SQLException {
-        ArrayList<String>[] allCategories = searchBean.getAllCategories();
+        ArrayList<String>[] allCategories = advertsManagerBean.getAllCategories();
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String categoriesJson = gson.toJson(allCategories, allCategories.getClass());
@@ -179,7 +169,7 @@ public class AdvertsListServlet extends HttpServlet {
         String adCategoryId = request.getParameter("adCategoryId");
         String adCategoryName = request.getParameter("adCategoryName");
 
-        ArrayList<String[]> categories = searchBean.getFirstLevelCategories(adCategoryId,adCategoryName);
+        ArrayList<String[]> categories = advertsManagerBean.getFirstLevelCategories(adCategoryId,adCategoryName);
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String categoriesJson = gson.toJson(categories, categories.getClass());
@@ -235,7 +225,7 @@ public class AdvertsListServlet extends HttpServlet {
             throws IOException, PropertyVetoException, SQLException {
         String adCategoryId = request.getParameter("adCategoryId");
 
-        ArrayList<String[]> attributes = searchBean.getAttributes(adCategoryId);
+        ArrayList<String[]> attributes = advertsManagerBean.getAttributes(adCategoryId);
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String attrJson = gson.toJson(attributes, attributes.getClass());
@@ -286,7 +276,7 @@ public class AdvertsListServlet extends HttpServlet {
         String adCategoryId = request.getParameter("adCategoryId");
         String adCategoryName = request.getParameter("adCategoryName");
 
-        ArrayList<String> parentsCategories = searchBean.getParentCategories(adCategoryId, adCategoryName);
+        ArrayList<String> parentsCategories = advertsManagerBean.getParentCategories(adCategoryId, adCategoryName);
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String categoriesJson = gson.toJson(parentsCategories, parentsCategories.getClass());

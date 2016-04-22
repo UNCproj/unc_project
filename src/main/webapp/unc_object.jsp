@@ -28,6 +28,7 @@
         currentObject.selectFromDB();
     } catch (SQLException|PropertyVetoException e) {
         e.printStackTrace();
+        response.sendRedirect("error.jsp");
     }
     
     
@@ -55,7 +56,6 @@
 <!DOCTYPE html>
 <html ng-app="objectSettings">
 <head>
-    <script type="text/javascript" src="jshash-2.2/md5.js"></script>
     <c:catch var="e">
         <c:import url="/includes/object/scripts/${currentObjectType}.jspf" />
     </c:catch>
@@ -63,7 +63,7 @@
         <c:import url="/includes/object/scripts/default.jspf" />
     </c:if>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title><%= currentObject.getParentType() %></title>
+    <title><%= currentObject.getName() %></title>
     <c:catch var="e">
         <c:import url="/includes/object/css/<%= currentObject.getParentType() %>.jspf" />
     </c:catch>
@@ -80,9 +80,15 @@
                  <%if (!"1".equals(currentObject.getType())) {%>
                      <div class="list-categories clearfix">
                          <ul>
+                             <li class="list-categories-li">
+                                    <a href="/unc-project/index.jsp">Главная</a>
+                             </li>
                              <% for (int i = 0; i < listCategories.size(); i++ ) { %>
                                 <li class="list-categories-li">
-                                    <a href="#"><%= listCategories.get(i) %></a>
+                                    <script type="text/javascript">
+                                        var temp = encodeURIComponent('<%= listCategories.get(i) %>');
+                                        document.write('<a href="/unc-project/index.jsp?categoryName=' + temp + '"><%= listCategories.get(i) %></a>');
+                                    </script>
                                 </li>
                              <% } %>
                              <li class="list-categories-li"><%= currentObject.getName() %></li>
@@ -91,15 +97,15 @@
                   <% } %>
                     <ul class="custom-tabs nav nav-tabs tabs" id="tab_name">
                     <% if (currentObject.getAttributeGroups() != null && currentObject.getAttributeGroups().size() != 0) {%>
-                         <li class="active"><a href="#tab<%= currentObject.getAttributeGroups().get(0) %>" data-toggle="tab"><%= currentObject.getAttributeGroups().get(0) %></a></li>
+                         <li class="active"><a href="#tab<%= currentObject.getAttributeGroups().get(0) %>" data-toggle="tab">Основная информация</a></li>
                          <% for (int i = 1; i < currentObject.getAttributeGroups().size(); i++) { %>
-                                 <li><a href="#tab<%= currentObject.getAttributeGroups().get(i) %>" data-toggle="tab"><%= currentObject.getAttributeGroups().get(i) %></a></li>
+                                 <li><a href="#tab<%= currentObject.getAttributeGroups().get(i) %>" data-toggle="tab">Дополнительная информация</a></li>
                          <% } %>
                          <%if ("1".equals(currentObject.getType())) {%>
                                  <li><a href="#statid" data-toggle="tab">Статистика</a></li>
                          <% } %>
                          <%if ("4".equals(currentObject.getParentType())) {%>
-                                 <li><a href="#adstatid" data-toggle="tab">Статистика</a></li>
+                                 <li><a href="#adstatid" data-toggle="tab">Статистика просмотров</a></li>
                          <% } %>
                      <% } %>
                      </ul>
@@ -132,7 +138,6 @@
                 
                          <%if ("1".equals(currentObject.getType())) {%>
                             <div id="statid" class="tab-pane fade in">
-                               <h3>Статистика просмотров объявлений:</h3>
                                <div ng-controller="LineCtrl" >
                                     <div id = "dropdown1" action="" class="tab-pane fade in" ng-show="isExistData">
                                         <div class="dropdown">
@@ -155,9 +160,13 @@
                         <% } %>                       
                         <%if ("4".equals(currentObject.getParentType())) {%>
                             <div id="adstatid" class="tab-pane fade in">
+<<<<<<< HEAD
                                 <input type="hidden" id="hidden_user_name" value="${uname}">
                                <h3>Статистика просмотров объявления:</h3>
                                <div ng-controller="AdvertStatCtrl">
+=======
+                               <div class="graph-pos" ng-controller="AdvertStatCtrl">
+>>>>>>> 19924ef9f91a44245d3ca43a47ab3ac5c73c8f05
                                     <canvas id="line2" class="chart chart-line" chart-data="data"
                                       chart-labels="labels" chart-legend="true" chart-series="series"
                                       chart-click="onClick" chart-options="opts" width="800" height="400">
@@ -167,21 +176,28 @@
                             </div>
                         <% } %>
                         <%if ("4".equals(currentObject.getParentType()) && user != null && user.isLoggedIn() && !currentObject.isVip()) {%>
-                        <div>
+                        <div class="robokassa-button" >
+                            <ul>
+                                <li class="robo-li robokassa-li">
+                                    Оплатить Vip-статус 
+                                </li>
+                            
                             <%
-                            String sMrchLogin = "UNC-objavlenija";
-    String sMrchPass1 = "VoSO6r17j0sRbryq9BLm";
-    //String sMrchPass2 = "n8DcTF8ogp410TZQqJgI";
-    String nInvId = "100";
-    String sDesc = "Test payment ROBOKASSA";
-    String sOutSum = "1.00";
-    String sCulture = "ru";
-    String sEncoding = "utf-8";
-    String shp_id_a = currentObject.getId();
-    String crc = currentObject.MD5(new String[] {sMrchLogin, sOutSum, nInvId, sMrchPass1, "shp_id_a="+shp_id_a});
-    %>
-    <script language=JavaScript src='https://auth.robokassa.ru/Merchant/PaymentForm/FormMS.js?MerchantLogin=<%= sMrchLogin%>&OutSum=<%= sOutSum%>&InvoiceID=<%= nInvId%>&Description=<%= sDesc%>&shp_id_a=<%= shp_id_a%>&isTest=1&SignatureValue=<%= crc%>'></script>;
-
+                            String sMrchLogin = "UNC-project";
+                            String sMrchPass1 = "GVic7cAaCBs52j71lCuk";
+                            //String sMrchPass2 = "n8DcTF8ogp410TZQqJgI";
+                            String nInvId = "100";
+                            String sDesc = "Test payment ROBOKASSA";
+                            String sOutSum = "1.00";
+                            String sCulture = "ru";
+                            String sEncoding = "utf-8";
+                            String shp_id_a = currentObject.getId();
+                            String crc = currentObject.MD5(new String[] {sMrchLogin, sOutSum, nInvId, sMrchPass1, "shp_id_a="+shp_id_a});
+                            %>
+                                <li class="robo-li">
+                                    <script language=JavaScript src='https://auth.robokassa.ru/Merchant/PaymentForm/FormSS.js?MerchantLogin=<%= sMrchLogin%>&OutSum=<%= sOutSum%>&InvoiceID=<%= nInvId%>&Description=<%= sDesc%>&shp_id_a=<%= shp_id_a%>&isTest=1&SignatureValue=<%= crc%>'></script>;
+                                </li>
+                            </ul>
                         </div>
                         <%}%>
                             <% if ((user != null)&&user.isIsModer()&&("4".equals(currentObject.getParentType()))) { %>
@@ -196,23 +212,19 @@
                             }
                             %>
                  <div class="references">
-                    <h3>Список ссылок</h3>
+                    <% ArrayList<String[]> listReferences = currentObject.lisrReferences(); %>
+                    <% if ("1".equals(currentObject.getType())) { %>
+                    <h4>Список обьявлений</h4>
                     <ul class="references-ul">
-                        <% ArrayList<String> listReferences = currentObject.lisrReferences(); %>
-                        <% for (int i = 0; i < listReferences.size(); i++) {
-                                UncObject object = new UncObject(listReferences.get(i), null, true); 
-                                try {
-                                    object.selectFromDB();
-                                } catch (SQLException|PropertyVetoException e) {
-                                    e.printStackTrace();
-                                }
-                                //String attrGroupName = currentObject.getAttributeGroups().get(i);
-                                //ArrayList<Param> currentGroupParams = currentObject.getParams(attrGroupName); %>
+                        <% for (int i = 0; i < listReferences.size(); i++) { %>
                         <li class="references-ul-li">
-                            <a a href="unc_object.jsp?id=<%= listReferences.get(i) %>"><%= object.getName() %></a>
+                            <a a href="unc_object.jsp?id=<%= listReferences.get(i)[0] %>"><%= listReferences.get(i)[1] %></a>
                         </li>
                         <% } %>
                     </ul>
+                    <%} else if ("4".equals(currentObject.getParentType())) { %>
+                    <h4 class="robokassa-li">Продавец : <a a href="unc_object.jsp?id=<%= listReferences.get(0)[0] %>"><%= listReferences.get(0)[1] %></a></h4>
+                    <%}%>
                  </div>
             </div>
             <c:catch var="e">

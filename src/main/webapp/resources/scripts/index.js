@@ -6,6 +6,8 @@
             return -1;
         }
 
+        results[1] = decodeURIComponent(results[1]);
+
         return results[1] || -1;
     };
 
@@ -65,8 +67,6 @@
                     });
             };
 
-            $scope.search(true);
-
             $scope.loadParentCategories = function(categoryId, categoryName) {
                 var params = {"action": "get_parent_categories"};
 
@@ -85,6 +85,17 @@
                     .success(function (data) {
                         $scope.enteredCategories = data;
                     });
+            }
+
+            var catName = $.urlParam('categoryName');
+
+            if (catName !== -1) {
+                $scope.selectedCategory.id = -1;
+                $scope.selectedCategory.name = catName;
+                $scope.search();
+            }
+            else {
+                $scope.search(true);
             }
         }
     ]);
@@ -105,13 +116,6 @@
         function($scope, $http) {
             $scope.selectedLevelCategories = [];
             $scope.foundedHelperAds = [];
-
-            var catName = $.urlParam('categoryName');
-
-            if (catName !== -1) {
-                $scope.selectedCategory.id = -1;
-                $scope.selectedCategory.name = catName;
-            }
 
             $scope.$watch('enteredCategories', function() {
                 var selectedCategoryParent = $scope.enteredCategories[$scope.enteredCategories.length - 2];
