@@ -127,13 +127,11 @@
                     <div class="attributes col-md-8 col-md-offset-2" ng-if="searchButtonClicked || defaultCategoryChanged" ng-controller="attributesController as attrCtrl">
                         <div class="panel-group">
                             <div class="panel panel-default">
-                                <div class="panel-heading">
+                                <div class="panel-heading" ng-click="changeCollapsed()">
                                     <h4 class="panel-title">
                                         <a data-toggle="collapse" href="#attrCollapse">
-                                            <span ng-class="{caret-right:isCollapsed}"
-                                                  ng-click="changeCollapsed()">
-                                                Атрибуты
-                                            </span>
+                                            <span ng-class="isCollapsed ? 'caret-right' : 'caret'"></span>
+                                            Атрибуты
                                         </a>
                                     </h4>
                                 </div>
@@ -204,16 +202,18 @@
                             <li class="list-group-item" ng-repeat="adv in foundedAds">
                                 <a href="" ng-click="redirToAdvertPage(adv.id)">
                                     <div class="img">
-                                        <img width="500" height="500" src="{{adv.image}}" alt="${initParam.get("default.advert.image")}}">
+                                        <img ng-src="{{adv.image != undefined ? adv.image : '${initParam.get("default.advert.image")}'}}">
                                     </div>
-                                    <div class="name">
-                                        <h3>{{adv.name}}</h3>
-                                    </div>
-                                    <div class="description">
-                                        {{adv.description}}
-                                    </div>
-                                    <div class="price">
-                                        {{adv.price}} руб.
+                                    <div class="main-content">
+                                        <div class="name">
+                                            <h3>{{adv.name}}</h3>
+                                        </div>
+                                        <div class="description">
+                                            {{adv.description}}
+                                        </div>
+                                        <div class="price">
+                                            {{adv.price}} руб.
+                                        </div>
                                     </div>
                                 </a>
                             </li>

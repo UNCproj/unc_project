@@ -160,13 +160,13 @@
                         <% } %>                       
                         <%if ("4".equals(currentObject.getParentType())) {%>
                             <div id="adstatid" class="tab-pane fade in">
-<<<<<<< HEAD
+
                                 <input type="hidden" id="hidden_user_name" value="${uname}">
                                <h3>Статистика просмотров объявления:</h3>
                                <div ng-controller="AdvertStatCtrl">
-=======
+
                                <div class="graph-pos" ng-controller="AdvertStatCtrl">
->>>>>>> 19924ef9f91a44245d3ca43a47ab3ac5c73c8f05
+
                                     <canvas id="line2" class="chart chart-line" chart-data="data"
                                       chart-labels="labels" chart-legend="true" chart-series="series"
                                       chart-click="onClick" chart-options="opts" width="800" height="400">

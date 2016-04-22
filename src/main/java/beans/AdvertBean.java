@@ -1,6 +1,5 @@
 package beans;
 
-import javax.ejb.Local;
 import javax.ejb.Stateless;
 import java.util.HashMap;
 
@@ -92,7 +91,7 @@ public class AdvertBean implements Advert {
 
     @Override
     public void setPrice(String price) {
-        this.price = ("000000000000000" + price).substring(price.length());
+        this.price = price;
     }
 
     @Override
