@@ -146,9 +146,19 @@ public class SQLQueriesHelper {
     }
     
     static public String getListReferences(String objectId) {
-        StringBuffer query = new StringBuffer("select  OBJECT_ID\n" +
-                        "  from  unc_references\n" +
-                        "  where OBJECT_REFERENCE_ID = ");
+        StringBuffer query = new StringBuffer("select  r.OBJECT_ID,\n" +
+                        "        o.OBJECT_NAME\n" +
+                        "from  unc_references r\n" +
+                        "  left join UNC_OBJECTS o\n" +
+                        "    on r.OBJECT_ID = o.OBJECT_ID\n" +
+                        "where r.OBJECT_REFERENCE_ID =  " + objectId +
+                        "union \n" +
+                        "select  rr.OBJECT_REFERENCE_ID,\n" +
+                        "        oo.OBJECT_NAME\n" +
+                        "from  unc_references rr\n" +
+                        "  left join UNC_OBJECTS oo\n" +
+                        "    on rr.OBJECT_REFERENCE_ID = oo.OBJECT_ID\n" +
+                        "where rr.OBJECT_ID = ");
         query.append(objectId);
         String queryString = query.toString();
         return queryString;
@@ -243,7 +253,7 @@ public class SQLQueriesHelper {
             query.append(" or o.object_id = " + ids[i]);
         }
 
-        query.append(  ") order by o.object_id,\n" +
+        query.append(  ") order by aot.ATTR_ORDER,o.object_id,\n" +
                 "         a.attr_id");
 
         String queryString = query.toString();
@@ -289,7 +299,7 @@ public class SQLQueriesHelper {
             query.append(" or o.object_id = " + ids[i]);
         }
 
-        query.append(  ") order by o.object_id,\n" +
+        query.append(  ") order by aot.ATTR_ORDER,o.object_id,\n" +
                 "         a.attr_id");
 
         String queryString = query.toString();
