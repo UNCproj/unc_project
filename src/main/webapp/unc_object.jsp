@@ -18,6 +18,7 @@
     Logger log = Logger.getLogger("unc_obj_log");
     String objectId = request.getParameter("id");
     UncObject currentObject = new UncObject(objectId, null, true);
+    request.setAttribute("currentObjectType", currentObject.getParentType());
     
     if (currentObject.getType()==null){
         response.sendRedirect("jsp404.jsp");   
@@ -31,13 +32,24 @@
     
     
     Param prm = currentObject.getParam("is_invalid");
+    Param prm_del_msg = currentObject.getParam("delete_msg");
+    Param prm_del_id = currentObject.getParam("delete_by");
+    String del_id = "", del_msg="";
     if ((prm!=null)&&(prm.getValue()!=null)&&(prm.getValue().equals("true"))){
-        response.sendRedirect("jsp404.jsp");   
+        if (prm_del_msg != null)
+            del_msg = prm_del_msg.getValue();
+        if (prm_del_id != null)
+            del_id = prm_del_id.getValue();
+        response.sendRedirect("ModerServlet/deleted?del_id="+del_id+"&del_msg="+del_msg);
     }
+    
     ArrayList<String> listCategories = currentObject.selectCategory(currentObject.getType());
     
 
     UserAccountBean user = (UserAccountBean)request.getSession().getAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY);
+    if (user!=null){
+        request.setAttribute("uname", user.getId()); 
+    }
 %>
 
 <!DOCTYPE html>
@@ -45,7 +57,7 @@
 <head>
     <script type="text/javascript" src="jshash-2.2/md5.js"></script>
     <c:catch var="e">
-        <c:import url="/includes/object/scripts/4.jspf" />
+        <c:import url="/includes/object/scripts/${currentObjectType}.jspf" />
     </c:catch>
     <c:if test="${!empty e}">
         <c:import url="/includes/object/scripts/default.jspf" />
@@ -143,13 +155,14 @@
                         <% } %>                       
                         <%if ("4".equals(currentObject.getParentType())) {%>
                             <div id="adstatid" class="tab-pane fade in">
+                                <input type="hidden" id="hidden_user_name" value="${uname}">
                                <h3>Статистика просмотров объявления:</h3>
                                <div ng-controller="AdvertStatCtrl">
                                     <canvas id="line2" class="chart chart-line" chart-data="data"
                                       chart-labels="labels" chart-legend="true" chart-series="series"
                                       chart-click="onClick" chart-options="opts" width="800" height="400">
                                     </canvas>
-                                    </div>
+                                </div>
                                </div>
                             </div>
                         <% } %>
@@ -170,18 +183,18 @@
     <script language=JavaScript src='https://auth.robokassa.ru/Merchant/PaymentForm/FormMS.js?MerchantLogin=<%= sMrchLogin%>&OutSum=<%= sOutSum%>&InvoiceID=<%= nInvId%>&Description=<%= sDesc%>&shp_id_a=<%= shp_id_a%>&isTest=1&SignatureValue=<%= crc%>'></script>;
 
                         </div>
-                        <%}%>  
-                        <div ng-controller="ModerCtrl">
-                        <%
-                            if ((user != null)&&user.isIsModer()&&("4".equals(currentObject.getParentType()))) {                          
-                        %>
-                        
-                            123
-                        
-                        <%
-                        }
-                        %>
-                        </div>
+                        <%}%>
+                            <% if ((user != null)&&user.isIsModer()&&("4".equals(currentObject.getParentType()))) { %>
+                            <div>
+                                <div ng-controller="ModerCtrl">
+                                    <button ng-click="clickToDel();">
+                                        Delete this!
+                                    </button>
+                                </div>
+                            </div>
+                            <%
+                            }
+                            %>
                  <div class="references">
                     <h3>Список ссылок</h3>
                     <ul class="references-ul">

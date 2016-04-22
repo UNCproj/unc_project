@@ -84,6 +84,6 @@
             }); 
             
             app.controller("ModerCtrl", function ($scope){
-               console.log("moder ready!"); 
+               console.log("user moder ready!"); 
             });
 })();

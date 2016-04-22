@@ -66,6 +66,7 @@ public class StatServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        Logger log = Logger.getLogger("statServletLogger");
         ArrayList<VisitBean> visits;
         visits = new ArrayList<VisitBean>();
         ArrayList<AdvertBean> names;
@@ -85,6 +86,7 @@ public class StatServlet extends HttpServlet {
                                     "where ref.ATTR_ID = 11 and\n" +
                                     "      ref.OBJECT_REFERENCE_ID = " + object_id +"\n"  ;
                     //response.getWriter().println(comm);
+                    log.info(comm);
                     Connection connection = null;
                     try {
                         connection = DataSource.getInstance().getConnection();
@@ -145,6 +147,7 @@ public class StatServlet extends HttpServlet {
                             + "order by  to_date(to_char(s.visit_date, 'YYYY-MM-DD'), 'YYYY-MM-DD')";
                     //response.getWriter().write(comm);
                     //DBConnect dc = new DBConnect("unc_user", "pass123");
+                    log.info(comm);
                     Connection connection = null;
                     try {
                         connection = DataSource.getInstance().getConnection();

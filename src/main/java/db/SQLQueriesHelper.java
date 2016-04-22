@@ -58,7 +58,9 @@ public class SQLQueriesHelper {
     static public final String COUNTRY_ATTR_ID = "17";
     static public final String ADDITIONAL_INFO_ATTR_ID = "18";
     static public final String BOOKMARK_ATTR_ID = "19";
-
+    static public final String INVALID_ATTR_ID = "37";
+    static public final String DEL_MSG_ATTR_ID = "40";
+    static public final String DEL_ID_ATTR_ID = "41";
     //static public final String DEFAULT_USER_PIC_FILE = "/unc-project/resources/img/user-pics/default.png";
 
     static public String selectFullObjectInformationByName(String[] typesIds, String objectName) {
@@ -402,7 +404,7 @@ public class SQLQueriesHelper {
 
         String query = "update unc_params set " +
                 "value = " + (value == null ? "null" : "'" + value + "'") + ", " +
-                "date_value = " + (value == null ? "to_date('" + df.format(dateValue) + "', 'yyyy-MM-dd HH24:mi:ss')" : "null") +
+                "date_value = " + (dateValue != null ? "to_date('" + df.format(dateValue) + "', 'yyyy-MM-dd HH24:mi:ss')" : "null") +
                 " where object_id = " + id + " and attr_id = " + attrId;
 
         return query;
@@ -953,6 +955,14 @@ public class SQLQueriesHelper {
                 "  from unc_objects \n" +
                 "  where object_name="+name+" and\n" +
                 " order by object_name";
+        return query;
+    }
+    
+    static public String getParamValue(String object_id, String attr_id){
+        String query = "select value\n" +
+                "  from unc_params \n" +
+                "  where object_id="+object_id+" and\n" +
+                "  attr_id="+attr_id;
         return query;
     }
 }
