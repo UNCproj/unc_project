@@ -14,7 +14,7 @@ import java.util.Enumeration;
 /**
  * Created by Денис on 20.04.2016.
  */
-@WebFilter(filterName = "IndexNewAdvertFilter", servletNames = "")
+@WebFilter(filterName = "IndexNewAdvertFilter", servletNames = "AddServlet")
 public class IndexNewAdvertFilter implements Filter {
     @EJB
     private AdvertsManager advertsManagerBean;
@@ -23,6 +23,9 @@ public class IndexNewAdvertFilter implements Filter {
     }
 
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws ServletException, IOException {
+        String type = req.getParameter("type");
+        type.equals("");
+
         ArrayList<String>[] allCategories;
 
         try {

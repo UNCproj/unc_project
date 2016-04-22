@@ -10,7 +10,6 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
-import org.elasticsearch.search.sort.SortOrder;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -34,9 +33,7 @@ public class AdvertsSearchBean {
     private AdvertsManager advertsManager;
 
     public SearchResponse advertsSearch(QueryBuilder query,
-                                         String adCategoryId, String adCategoryName, String sortingParam,
-                                         String sortingOrder, String additionalAttributes[],
-                                         String adsStartingNum, String adsCount)
+                                         String adCategoryId, String adCategoryName, String additionalAttributes[])
             throws PropertyVetoException, SQLException, IOException {
         if (adCategoryId == null && adCategoryName != null) {
             adCategoryId = advertsManager.getAdCategoryId(adCategoryName);
@@ -110,15 +107,7 @@ public class AdvertsSearchBean {
             searchRequestBuilder.setQuery(query);
         }
 
-        searchRequestBuilder.setFrom(adsStartingNum == null ? 0 : Integer.parseInt(adsStartingNum));
-
-        if (adsCount != null) {
-            searchRequestBuilder.setSize(Integer.parseInt(adsCount));
-        }
-
-        searchRequestBuilder.addSort(sortingParam == null ? "name" : sortingParam,
-                (sortingOrder != null && sortingOrder.equals("desc")) ? SortOrder.DESC : SortOrder.ASC);
-
+        searchRequestBuilder.setSize(5000);
 
         return searchRequestBuilder.execute().actionGet();
     }

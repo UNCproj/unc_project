@@ -20,10 +20,8 @@ import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Возможные значения параметра action:
@@ -95,17 +93,41 @@ public class AdvertsListServlet extends HttpServlet {
             query = null;
         }
 
-        SearchResponse searchResponse = searchBean.advertsSearch(query, adCategoryId, adCategoryName, sortingParam,
-                sortingOrder, additionalAttributes, adsStartingNum, adsCount);
+        SearchResponse searchResponse = searchBean.advertsSearch(query, adCategoryId,
+                adCategoryName, additionalAttributes);
 
         SearchHit[] searchHits = searchResponse.getHits().getHits();
 
-        ArrayList<Map<String, Object>> foundedAdverts = new ArrayList<>();
+        List<Map<String, Object>> foundedAdverts = new ArrayList<>();
 
         for (SearchHit res : searchHits) {
             Map<String, Object> mappedRes = res.getSource();
             foundedAdverts.add(mappedRes);
         }
+
+        foundedAdverts = applySortAndCount(
+                foundedAdverts,
+                (o1, o2) -> {
+                    String sortingParamValue1 = (String) o1.get(sortingParam);
+                    String sortingParamValue2 = (String) o2.get(sortingParam);
+
+                    int compared;
+
+                    try {
+                        int sortingParamIntValue1 = Integer.parseInt(sortingParamValue1);
+                        int sortingParamIntValue2 = Integer.parseInt(sortingParamValue2);
+
+                        compared = sortingParamIntValue1 - sortingParamIntValue2;
+                    }
+                    catch (Exception e) {
+                        compared = sortingParamValue1.compareTo(sortingParamValue2);
+                    }
+
+                    return sortingOrder.equalsIgnoreCase("desc") ? -compared : compared;
+                },
+                adsStartingNum,
+                adsCount
+        );
 
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -121,17 +143,12 @@ public class AdvertsListServlet extends HttpServlet {
             throws IOException, PropertyVetoException, SQLException {
         String adCategoryId = request.getParameter("adCategoryId");
         String adCategoryName = request.getParameter("adCategoryName");
-        String adsStartingNum = request.getParameter("adsStartingNum");
-        String adsCount = request.getParameter("adsCount");
-        String sortingParam = request.getParameter("sortingParam");
-        String sortingOrder = request.getParameter("sortingOrder");
         String adNamePattern = request.getParameter("adNamePattern");
         String additionalAttributes[] = request.getParameterValues("additionalAttributes");
 
         QueryBuilder query = QueryBuilders.matchPhrasePrefixQuery("name", adNamePattern).maxExpansions(10);
 
-        SearchResponse searchResponse = searchBean.advertsSearch(query, adCategoryId, adCategoryName, sortingParam,
-                sortingOrder, additionalAttributes, adsStartingNum, adsCount);
+        SearchResponse searchResponse = searchBean.advertsSearch(query, adCategoryId, adCategoryName, additionalAttributes);
 
         SearchHit[] searchHits = searchResponse.getHits().getHits();
 
@@ -141,6 +158,7 @@ public class AdvertsListServlet extends HttpServlet {
             Map<String, Object> mappedRes = res.getSource();
             foundedTitles.add((String)mappedRes.get("name"));
         }
+
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String advListJson = gson.toJson(foundedTitles, foundedTitles.getClass());
@@ -185,8 +203,6 @@ public class AdvertsListServlet extends HttpServlet {
         String adCategoryId = request.getParameter("adCategoryId");
         String adCategoryName = request.getParameter("adCategoryName");
         String adsCount = request.getParameter("adsCount");
-        String sortingParam = request.getParameter("sortingParam");
-        String sortingOrder = request.getParameter("sortingOrder");
         String adNamePattern = request.getParameter("adNamePattern");
         String[] additionalAttributes = request.getParameterValues("additionalAttributes");
 
@@ -203,14 +219,18 @@ public class AdvertsListServlet extends HttpServlet {
 
         SearchResponse searchResponse = null;
         try {
-            searchResponse = searchBean.advertsSearch(query, adCategoryId, adCategoryName, sortingParam,
-                    sortingOrder, additionalAttributes, null, adsCount);
+            searchResponse = searchBean.advertsSearch(query, adCategoryId, adCategoryName, additionalAttributes);
         }
         catch (Exception e) {
             e.getMessage();
         }
 
         Integer foundedAdsCount = searchResponse.getHits().getHits().length;
+        int parameteredAdsCount = Integer.parseInt(adsCount);
+
+        if (foundedAdsCount > parameteredAdsCount) {
+            foundedAdsCount = parameteredAdsCount;
+        }
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String advListJson = gson.toJson(foundedAdsCount, foundedAdsCount.getClass());
@@ -240,18 +260,14 @@ public class AdvertsListServlet extends HttpServlet {
             throws PropertyVetoException, IOException, SQLException {
         String adCategoryId = request.getParameter("adCategoryId");
         String adCategoryName = request.getParameter("adCategoryName");
-        String adsStartingNum = request.getParameter("adsStartingNum");
-        String adsCount = request.getParameter("adsCount");
-        String sortingParam = request.getParameter("sortingParam");
-        String sortingOrder = request.getParameter("sortingOrder");
         String attrName = request.getParameter("attrName");
         String attrValuePattern = request.getParameter("attrValuePattern");
         String additionalAttributes[] = request.getParameterValues("additionalAttributes");
 
         QueryBuilder query = QueryBuilders.matchPhrasePrefixQuery(attrName, attrValuePattern).maxExpansions(10);
 
-        SearchResponse searchResponse = searchBean.advertsSearch(query, adCategoryId, adCategoryName, sortingParam,
-                sortingOrder, additionalAttributes, adsStartingNum, adsCount);
+        SearchResponse searchResponse = searchBean.advertsSearch(query, adCategoryId,
+                adCategoryName, additionalAttributes);
 
         SearchHit[] searchHits = searchResponse.getHits().getHits();
 
@@ -285,5 +301,15 @@ public class AdvertsListServlet extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             out.print(categoriesJson);
         }
+    }
+
+    private <T> List<T> applySortAndCount(List<T> srcArray, Comparator<T> comparator,
+                                          String adsStartingNum, String adsCount) {
+        return srcArray
+                .stream()
+                .sorted(comparator)
+                .skip(Integer.parseInt(adsStartingNum))
+                .limit(Integer.parseInt(adsCount))
+                .collect(Collectors.toList());
     }
 }

@@ -131,6 +131,22 @@
     background-color: #CCC;
 }
 
+.search-results .list-group-item {
+    height: 200px;
+}
+
+.search-results .list-group-item .img {
+    height: 150px;
+    width: 150px;
+    float: left;
+    margin: 5px;
+}
+
+.search-results .list-group-item .img img {
+    height: 150px;
+    width: 150px;
+}
+
 .content:after {
     content: " ";
     display: block;
@@ -150,7 +166,6 @@
     border-bottom: 4px solid transparent;
     border-top: 4px solid transparent;
     border-left: 4px solid;
-    margin-left: 5px;
     display: inline-block;
     height: 0;
     vertical-align: middle;
