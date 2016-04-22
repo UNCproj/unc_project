@@ -3,8 +3,6 @@ package beans;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
-import db.DataSource;
-import db.SQLQueriesHelper;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -13,42 +11,38 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.sort.SortOrder;
-import org.jboss.as.clustering.ManagedScheduledExecutorService;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
  * Created by Денис on 04.04.2016.
  */
 @Stateless
-public class AdvertsSearchBean implements AdvertsSearch {
+public class AdvertsSearchBean {
     @EJB
     private ElasticSearchManager elasticSearchManager;
+    @EJB
+    private AdvertsManager advertsManager;
 
-    @Override
     public SearchResponse advertsSearch(QueryBuilder query,
                                          String adCategoryId, String adCategoryName, String sortingParam,
                                          String sortingOrder, String additionalAttributes[],
                                          String adsStartingNum, String adsCount)
             throws PropertyVetoException, SQLException, IOException {
         if (adCategoryId == null && adCategoryName != null) {
-            adCategoryId = getAdCategoryId(adCategoryName);
+            adCategoryId = advertsManager.getAdCategoryId(adCategoryName);
         }
 
-        ArrayList<String> advertsTypes = getSubCategories(adCategoryId);
+        ArrayList<String> advertsTypes = advertsManager.getSubCategories(adCategoryId);
 
         if (advertsTypes != null) {
             advertsTypes.add(adCategoryId);
@@ -127,144 +121,5 @@ public class AdvertsSearchBean implements AdvertsSearch {
 
 
         return searchRequestBuilder.execute().actionGet();
-    }
-
-    @Override
-    public ArrayList<String>[] getAllCategories() throws PropertyVetoException, SQLException, IOException {
-        try (
-                Connection connection = DataSource.getInstance().getConnection();
-                Statement statement = connection.createStatement()
-        ) {
-            try (ResultSet childrenTypesResults = statement.executeQuery(
-                    SQLQueriesHelper.getTypeChildren(SQLQueriesHelper.ADVERT_TYPE_ID)
-            )) {
-                ArrayList<String> categoriesIds = new ArrayList<>();
-                ArrayList<String> categoriesNames = new ArrayList<>();
-
-                while (childrenTypesResults.next()) {
-                    categoriesIds.add(childrenTypesResults.getString("ot_id"));
-                    categoriesNames.add(childrenTypesResults.getString("ot_name"));
-                }
-
-                return new ArrayList[]{categoriesIds, categoriesNames};
-            }
-        }
-    }
-
-    @Override
-    public ArrayList<String[]> getAttributes(String adCategoryId) throws IOException, SQLException, PropertyVetoException {
-        try (
-                Connection connection = DataSource.getInstance().getConnection();
-                Statement statement = connection.createStatement()
-        ) {
-            try (ResultSet attrResults = statement.executeQuery(
-                    SQLQueriesHelper.getAllAttributes(adCategoryId == null ? SQLQueriesHelper.ADVERT_TYPE_ID : adCategoryId)
-            )) {
-                ArrayList<String[]> attributes = new ArrayList<>();
-
-                while (attrResults.next()) {
-                    attributes.add(
-                            new String[] {
-                                    attrResults.getString("attr_name"),
-                                    attrResults.getString("attr_name_ru"),
-                                    attrResults.getString("attr_type"),
-                                    attrResults.getString("search_group")
-                            }
-                    );
-                }
-
-                return attributes;
-            }
-        }
-    }
-
-    @Override
-    public ArrayList<String[]> getFirstLevelCategories(String adCategoryId, String adCategoryName) throws SQLException, IOException, PropertyVetoException {
-        try (
-                Connection connection = DataSource.getInstance().getConnection();
-                Statement statement = connection.createStatement()
-        ) {
-            if (adCategoryId == null) {
-                adCategoryId = getAdCategoryId(adCategoryName);
-            }
-
-            try (ResultSet childrenTypesResults = statement.executeQuery(
-                    SQLQueriesHelper.getTypeFirstLevelChildren(adCategoryId != null ?
-                            adCategoryId :
-                            SQLQueriesHelper.ADVERT_TYPE_ID)
-            )) {
-                ArrayList<String[]> categories = new ArrayList<>();
-
-                while (childrenTypesResults.next()) {
-                    categories.add(new String[] {childrenTypesResults.getString("ot_id"),
-                            childrenTypesResults.getString("ot_name")});
-                }
-
-                return  categories;
-            }
-        }
-    }
-
-    @Override
-    public ArrayList<String> getParentCategories(String adCategoryId, String adCategoryName) throws SQLException, IOException, PropertyVetoException {
-        try (
-                Connection connection = DataSource.getInstance().getConnection();
-                Statement statement = connection.createStatement()
-        ) {
-            if (adCategoryId == null) {
-                adCategoryId = getAdCategoryId(adCategoryName);
-            }
-
-            try (ResultSet childrenTypesResults = statement.executeQuery(
-                    SQLQueriesHelper.selectCategories(adCategoryId != null ?
-                            adCategoryId :
-                            SQLQueriesHelper.ADVERT_TYPE_ID)
-            )) {
-                ArrayList<String> parentsCategories = new ArrayList<>();
-
-                while (childrenTypesResults.next()) {
-                    parentsCategories.add(childrenTypesResults.getString("ot_name"));
-                }
-
-                return parentsCategories;
-            }
-        }
-    }
-
-    private ArrayList<String> getSubCategories(String adCategoryId) throws PropertyVetoException, SQLException, IOException {
-        ArrayList<String> advertsTypes = new ArrayList<>();
-
-        if (adCategoryId == null) {
-            return null;
-        }
-
-        try (
-                Connection connection = DataSource.getInstance().getConnection();
-                Statement statement = connection.createStatement()
-        ) {
-            try (ResultSet childrenTypesResults = statement.executeQuery(SQLQueriesHelper.getTypeChildren(adCategoryId))) {
-
-                while (childrenTypesResults.next()) {
-                    advertsTypes.add(childrenTypesResults.getString("ot_id"));
-                }
-            }
-        }
-
-        return advertsTypes;
-    }
-
-    private String getAdCategoryId(String adCategoryName) throws SQLException, IOException, PropertyVetoException {
-        try (
-                Connection connection = DataSource.getInstance().getConnection();
-                Statement statement = connection.createStatement()
-        ) {
-            try (
-                ResultSet adCatIdResults = statement.executeQuery(
-                        SQLQueriesHelper.getTypeIdByTypeName(adCategoryName)
-                )) {
-                    adCatIdResults.next();
-                    return adCatIdResults.getString("id");
-                }
-        }
     }
 }
