@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,10 +31,9 @@ public class chatPublishServlet extends HttpServlet {
         response.setContentType("text/html");
 
         String message = noQuotes(request.getParameter("message"));
-        String sellerLogin = request.getParameter("sellerLogin");
+        String recipientId = request.getParameter("recipientId");
         UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
         String senderId = userAccountBean.getId();
-//        System.out.println("В сервлет пришло для добавления в базу - " + sellerLogin + ", " + message);
 
         String messageId = "";
 
@@ -47,14 +47,19 @@ public class chatPublishServlet extends HttpServlet {
                 resultSetId.next();
                 messageId = resultSetId.getString("id");
 
-                Statement statementfindIdNamed = connection.createStatement();
-                ResultSet resultSetFindIdNamed = statementfindIdNamed.executeQuery(SQLQueriesHelper.findIdNamed(sellerLogin));
-                resultSetFindIdNamed.next();
-                String recipientId = resultSetFindIdNamed.getString("object_id");
-
                 Statement statementMessage = connection.createStatement();
-                statementMessage.executeUpdate(SQLQueriesHelper.newMessage(messageId, message, senderId, recipientId));
-
+//                statementMessage.executeUpdate(SQLQueriesHelper.newMessage(messageId, message, senderId, recipientId));
+                statementMessage.executeUpdate(SQLQueriesHelper.newMessage(
+                        SQLQueriesHelper.MESSAGE_TYPE_ID, messageId
+                ));
+                statementMessage.executeUpdate(SQLQueriesHelper.insertParam(
+                        new BigDecimal(messageId),SQLQueriesHelper.TEXT_MESSAGE,message,null));
+                statementMessage.executeUpdate(SQLQueriesHelper.insertParam(
+                        new BigDecimal(messageId),SQLQueriesHelper.DATE_MESSAGE,null,null));
+                statementMessage.executeUpdate(SQLQueriesHelper.insertParam(
+                        new BigDecimal(messageId),SQLQueriesHelper.ID_SENDER,senderId,null));
+                statementMessage.executeUpdate(SQLQueriesHelper.insertParam(
+                        new BigDecimal(messageId),SQLQueriesHelper.ID_RECIPIENT,recipientId,null));
             } catch (SQLException e) {
                 e.printStackTrace();
             } catch (PropertyVetoException e) {
@@ -78,7 +83,7 @@ public class chatPublishServlet extends HttpServlet {
                 i++;
             }
         }
-System.out.println(message);
+        System.out.println(message);
         return message;
     }
 }

@@ -20,19 +20,7 @@
             var data = [];
             var adverts = [];
             
-            
-                
             function isExistData(){
-                    $.ajax({
-                url: "/unc-project/StatServlet/getList",
-                async: false,
-                data: {"object_id": id}
-                }).done(function(ads) {
-                    console.log("len="+ads.length);
-                $.each(ads, function(index, ad) {
-                        adverts.push({id:ad.id, name:ad.name})
-                    });
-                });
                 console.log("check!");
                 if ((data.length === 0)&&(adverts.length === 0)){
                     $('#ifempty').html('У вас пока что нет объявлений.');
@@ -44,11 +32,20 @@
             
             $scope.isExistData = isExistData();
             
-            
+            $.ajax({
+            url: "/unc-project/StatServlet/getList",
+            async: false,
+            data: {"object_id": id}
+            }).done(function(ads) {
+            $.each(ads, function(index, ad) {
+                    adverts.push({id:ad.id, name:ad.name})
+                });
+            });
             
             
             
             $scope.dropboxitemselected = function (item) {
+                console.log('query!');
                 if (!$scope.isExistData) { return; }
                 console.log('query1!'+$scope.isExistData);
                 $scope.selectedItem = item;
@@ -77,7 +74,7 @@
                 console.log($scope.labels);
                 console.log($scope.data);
             });
-            };
+            }
             $scope.subjects = adverts;
             $scope.selectedItem = adverts[0];
             $scope.dropboxitemselected($scope.selectedItem);

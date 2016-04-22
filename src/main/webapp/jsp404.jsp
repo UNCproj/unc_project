@@ -4,14 +4,38 @@
     Author     : artem
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>404</title>
-    </head>
-    <body>
-        <h1 align="center">404</h1>
-    </body>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Ошибка</title>
+    <script type="text/javascript" src="resources/scripts/angular.min.js"></script>
+    <script src="resources/scripts/jquery-1.12.0.min.js"></script>
+    <script src="resources/scripts/angular.min.js"></script>
+    <script src="resources/scripts/bootstrap.min.js"></script>
+    <script src="resources/scripts/chat.js"></script>
+    <link rel="stylesheet" href="resources/css/chat.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/angular-chart.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/template.css">
+    <link rel="stylesheet" type="text/css" href="resources/css/params.css">
+</head>
+<body>
+<div class="main">
+    <div id="header">
+        <ul class="menu">
+            <li><a class="a-outline button-style" href="index.jsp">Главная</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <h1 align="center" style="font-size: 200px">Произошла ошибка</h1>
+    </div>
+    <c:catch var="e">
+        <c:import url="/includes/object/footers/default.jspf" />
+    </c:catch>
+</div>
+</body>
 </html>

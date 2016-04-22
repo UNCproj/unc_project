@@ -1,0 +1,25 @@
+.question{
+    margin: 2% 10% 0%;
+    font-size: 20px;
+}
+.question:hover{
+    background-color: #5abdf1;
+    cursor: pointer;
+}
+.question-active{
+    /*background-color: #83cfe9;*/
+    background-color: #d9edf7;
+}
+.answer{
+    margin: 0% 14%;
+    background-color: #d9edf7;
+    display: none;
+    border-radius: 0 0 5px 5px;
+    -moz-border-radius:0 0 5px 5px;
+    -khtml-border-radius: 0 0 5px 5px;
+    padding: 1%;
+}
+.question span{
+    float: right;
+}
+
