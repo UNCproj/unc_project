@@ -21,6 +21,16 @@
                     </c:otherwise>
                 </c:choose>
             </c:when>
+            <c:when test="${param.attr_type.equals(\"6\")}">
+                <c:choose>
+                    <c:when test="${!param.attr_value.equals(\"\")}">
+                        ${param.attr_value}
+                    </c:when>
+                    <c:otherwise>
+                       Обычный
+                    </c:otherwise>
+                </c:choose>
+            </c:when>
             <c:otherwise>${param.attr_value}</c:otherwise>
         </c:choose>
     </td>

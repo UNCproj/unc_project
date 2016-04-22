@@ -173,7 +173,7 @@ a:hover {
 
 .references {
     margin-left: 20px;
-
+    clear: both; display: block;
 }
 
 .references-ul {
@@ -182,4 +182,23 @@ a:hover {
 
 .references-ul-li {
     margin : 10px 10px;
+    
+}
+
+.robokassa-button {
+    margin-left: 100px;
+}
+
+.robo-li {
+    float: left;
+    list-style: none;
+}
+
+.robo-li::after {
+    padding-left: 2px;
+    padding-right: 4px;
+}
+
+.robokassa-li {
+    margin: 15px 10px 0 0; 
 }

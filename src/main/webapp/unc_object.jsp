@@ -158,10 +158,15 @@
                             </div>
                         <% } %>
                         <%if ("4".equals(currentObject.getParentType()) && user != null && user.isLoggedIn() && !currentObject.isVip()) {%>
-                        <div>
+                        <div class="robokassa-button" >
+                            <ul>
+                                <li class="robo-li robokassa-li">
+                                    Оплатить Vip-статус 
+                                </li>
+                            
                             <%
-                            String sMrchLogin = "UNC-objavlenija";
-                            String sMrchPass1 = "VoSO6r17j0sRbryq9BLm";
+                            String sMrchLogin = "UNC-project";
+                            String sMrchPass1 = "GVic7cAaCBs52j71lCuk";
                             //String sMrchPass2 = "n8DcTF8ogp410TZQqJgI";
                             String nInvId = "100";
                             String sDesc = "Test payment ROBOKASSA";
@@ -171,8 +176,10 @@
                             String shp_id_a = currentObject.getId();
                             String crc = currentObject.MD5(new String[] {sMrchLogin, sOutSum, nInvId, sMrchPass1, "shp_id_a="+shp_id_a});
                             %>
-                        <script language=JavaScript src='https://auth.robokassa.ru/Merchant/PaymentForm/FormMS.js?MerchantLogin=<%= sMrchLogin%>&OutSum=<%= sOutSum%>&InvoiceID=<%= nInvId%>&Description=<%= sDesc%>&shp_id_a=<%= shp_id_a%>&isTest=1&SignatureValue=<%= crc%>'></script>;
-
+                                <li class="robo-li">
+                                    <script language=JavaScript src='https://auth.robokassa.ru/Merchant/PaymentForm/FormSS.js?MerchantLogin=<%= sMrchLogin%>&OutSum=<%= sOutSum%>&InvoiceID=<%= nInvId%>&Description=<%= sDesc%>&shp_id_a=<%= shp_id_a%>&isTest=1&SignatureValue=<%= crc%>'></script>;
+                                </li>
+                            </ul>
                         </div>
                         <%}%>  
                         <div ng-controller="ModerCtrl">
@@ -198,7 +205,7 @@
                         <% } %>
                     </ul>
                     <%} else if ("4".equals(currentObject.getParentType())) { %>
-                    <h4>Продавец : <a a href="unc_object.jsp?id=<%= listReferences.get(0)[0] %>"><%= listReferences.get(0)[1] %></a></h4>
+                    <h4 class="robokassa-li">Продавец : <a a href="unc_object.jsp?id=<%= listReferences.get(0)[0] %>"><%= listReferences.get(0)[1] %></a></h4>
                     <%}%>
                  </div>
             </div>
