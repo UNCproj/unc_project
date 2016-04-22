@@ -129,10 +129,7 @@ public class SQLQueriesHelper {
         return queryString;
     }
     static public String setVipAdvert(String id_advert) {
-        StringBuffer query = new StringBuffer("update UNC_PARAMS\n" +
-                        "  SET VALUE = 'Gold',\n" +
-                        "      DATE_VALUE = sysdate\n" +
-                        "  where ATTR_ID = 20 and OBJECT_ID = ");
+        StringBuffer query = new StringBuffer("insert into UNC_PARAMS values( " + id_advert + ", 20, 'Gold', sysdate, null)");
         query.append(id_advert);
         String queryString = query.toString();
         return queryString;
