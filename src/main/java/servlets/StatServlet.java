@@ -86,7 +86,7 @@ public class StatServlet extends HttpServlet {
                                     "where ref.ATTR_ID = 11 and\n" +
                                     "      ref.OBJECT_REFERENCE_ID = " + object_id +"\n"  ;
                     //response.getWriter().println(comm);
-                    log.info(comm);
+                    log.info("GETLIST"+comm);
                     Connection connection = null;
                     try {
                         connection = DataSource.getInstance().getConnection();
@@ -147,7 +147,7 @@ public class StatServlet extends HttpServlet {
                             + "order by  to_date(to_char(s.visit_date, 'YYYY-MM-DD'), 'YYYY-MM-DD')";
                     //response.getWriter().write(comm);
                     //DBConnect dc = new DBConnect("unc_user", "pass123");
-                    log.info(comm);
+                    log.info("GETSTAT"+comm);
                     Connection connection = null;
                     try {
                         connection = DataSource.getInstance().getConnection();

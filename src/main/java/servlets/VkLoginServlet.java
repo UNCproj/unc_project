@@ -66,24 +66,25 @@ public class VkLoginServlet extends HttpServlet {
             throws ServletException, IOException, OAuthSystemException, OAuthProblemException, SQLException, PropertyVetoException {
         response.setContentType("text/html;charset=UTF-8");
         VkOauthLogin vk = new VkOauthLogin(request.getServletPath());
+        
         OAuthClientRequest oacr = OAuthClientRequest.tokenLocation("https://oauth.vk.com/authorize")
                 .setClientId(vk.getClientID())
                 .setClientSecret(vk.getClientSecret())
-                .setRedirectURI("http://localhost:8081/unc-project/vklogin")
+                .setRedirectURI("http://localhost:"+request.getServerPort()+"/unc-project/vklogin")
                 .buildQueryMessage();
         if ((request.getParameter("code") == null) && (request.getSession().getAttribute(BeansHelper.VK_CODE) == null)) {
             //response.getWriter().println(oacr.getLocationUri());
             response.sendRedirect(oacr.getLocationUri()+"&scope=email");
         } else if ((request.getParameter("code") != null) && (request.getSession().getAttribute(BeansHelper.VK_CODE) == null)) {
             request.getSession().setAttribute(BeansHelper.VK_CODE, request.getParameter("code"));
-            response.sendRedirect("http://localhost:8081/unc-project/vklogin");
+            response.sendRedirect("http://localhost:"+request.getServerPort()+"/unc-project/vklogin");
         } else if (request.getSession().getAttribute(BeansHelper.VK_AUTHORIZATION_KEY) == null) {
             try{
             OAuthJSONAccessTokenResponse token = getAuthKeyInfo(response, request, vk);
             request.getSession().setAttribute(BeansHelper.VK_AUTHORIZATION_KEY, token.getAccessToken());
             request.getSession().setAttribute(BeansHelper.VK_TOKEN, token);
             response.getWriter().println((String)request.getSession().getAttribute(BeansHelper.VK_AUTHORIZATION_KEY));
-            response.sendRedirect("http://localhost:8081/unc-project/vklogin");
+            response.sendRedirect("http://localhost:"+request.getServerPort()+"/unc-project/vklogin");
             }
             catch(Exception e){
                 response.getWriter().println(e.toString());
@@ -113,7 +114,6 @@ public class VkLoginServlet extends HttpServlet {
             types[0] = "1";
             types[1] = "2";
             ResultSet result = statement.executeQuery(SQLQueriesHelper.selectFullObjectInformationByName(types, user_id));
-            
             list = new ArrayList<>();
             list.add(new Param("user_ids", user_id));
             JsonNode user = doQuery(response, "users.get", auth, list);
@@ -142,9 +142,7 @@ public class VkLoginServlet extends HttpServlet {
                         +"&fname="+URLEncoder.encode(fname,"UTF-8")
                         +"&sname="+URLEncoder.encode(sname,"UTF-8")
                         );
-                
             }
-            
         }
     }
 
@@ -154,7 +152,7 @@ public class VkLoginServlet extends HttpServlet {
                 .setClientId(vk.getClientID())
                 .setClientSecret(vk.getClientSecret())
                 .setCode((String) request.getSession().getAttribute(BeansHelper.VK_CODE))
-                .setRedirectURI("http://localhost:8081/unc-project/vklogin")
+                .setRedirectURI("http://localhost:"+request.getServerPort()+"/unc-project/vklogin")
                 .buildQueryMessage();
         response.getWriter().println(rq.getLocationUri());
         OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
