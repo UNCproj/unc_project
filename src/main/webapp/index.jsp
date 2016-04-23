@@ -127,9 +127,9 @@
                     <div class="attributes col-md-8 col-md-offset-2" ng-if="searchButtonClicked || defaultCategoryChanged" ng-controller="attributesController as attrCtrl">
                         <div class="panel-group">
                             <div class="panel panel-default">
-                                <div class="panel-heading" ng-click="changeCollapsed()">
+                                <div class="panel-heading">
                                     <h4 class="panel-title">
-                                        <a data-toggle="collapse" href="#attrCollapse">
+                                        <a data-toggle="collapse" href="#attrCollapse" ng-click="changeCollapsed()">
                                             <span ng-class="isCollapsed ? 'caret-right' : 'caret'"></span>
                                             Атрибуты
                                         </a>
@@ -149,10 +149,12 @@
                 </form>
 
                 <div class="clearfix"></div>
+                <br/>
 
                 <%--Вывод списка объявлений--%>
-                <div class="adverts-list-wrapper col-md-10 col-md-offset-1"
+                <div class="adverts-list-wrapper col-md-7 col-md-offset-1"
                      ng-controller="searchResultsController as resultsCtrl">
+
                     <%--Результаты поиска--%>
                     <div class="pagination-wrapper" ng-if="pagesCount > 0">
                         <ul class="pagination">
@@ -229,6 +231,31 @@
                             </ul>
                         </div>
                     </div>
+                </div>
+
+                <%--VIP объявления--%>
+                <div class="vip-adverts col-md-3" ng-controller="vipAdvertsController as vipAdvertsCtrl">
+                    <h3 class="vip-adverts-header">VIP-объявления</h3>
+                    <ul class="list-group">
+                        <li class="list-group-item" ng-repeat="adv in vipAds">
+                            <a href="" ng-click="redirToAdvertPage(adv.id)">
+                                <div class="img">
+                                    <img ng-src="{{adv.image != undefined ? adv.image : '${initParam.get("default.advert.image")}'}}">
+                                </div>
+                                <div class="main-content">
+                                    <div class="name">
+                                        <h3>{{adv.name}}</h3>
+                                    </div>
+                                    <div class="description">
+                                        {{adv.description}}
+                                    </div>
+                                    <div class="price">
+                                        {{adv.price}} руб.
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
 

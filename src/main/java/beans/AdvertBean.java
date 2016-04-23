@@ -1,126 +1,61 @@
 package beans;
 
-import javax.ejb.Stateless;
 import java.util.HashMap;
 
 /**
  * Created by Денис on 18.01.2016.
  */
-@Stateless
-public class AdvertBean implements Advert {
-    private String id;
-    private String name;
-    private String description;
-    private String category;
-    private String pic;
-    private String price;
-    private String city;
-    private String registrationDate;
-    private HashMap<String, String> additionalAttributesMap;
+public class AdvertBean {
+    private HashMap<String, String> attributesMap;
 
     public AdvertBean() {
-        additionalAttributesMap = new HashMap<>();
+        attributesMap = new HashMap<>();
     }
 
     public AdvertBean(String id, String name) {
         this();
-        this.id = id;
-        this.name = name;
+        setId(id);
+        setName(name);
     }
 
     public AdvertBean(String id, String name, String description) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
+        this(id, name);
+        setDescription(description);
     }
 
-    @Override
     public String getId() {
-        return id;
+        return getAttribute("id");
     }
 
-    @Override
-    public void setId(String Id) {
-        this.id = Id;
+    public void setId(String id) {
+        setAttribute("id", id);
     }
 
-    @Override
     public String getName() {
-        return name;
+        return getAttribute("name");
     }
 
-    @Override
     public void setName(String name) {
-        this.name = name;
+        setAttribute("name", name);
     }
 
-    @Override
     public String getDescription() {
-        return description;
+        return getAttribute("description");
     }
 
-    @Override
     public void setDescription(String description) {
-        this.description = description;
+        setAttribute("description", description);
     }
 
-    @Override
-    public String getCategory() {
-        return category;
+    public String getAttribute(String name) {
+        return attributesMap.get(name.toLowerCase());
     }
 
-    @Override
-    public void setCategory(String category) {
-        this.category = category;
+    public void setAttribute(String name, String value) {
+        attributesMap.put(name.toLowerCase(), value);
     }
 
-    @Override
-    public String getPic() {
-        return pic;
-    }
-
-    @Override
-    public void setPic(String pic) {
-        this.pic = pic;
-    }
-
-    @Override
-    public String getPrice() {
-        return price;
-    }
-
-    @Override
-    public void setPrice(String price) {
-        this.price = price;
-    }
-
-    @Override
-    public String getCity() {
-        return city;
-    }
-
-    @Override
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    @Override
-    public String getRegistrationDate() {
-        return registrationDate;
-    }
-
-    @Override
-    public void setRegistrationDate(String registrationDate) {
-        this.registrationDate = registrationDate;
-    }
-
-    @Override
-    public String getAdditionalAttribute(String name) {
-        return additionalAttributesMap.get(name);
-    }
-
-    @Override
-    public void setAdditionalAttribute(String name, String value) {
-        additionalAttributesMap.put(name, value);
+    public HashMap<String, String> getAttributesMap() {
+        return attributesMap;
     }
 }

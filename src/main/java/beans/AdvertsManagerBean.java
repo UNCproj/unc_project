@@ -18,6 +18,62 @@ import java.util.ArrayList;
 @Stateless
 public class AdvertsManagerBean implements AdvertsManager {
     @Override
+    public ArrayList<AdvertBean> getAdverts(String adCategoryId, boolean isOnlyValid) throws PropertyVetoException, SQLException, IOException {
+        ArrayList<AdvertBean> adverts = new ArrayList<>();
+
+        try (
+                Connection connection = DataSource.getInstance().getConnection();
+                Statement statement = connection.createStatement()
+        ) {
+            try (ResultSet childrenTypesResults = statement.executeQuery(SQLQueriesHelper.getTypeChildren(adCategoryId))) {
+                ArrayList<String> categories = new ArrayList<>();
+
+                while (childrenTypesResults.next()) {
+                    categories.add(childrenTypesResults.getString("ot_id"));
+                }
+
+                try (
+                        ResultSet advListResults = statement.executeQuery(
+                                SQLQueriesHelper.getAdvertsList(
+                                        categories.toArray(new String[0]), null, null, null, null, null
+                                )
+                        )
+                ) {
+                    while (advListResults.next()) {
+                        if (isOnlyValid && Boolean.parseBoolean(advListResults.getString("is_invalid"))) {
+                            continue;
+                        }
+
+                        AdvertBean adv = new AdvertBean();
+
+                        adv.setAttribute("object_id", advListResults.getString("object_id"));
+                        adv.setAttribute("object_name", advListResults.getString("object_name"));
+                        adv.setAttribute("type_id", advListResults.getString("type_id"));
+
+                        adv.setAttribute(SQLQueriesHelper.DESCRIPTION_ATTR,
+                                advListResults.getString(SQLQueriesHelper.DESCRIPTION_ATTR));
+
+                        adv.setAttribute(SQLQueriesHelper.CITY_ADVERT_ATTR,
+                                advListResults.getString(SQLQueriesHelper.CITY_ADVERT_ATTR));
+
+                        adv.setAttribute("pic", advListResults.getString("pic"));
+
+                        adv.setAttribute(SQLQueriesHelper.PRICE_ADVERT_ATTR,
+                                advListResults.getString(SQLQueriesHelper.PRICE_ADVERT_ATTR));
+
+                        adv.setAttribute(SQLQueriesHelper.REG_DATE_ATTR,
+                                advListResults.getString(SQLQueriesHelper.REG_DATE_ATTR));
+
+                        adverts.add(adv);
+                    }
+                }
+            }
+        }
+
+        return adverts;
+    }
+
+    @Override
     public ArrayList<String>[] getAllCategories() throws PropertyVetoException, SQLException, IOException {
         try (
                 Connection connection = DataSource.getInstance().getConnection();

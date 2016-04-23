@@ -11,6 +11,7 @@ import java.util.ArrayList;
  */
 @Local
 public interface AdvertsManager {
+    ArrayList<AdvertBean> getAdverts(String adCategoryId, boolean isOnlyValid) throws PropertyVetoException, SQLException, IOException;
     ArrayList[] getAllCategories() throws PropertyVetoException, SQLException, IOException;
     ArrayList<String[]> getAttributes(String adCategoryId) throws IOException, SQLException, PropertyVetoException;
     ArrayList<String[]> getFirstLevelCategories(String adCategoryId, String adCategoryName) throws SQLException, IOException, PropertyVetoException;

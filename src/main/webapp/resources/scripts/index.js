@@ -85,7 +85,7 @@
                     .success(function (data) {
                         $scope.enteredCategories = data;
                     });
-            }
+            };
 
             var catName = $.urlParam('categoryName');
 
@@ -108,6 +108,8 @@
 
                 $scope.loadParentCategories($scope.selectedCategory.id, $scope.selectedCategory.name);
                 $scope.$parent.search();
+
+                $scope.$broadcast('categorySelected');
             };
         }
     ]);
@@ -373,29 +375,24 @@
     ]);
     app.controller('vipAdvertsController', ['$scope', '$http',
         function($scope, $http){
-
-            $scope.vipAdvertsType = decodeURI($.urlParam('advert'));
-
-
+            $scope.vipAds = [];
 
             $scope.loadVipAdverts = function(){
-                console.log("Началась загрузка вип объявлений");
-                console.log($scope.vipAdvertsType);
                 $http({
                     url: 'load-vip-adverts',
                     method: 'POST',
                     params: {
-                        "type": $scope.vipAdvertsType
+                        "type": 'advert'
                     }
                 })
                     .success(function(data) {
-                        for (var i=0; i<data.length;i++){
-                            $("div#vip-adverts").append('<a href="/unc-project/unc_object.jsp?id=' + data[i].id + '">'
-                            + data[i].name +'</a><p>' + data[i].price + '</p>');
-                        }
+                        $scope.vipAds = data;
                     });
             };
-            $scope.loadVipAdverts();
+
+            $scope.$watch('selectedCategory.id', function() {
+                $scope.loadVipAdverts();
+            });
         }
     ]);
 })();
