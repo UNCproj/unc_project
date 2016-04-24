@@ -12,6 +12,8 @@ public class SQLQueriesHelper {
     static public final String USER_TYPE_ID = "1";
     static public final String MODERATOR_TYPE_ID = "2";
     static public final String ADVERT_TYPE_ID = "4";
+    static public final String MESSAGE_TYPE_ID = "3";
+    static public final String FORUM_TOPIC = "388";
 
     static public final String LOGIN_ATTR = "login";
     static public final String MODER_ATTR = "is_moderator";
@@ -54,7 +56,13 @@ public class SQLQueriesHelper {
     static public final String COUNTRY_ATTR_ID = "17";
     static public final String ADDITIONAL_INFO_ATTR_ID = "18";
     static public final String BOOKMARK_ATTR_ID = "19";
+    static public final String TEXT_MESSAGE = "31";
+    static public final String DATE_MESSAGE = "32";
+    static public final String ID_SENDER = "33";
+    static public final String ID_RECIPIENT = "34";
     static public final String INVALID_ATTR_ID = "37";
+    static public final String DATE_CREATION = "38";
+    static public final String PERSON_CREATION = "39";
     static public final String DEL_MSG_ATTR_ID = "40";
     static public final String DEL_ID_ATTR_ID = "41";
     //static public final String DEFAULT_USER_PIC_FILE = "/unc-project/resources/img/user-pics/default.png";
@@ -383,20 +391,25 @@ public class SQLQueriesHelper {
         return query;
     }
 
-    static public String insertParam(BigDecimal object_id, String attrId, String value, Date dateValue)
-    {
-        System.out.println("object_id" +object_id+"attrId"+attrId+"value"+value+"dateValue"+dateValue);
+    static public String insertParam(BigDecimal object_id, String attrId, String value, Date dateValue) {
+        System.out.println("object_id" + object_id + "attrId" + attrId + "value" + value + "dateValue" + dateValue);
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
+        if(value==null && dateValue==null &&( attrId.equals(SQLQueriesHelper.DATE_MESSAGE)
+                || attrId.equals(SQLQueriesHelper.DATE_CREATION)) ){
+            String query = "insert into unc_params(object_id, attr_id, date_value) values(" + object_id + ", " +
+                    attrId + ", systimestamp)";
+            return query;
+        }
         String query = "insert into unc_params(object_id, attr_id, value, date_value) values(" +
                 object_id + ", " +
                 attrId + ", " +
                 (value == null ? "null" : "'" + value + "'") + ", " +
                 (value == null ? "to_date('" + df.format(dateValue) + "', 'yyyy-MM-dd HH24:mi:ss')" : "null") + ")";
-        if(attrId.equals("20")){
+        if (attrId.equals("20")) {
             query = "insert into unc_params(object_id, attr_id, value, date_value) values(" + object_id + ", " +
                     attrId + ", '" + value + "', systimestamp)";
         }
+
         System.out.println(query);
         return query;
     }
@@ -740,40 +753,116 @@ public class SQLQueriesHelper {
         System.out.println(query);
         return query;
     }
-    static public String newMessage(String id, String text, String senderId, String recipientId){
-        String query = "insert into unc_messages(id_message, text_message, date_message,id_sender,id_recipient) values (" +
-                id + ",'" + text +"',systimestamp,"+senderId+","+recipientId+")";
+    static public String newMessage(String type, String data) {
+        String query = "insert into unc_objects(object_id, object_type_id) values(" + data + ", " + type + ")";
         return query;
     }
-    static public String outputMessages(String lastId,String senderId, String recipientId){
-        if(lastId==null || lastId.equals("") || lastId.equals("undefined")){
-            String query = "select m.TEXT_MESSAGE,\n" +
-                    "        m.DATE_MESSAGE,\n" +
-                    "        m.ID_MESSAGE,\n" +
-                    "        o.OBJECT_NAME \n" +
-                    "  from unc_messages m\n" +
-                    " join UNC_OBJECTS o \n" +
-                    "          on o.OBJECT_ID=m.ID_SENDER "+
-                    "where" +
-                    "(m.id_sender = "+senderId+" and m.id_recipient="+recipientId+") or"+
-                    "(m.id_sender = "+recipientId+" and m.id_recipient="+senderId+")"+
+
+    static public String outputMessages(String lastId, String senderId, String recipientId) {
+        if (lastId == null || lastId.equals("") || lastId.equals("undefined")) {
+            String query = "select m.TEXT_MESSAGE, " +
+                    "m.DATE_MESSAGE, " +
+                    "m.ID_MESSAGE, " +
+                    "m.OBJECT_NAME " +
+                    "from ( " +
+                    "select * " +
+                    "from ( " +
+                    "select object_id as id_message " +
+                    "from unc_objects " +
+                    "where object_type_id = 3 " +
+                    ") table_mess_id " +
+                    "left join ( " +
+                    "select value as text_message, " +
+                    "object_id " +
+                    "from unc_params " +
+                    "where attr_id = 31 " +
+                    ") table_mess_text " +
+                    "on table_mess_text.object_id=table_mess_id.id_message " +
+                    "left join ( " +
+                    "select date_value as date_message, " +
+                    "object_id " +
+                    "from unc_params " +
+                    "where attr_id = 32 " +
+                    ") table_mess_date " +
+                    "on table_mess_date.object_id=table_mess_id.id_message " +
+                    "left join ( " +
+                    "select value as id_sender, " +
+                    "object_id " +
+                    "from unc_params " +
+                    "where attr_id = 33 " +
+                    ") table_mess_sender_id " +
+                    "on table_mess_sender_id.object_id=table_mess_id.id_message " +
+                    "left join ( " +
+                    "select value as id_recipient, " +
+                    "object_id " +
+                    "from unc_params " +
+                    "where attr_id = 34 " +
+                    ") table_mess_recipient_id " +
+                    "on table_mess_recipient_id.object_id=table_mess_id.id_message " +
+                    "inner join ( " +
+                    "select object_id, object_name " +
+                    "from unc_objects " +
+                    ") table_sender_name " +
+                    "on table_sender_name.object_id = table_mess_sender_id.id_sender " +
+                    ") m " +
+                    "where " +
+                    "(m.id_sender = " + senderId + " and m.id_recipient=" + recipientId + ") or " +
+                    "(m.id_sender = " + recipientId + " and m.id_recipient=" + senderId + ") " +
                     " order by m.date_message";
             return query;
-        }else {
-            String query = "select m.TEXT_MESSAGE,\n" +
-                    "        m.DATE_MESSAGE,\n" +
-                    "        m.ID_MESSAGE,\n" +
-                    "        o.OBJECT_NAME \n" +
-                    "  from unc_messages m\n" +
-                    " join UNC_OBJECTS o \n" +
-                    "          on o.OBJECT_ID=m.ID_SENDER "+
-                    " where m.date_message>(\n" +
-                    "  select um.date_message\n" +
-                    "  from unc_messages um\n" +
-                    "  where um.id_message=" + lastId + "\n" +
-                    " )\n" +
-                    " and ((m.id_sender = "+senderId+" and m.id_recipient="+recipientId+") or"+
-                    "(m.id_sender = "+recipientId+" and m.id_recipient="+senderId+"))"+
+        } else {
+            String query = "select m.TEXT_MESSAGE, " +
+                    "m.DATE_MESSAGE, " +
+                    "m.ID_MESSAGE, " +
+                    "m.OBJECT_NAME  " +
+                    "from ( " +
+                    "select * " +
+                    "from ( " +
+                    "select object_id as id_message " +
+                    "from unc_objects " +
+                    "where object_type_id = 3 " +
+                    ") table_mess_id " +
+                    "left join ( " +
+                    "select value as text_message, " +
+                    "object_id " +
+                    "from unc_params " +
+                    "where attr_id = 31 " +
+                    ") table_mess_text " +
+                    "on table_mess_text.object_id=table_mess_id.id_message " +
+                    "left join ( " +
+                    "select date_value as date_message, " +
+                    "object_id " +
+                    "from unc_params " +
+                    "where attr_id = 32 " +
+                    ") table_mess_date " +
+                    "on table_mess_date.object_id=table_mess_id.id_message " +
+                    "left join ( " +
+                    "select value as id_sender, " +
+                    "object_id " +
+                    "from unc_params " +
+                    "where attr_id = 33 " +
+                    ") table_mess_sender_id " +
+                    "on table_mess_sender_id.object_id=table_mess_id.id_message " +
+                    "left join ( " +
+                    "select value as id_recipient, " +
+                    "object_id " +
+                    "from unc_params " +
+                    "where attr_id = 34 " +
+                    ") table_mess_recipient_id " +
+                    "on table_mess_recipient_id.object_id=table_mess_id.id_message " +
+                    "inner join ( " +
+                    "select object_id, object_name " +
+                    "from unc_objects " +
+                    ") table_sender_name " +
+                    "on table_sender_name.object_id = table_mess_sender_id.id_sender " +
+                    ") m " +
+                    "where m.date_message>( " +
+                    "select date_value " +
+                    "from unc_params " +
+                    "  where object_id=" + lastId + " and attr_id=32 " +
+                    " ) " +
+                    " and ((m.id_sender = " + senderId + " and m.id_recipient=" + recipientId + ") or" +
+                    "(m.id_sender = " + recipientId + " and m.id_recipient=" + senderId + "))" +
                     " order by m.date_message";
             return query;
         }
@@ -849,9 +938,22 @@ public class SQLQueriesHelper {
         System.out.println(query);
         return query;
     }
-    public static String selectChildTypeIdByTypeNames(String type, String type1, String type2, String type3, String type4){
+    public static String selectChildTypeIdByTypeNames(String type, String type1, String type2, String type3, String type4) {
         String query = "";
-        if(type!=null && type1!=null && type2!=null && type3==null && type4==null){
+        if (type != null && type1 == null && type2 == null && type3 == null && type4 == null) {
+            query = "select t.ot_id " +
+                    "from  unc_object_types t " +
+                    "where t.ot_name = '" + type + "'";
+        }
+        if (type != null && type1 != null && type2 == null && type3 == null && type4 == null) {
+            query = "select t1.ot_id " +
+                    "from  unc_object_types t " +
+                    "left join unc_object_types t1 " +
+                    "on t1.parent_id = t.ot_id " +
+                    "where t.ot_name = '" + type + "' and " +
+                    "t1.ot_name = '" + type1 + "'";
+        }
+        if (type != null && type1 != null && type2 != null && type3 == null && type4 == null) {
             query = "select t2.ot_id " +
                     "from  unc_object_types t " +
                     "left join unc_object_types t1 " +
@@ -862,7 +964,7 @@ public class SQLQueriesHelper {
                     "t1.ot_name = '" + type1 + "' and " +
                     "t2.ot_name = '" + type2 + "'";
         }
-        if(type!=null && type1!=null && type2!=null && type3!=null && type4==null){
+        if (type != null && type1 != null && type2 != null && type3 != null && type4 == null) {
             query = "select t3.ot_id " +
                     "from  unc_object_types t " +
                     "left join unc_object_types t1 " +
@@ -876,7 +978,7 @@ public class SQLQueriesHelper {
                     "t2.ot_name = '" + type2 + "' and " +
                     "t3.ot_name = '" + type3 + "' ";
         }
-        if(type!=null && type1!=null && type2!=null && type3!=null && type4!=null){
+        if (type != null && type1 != null && type2 != null && type3 != null && type4 != null) {
             query = "select t4.ot_id " +
                     "from  unc_object_types t " +
                     "left join unc_object_types t1 " +
@@ -973,6 +1075,99 @@ public class SQLQueriesHelper {
                 "  from unc_params \n" +
                 "  where object_id="+object_id+" and\n" +
                 "  attr_id="+attr_id;
+        return query;
+    }
+    static public String verificationUser (String id){
+        String query = "select case  " +
+                "when object_type_id = 1 then " +
+                "object_id " +
+                "else " +
+                "( " +
+                "  select object_reference_id " +
+                "  from UNC_REFERENCES " +
+                "  where OBJECT_ID = " + id  +
+                " ) " +
+                "end as object_id " +
+                "from unc_objects " +
+                "where object_id = " + id;
+        return query;
+    }
+    static public String selectForumTopics (){
+        String query = "select * " +
+                "from unc_object_types uot " +
+                "where uot.parent_id = " + FORUM_TOPIC;
+        return query;
+    }
+    static public String selectselectForumTopicsWithAttrs(String type){
+        String query = "select o.object_id, " +
+                "o.object_name, " +
+                "p1.value as description, " +
+                "to_char(p2.DATE_VALUE,'YYYY:MM:DD HH24:MI:SS') as creation_date, " +
+                "p3.value as creation_id, " +
+                "o2.object_name as creation_login " +
+                "from unc_objects o " +
+                "left join unc_params p1 " +
+                "on p1.object_id = o.object_id " +
+                "left join unc_params p2 " +
+                "on p2.object_id = o.object_id " +
+                "left join unc_params p3 " +
+                "on p3.object_id = o.object_id " +
+                "left join unc_objects o2 " +
+                "on o2.OBJECT_ID = p3.VALUE " +
+                "where o.object_type_id = ( " +
+                "select ot.ot_id  " +
+                "from unc_object_types ot  " +
+                "where lower(ot.ot_name) =  " +
+                "lower('" + type + "') " +
+                ") and p1.attr_id = " + DESCRIPTION_ATTR_ID +
+                " and p2.attr_id =  " + DATE_CREATION +
+                " and p3.attr_id =  " + PERSON_CREATION +
+                " order by p2.DATE_VALUE desc";
+        return query;
+    }
+    public static String selectForumsDiscussion(String id){
+        String query = "select o.object_id, " +
+                "o.object_name, " +
+                "p1.value as description, " +
+                "to_char(p2.DATE_VALUE,'YYYY:MM:DD HH24:MI:SS') as creation_date, " +
+                "p3.value as creation_id, " +
+                "o2.object_name as creation_login " +
+                "from unc_objects o " +
+                "left join unc_params p1 " +
+                "on p1.object_id = o.object_id " +
+                "left join unc_params p2 " +
+                "on p2.object_id = o.object_id " +
+                "left join unc_params p3 " +
+                "on p3.object_id = o.object_id " +
+                "left join unc_objects o2 " +
+                "on o2.OBJECT_ID = p3.VALUE " +
+                "where o.object_id = " + id +
+                " and p1.attr_id = " + DESCRIPTION_ATTR_ID +
+                " and p2.attr_id =  " + DATE_CREATION +
+                " and p3.attr_id =  " + PERSON_CREATION +
+                " order by p2.DATE_VALUE ";
+        System.out.println(query);
+        return  query;
+    }
+    public static String selectForumComments (String forumTopicId){
+        String query = "select  o.object_name, " +
+                "to_char(p1.date_value, 'YYYY:MM:DD HH24:MI:SS') as date_creation, " +
+                "p2.value as id_creation, " +
+                "o2.object_name as login_creation " +
+                "from unc_objects o " +
+                "left join unc_params p1 " +
+                "on p1.object_id = o.object_id " +
+                "left join unc_params p2 " +
+                "on p2.object_id = o.object_id " +
+                "left join unc_params p3 " +
+                "on p3.object_id = o.object_id " +
+                "left join unc_objects o2 " +
+                "on o2.object_id = p2.value " +
+                "where o.object_type_id = 392 and " +
+                "p1.attr_id = 38 and " +
+                "p2.attr_id = 39 and " +
+                "p3.attr_id = 42 and " +
+                "p3.value = " + forumTopicId;
         return query;
     }
 }

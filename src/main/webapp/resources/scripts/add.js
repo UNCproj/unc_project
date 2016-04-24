@@ -20,14 +20,19 @@ $(function(){
             $scope.arrAttr = [];
             $scope.arrAttrIndex = 0;
 
-            var add = function(){
-                console.log('Rabotaet');
-            };
+            if($.urlParam('type')=='forum_topic'){
+                $scope.object.type = $.urlParam('type');
+                $scope.object.type1 = decodeURI($.urlParam('name'));
+            }
+            if($.urlParam('type')=='forum_comment'){
+                $scope.object.type = $.urlParam('type');
+                $scope.object.topic_id = $.urlParam('id');
+            }
 
             $("div#category-div-1 a").on("click",function(){
                 $("div#category-div-1 a").removeClass("a-category-active");
                 $(this).addClass("a-category-active");
-                $scope.object.type1=$(this).html();
+                $scope.object.type1=$(this).text();
                 $scope.loadTypes("type1");
             });
 
@@ -188,7 +193,17 @@ $(function(){
                     params: p
                 })
                     .success(function (data) {
-                        console.log(data);
+                        if (data == 1){
+                            var h = window.location.href;
+                            var n = h.indexOf('unc_add.jsp?');
+                            var hr = h.substring(0, n);
+                            if ($scope.object.type == 'forum_topic') {
+                                window.location.href = hr + "forum.jsp?type=" + $scope.object.type1;
+                            }
+                            if ($scope.object.type == 'forum_comment') {
+                                window.location.href = hr + "forum.jsp?id=" + $scope.object.topic_id;
+                            }
+                        }
                     });
             };
 
@@ -245,16 +260,25 @@ $(function(){
                             '</td>'+
                             '<td>' +
                                 '<select id="'+a_name+'" ng-model="object.'+a_name+'" required ng-options="n for n in '+a_name+'">' +
-                                    '<option disabled value="">Выберите город</option>' +
                                 '</select>' +
                             '</td>'+
                         '</tr>'
                     );
                     if(a_name=='city') {
+                        $("div.attributes select#city").append(
+                            '<option disabled value="">Выберите ' + a_ru_name.toLowerCase() +'</option>');
                         for (var i = 0; i < $scope.city.length; i++) {
                             $("div.attributes select#city").append('<option value="' + $scope.city[i] + '">'+$scope.city[i]+'</option>');
                         }
-                    }
+                    };
+                    if(a_name=='vip_status'){
+                        $("div.attributes select#vip_status").append('<option value="">Выбрать VIP-статус</option>'+
+                            '<option value="Gold">Золотой</option>' +
+                            '<option value="Platinum">Платиновый</option>');
+                        $("div.attributes tbody tr:last td:last").append("<p>Если хотите реализовать свое объявление " +
+                            "быстрее, воспользуйтесь услугой VIP-статус.</p>");
+
+                    };
                 }
             };
 

@@ -5,30 +5,32 @@ chat.controller('chatController', function($scope, $http){
     $http.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 
     $scope.lastmesid;
-    $scope.sellerLogin;
+    $scope.recipientId;
 
     $scope.publish = function(){
         var mesText = $("#textMessage").val();
         if (mesText!=""){
             $("#textMessage").val("");
             $scope.start();
-            $http.post("chatPublish", "message=" + mesText+"&sellerLogin="+$scope.sellerLogin);
+            $http.post("chatPublish", "message=" + mesText+"&recipientId="+$scope.recipientId);
         }
     };
 
     $scope.subscribe = function (id){
         $scope.lastmesid=id;
-        $http.post("chatSubscribe","lastMessageId=" + $scope.lastmesid+"&sellerLogin="+$scope.sellerLogin).
+        $http.post("chatSubscribe","lastMessageId=" + $scope.lastmesid+"&recipientId="+$scope.recipientId).
         success(function(data, status) {
             if (status == "200"){
                 for (var i = 0; i < data.length; i++) {
                     $scope.lastmesid = data[i].id;
-                    $("div#messages").children("div#name").children().append('<p>' + data[i].sender  +"</p>");
-                    $("div#messages").children("div#text").children().append('<p>' + data[i].text  +"</p>");
-                    $("div#messages").children("div#date").children().append('<p>' + data[i].date.substring(0,19) +"</p>");
+                    $("table#message tbody").append("<tr></tr>");
+                    $("table#message tbody tr:last").append('<td style="width: 50px">' + data[i].sender  +"</td>");
+                    $("table#message tbody tr:last").append('<td style="width: 300px">' + data[i].text  +"</td>");
+                    $("table#message tbody tr:last").append('<td style="width: 80px">' + data[i].date.substring(0,19) +"</td>");
                 }
                 $scope.subscribe($scope.lastmesid);
             }
+            $("div.message").animate({ scrollTop: 999 }, 1100);
         }).
         error(function(data, status) {
         });
@@ -44,7 +46,7 @@ chat.controller('chatController', function($scope, $http){
     };
 
     $scope.start = function(){
-        $scope.sellerLogin=getUrlVars()["name"];
+        $scope.recipientId=getUrlVars()["id"];
     };
 
     $("document").ready(function(){

@@ -125,28 +125,45 @@ public class UncObject {
     }
 
     public void insertIntoDB() throws PropertyVetoException, SQLException, IOException {
-        try(Connection connection = DataSource.getInstance().getConnection();
-            Statement statement = connection.createStatement()) {
+        try (Connection connection = DataSource.getInstance().getConnection();
+             Statement statement = connection.createStatement()) {
             connection.setAutoCommit(false);
             ResultSet results = (statement.executeQuery(SQLQueriesHelper.newId()));
             results.next();
             id = results.getString("id");
             statement.executeUpdate(SQLQueriesHelper.insertObject(id, type, name));
 
-            if(userId!=null){
+            if (userId != null) {
                 Statement statementReference = connection.createStatement();
-                statementReference.executeUpdate(SQLQueriesHelper.newReference(id, userId, SQLQueriesHelper.USERS_ADVERT_ATTR_ID));
+                System.out.println(type);
+                if (Integer.parseInt(type) > 388) {
+                    statementReference.executeUpdate(SQLQueriesHelper.insertParam(
+                            new BigDecimal(id), "39", userId, null
+                    ));
+                    statementReference.executeUpdate(SQLQueriesHelper.insertParam(
+                            new BigDecimal(id), "38", null, null
+                    ));
+                } else {
+                    statementReference.executeUpdate(SQLQueriesHelper.newReference(id, userId, SQLQueriesHelper.USERS_ADVERT_ATTR_ID));
+                }
+                if (type.equals("388")) {
+                    statementReference.executeUpdate(SQLQueriesHelper.insertParam(
+                            new BigDecimal(id), "42", userId, null
+                    ));
+                }
                 Statement statementAllAttrId = connection.createStatement();
                 ResultSet resultsAllAttrId = statementAllAttrId.executeQuery(SQLQueriesHelper.getAllAttributes(type));
-                while(resultsAllAttrId.next()){
-                    for(Param p :params){
-                        if(p.getName().equals(resultsAllAttrId.getString("attr_name"))){
+                while (resultsAllAttrId.next()) {
+                    for (Param p : params) {
+                        if (p.getName().equals(resultsAllAttrId.getString("attr_name"))) {
                             p.setAttrId(resultsAllAttrId.getString("attr_id"));
                         }
                     }
                 }
-                Statement statementRegDate = connection.createStatement();
-                statementRegDate.executeUpdate(SQLQueriesHelper.insertRegDateById(id));
+                if (Integer.parseInt(type) < 388) {
+                    Statement statementRegDate = connection.createStatement();
+                    statementRegDate.executeUpdate(SQLQueriesHelper.insertRegDateById(id));
+                }
             }
 
             for (Param param : params) {

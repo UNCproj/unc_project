@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.beans.PropertyVetoException;
+import java.io.PrintWriter;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.io.IOException;
@@ -27,12 +28,13 @@ public class AddServlet extends HttpServlet {
         String type2 = request.getParameter("type2");
         String type3 = request.getParameter("type3");
         String type4 = request.getParameter("type4");
+        String topicId = request.getParameter("topicId");
         String objectName = request.getParameter("name");
 
-        System.out.println(type1);
-        System.out.println(type2);
-        System.out.println(type3);
-        System.out.println(type4);
+        System.out.println(topicId);
+        System.out.println(request.getParameter("type"));
+        System.out.println(request.getParameter("name"));
+        System.out.println(request.getParameter("description"));
 
         Enumeration<String> paramsNames = request.getParameterNames();
 
@@ -67,6 +69,7 @@ public class AddServlet extends HttpServlet {
             String paramValue = request.getParameter(paramName);
 
             obj.setParam(paramName, paramValue);
+
         }
 
         try {
@@ -76,6 +79,7 @@ public class AddServlet extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+        PrintWriter out = response.getWriter();
+        out.println("1");
     }
 }

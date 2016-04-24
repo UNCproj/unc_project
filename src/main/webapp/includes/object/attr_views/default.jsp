@@ -1,4 +1,4 @@
-﻿<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <tr>
     <td class="attr-center" >
         ${param.attr_name_ru}
@@ -21,7 +21,7 @@
                     </c:otherwise>
                 </c:choose>
             </c:when>
-            <c:when test="${param.attr_type.equals(\"6\")}">
+            <c:when test="${param.attr_type.equals(\"7\")}">
                 <c:choose>
                     <c:when test="${!param.attr_value.equals(\"\")}">
                         ${param.attr_value}

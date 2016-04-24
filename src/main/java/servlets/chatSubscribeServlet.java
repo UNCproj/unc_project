@@ -34,7 +34,7 @@ public class chatSubscribeServlet extends HttpServlet {
         response.setContentType("text/html");
 
         String lastMessageId = request.getParameter("lastMessageId");
-        String sellerLogin = request.getParameter("sellerLogin");
+        String recipientId = request.getParameter("recipientId");
 
         UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
         String senderId = userAccountBean.getId();
@@ -44,13 +44,10 @@ public class chatSubscribeServlet extends HttpServlet {
         try {
             connection = DataSource.getInstance().getConnection();
 
-            Statement statementfindIdNamed = connection.createStatement();
-            ResultSet resultSetFindIdNamed = statementfindIdNamed.executeQuery(SQLQueriesHelper.findIdNamed(sellerLogin));
-            resultSetFindIdNamed.next();
-            String recipientId = resultSetFindIdNamed.getString("object_id");
             Statement statementOutputMessages = connection.createStatement();
             ResultSet resultSetOutputMessagees =  statementOutputMessages.executeQuery(SQLQueriesHelper.outputMessages(
-                    lastMessageId,senderId,recipientId));
+                    lastMessageId,senderId,recipientId
+            ));
             ArrayList <Message> messagesArray = new ArrayList<Message>();
             int step = 0;
             if(resultSetOutputMessagees.next()==false){
@@ -59,7 +56,7 @@ public class chatSubscribeServlet extends HttpServlet {
                             lastMessageId,senderId,recipientId));
                     if(resultSetOutputMessagees.next()) {
                         break;
-                    }else if(step==10){
+                    }else if(step==100){
                         break;
                     }else{
                         Thread myThread = Thread.currentThread();
