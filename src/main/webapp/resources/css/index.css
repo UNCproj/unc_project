@@ -2,18 +2,6 @@
     margin-top: 50px;
 }
 
-.search-results a {
-    color: black;
-}
-
-.search-results a .name {
-    color: #2b669a;
-}
-
-.search-results a .description {
-    height: 50px;
-}
-
 .categories {
     margin: 5px auto;
     width: auto;
@@ -114,9 +102,23 @@
     clear: both;
 }
 
+.search-results a {
+    color: black;
+}
+
+.search-results a .name {
+    color: #2b669a;
+}
+
+.search-results a .description {
+    height: 50px;
+}
+
 .search-results .list-group-item:hover {
     cursor: pointer;
-    background-color: #CCC;
+    background-color: #f9f9f9;
+    border: 1px solid #5cb85c;
+    z-index: 2;
 }
 
 .search-results .list-group-item {
@@ -133,6 +135,47 @@
 .search-results .list-group-item .img img {
     height: 150px;
     width: 150px;
+}
+
+.vip-adverts {
+    margin-top: 75px;
+    padding: 0px;
+    border: 1px solid #d9534f;
+}
+
+.vip-adverts .vip-adverts-header {
+    margin: 0;
+    height: 30px;
+    line-height: 30px;
+    background-color: #d9534f;
+    text-align: center;
+    vertical-align: middle;
+    border: 2px solid #d9534f;
+    border-radius: 5px 5px 0 0;
+}
+
+.vip-adverts .img img {
+    display: block;
+    margin: 0 auto;
+}
+
+.vip-adverts a {
+    color: black;
+}
+
+.vip-adverts a .name {
+    color: #2b669a;
+}
+
+.vip-adverts .list-group {
+    margin: 20px;
+}
+
+.vip-adverts .list-group-item:hover {
+    cursor: pointer;
+    background-color: #f9f9f9;
+    border: 1px solid #d9534f;
+    z-index: 2;
 }
 
 .content:after {

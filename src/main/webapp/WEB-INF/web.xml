@@ -21,7 +21,7 @@
 
     <context-param>
         <param-name>default.advert.image</param-name>
-        <param-value>/var/img/content/default.png</param-value>
+        <param-value>/resources/img/default.png</param-value>
     </context-param>
 
     <servlet>

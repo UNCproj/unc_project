@@ -236,7 +236,7 @@
                 </div>
 
                 <%--VIP объявления--%>
-                <div class="vip-adverts col-md-3" ng-controller="vipAdvertsController as vipAdvertsCtrl">
+                <div class="vip-adverts col-md-3 img-rounded" ng-controller="vipAdvertsController as vipAdvertsCtrl">
                     <h3 class="vip-adverts-header">VIP-объявления</h3>
                     <ul class="list-group">
                         <li class="list-group-item" ng-repeat="adv in vipAds">
