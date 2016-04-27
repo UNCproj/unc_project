@@ -1,4 +1,4 @@
-package db;
+﻿package db;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -1102,7 +1102,7 @@ public class SQLQueriesHelper {
         String query = "select o.object_id, " +
                 "o.object_name, " +
                 "p1.value as description, " +
-                "to_char(p2.DATE_VALUE,'YYYY:MM:DD HH24:MI:SS') as creation_date, " +
+                "to_char(p2.DATE_VALUE,'DD:MM:YYYY HH24:MI:SS') as creation_date, " +
                 "p3.value as creation_id, " +
                 "o2.object_name as creation_login " +
                 "from unc_objects o " +
@@ -1129,7 +1129,7 @@ public class SQLQueriesHelper {
         String query = "select o.object_id, " +
                 "o.object_name, " +
                 "p1.value as description, " +
-                "to_char(p2.DATE_VALUE,'YYYY:MM:DD HH24:MI:SS') as creation_date, " +
+                "to_char(p2.DATE_VALUE,'DD:MM:YYYY HH24:MI:SS') as creation_date, " +
                 "p3.value as creation_id, " +
                 "o2.object_name as creation_login " +
                 "from unc_objects o " +
@@ -1151,7 +1151,7 @@ public class SQLQueriesHelper {
     }
     public static String selectForumComments (String forumTopicId){
         String query = "select  o.object_name, " +
-                "to_char(p1.date_value, 'YYYY:MM:DD HH24:MI:SS') as date_creation, " +
+                "to_char(p1.date_value, 'DD:MM:YYYY HH24:MI:SS') as date_creation, " +
                 "p2.value as id_creation, " +
                 "o2.object_name as login_creation " +
                 "from unc_objects o " +
