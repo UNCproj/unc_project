@@ -1,5 +1,5 @@
 (function(){
-            var app = angular.module('objectSettings', ['chart.js']);
+            var app = angular.module('objectSettings', ['chart.js','ngDialog']);
             console.log('start');           
             var getUrlParameter = function getUrlParameter(sParam) {
                 var sPageURL = decodeURIComponent(window.location.search.substring(1)),
@@ -85,7 +85,31 @@
             };
             }); 
             
-            app.controller("AdminCtrl", function ($scope){
-               console.log("admin ready!"); 
+            app.controller("AdminCtrl", function ($scope, ngDialog){
+               console.log("adminmoder ready!");
+                $scope.del_model = {};
+                $scope.del_model.txt = "";
+                $scope.del_model.uid = $('#hidden_user_name').val();
+                $scope.deleteAdvert = function (){
+                   $.ajax({
+                url: "/unc-project/ModerServlet/delAdvert",
+                async:false,
+                data: {"id": getUrlParameter("id"),
+                        "uid":encodeURIComponent($scope.del_model.uid),
+                        "msg":encodeURIComponent($scope.del_model.txt)}
+                }).done(function(data) {
+                    console.log("del success!");
+                    console.log("uid="+$scope.del_model.uid);
+                    console.log("umsg="+$scope.del_model.txt);
+                    $scope.close_diag.close();
+                });
+               };
+               
+                $scope.clickToDel = function (){
+                        $scope.close_diag = ngDialog.open({ template: 'directives/delete.html',
+                        scope: $scope
+                    });
+                };
+             
             });
 })();

@@ -115,8 +115,10 @@ public class ModerServlet extends HttpServlet {
                 log.info("checktype2 " + comm);
                 res = st.executeQuery(comm);
                 res.next();
-                if (!res.getString(1).equals(SQLQueriesHelper.ADVERT_TYPE_ID)) {
-                    response.getWriter().println("Некорректный тип объекта!");
+                String type = res.getString(1);
+                if (!type.equals(SQLQueriesHelper.ADVERT_TYPE_ID)&&!type.equals(SQLQueriesHelper.USER_TYPE_ID)) {
+                    log.info("Некорректный тип объекта!");
+                    log.info(type);
                     return;
                 }
                 comm = "select value from unc_params where "

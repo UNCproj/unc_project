@@ -33,7 +33,7 @@ public class LoginServlet extends HttpServlet {
         boolean isLoggedIn = logIn(request.getParameter("login"), request.getParameter("pass"));
         PrintWriter out;
         StringBuffer responseJSON = new StringBuffer("{");
-
+        boolean isDeleted = false;
         try {
             out = response.getWriter();
         }
@@ -115,7 +115,8 @@ public class LoginServlet extends HttpServlet {
     }
 
     private boolean logIn(String login, String password) throws ServletException {
-
+        Logger log = Logger.getLogger("loginlog");
+        boolean islog = false;
         try {
             Connection con = DataSource.getInstance().getConnection();
             Statement statement = con.createStatement();
@@ -123,20 +124,27 @@ public class LoginServlet extends HttpServlet {
             types[0] = "1";
             types[1] = "2";
             ResultSet result = statement.executeQuery(SQLQueriesHelper.selectFullObjectInformationByName(types, login));
-
             if (result == null) {
                 return false;
             }
-
             while (result.next()) {
                 String attrName = result.getString("attr_name");
-                if (attrName.equals(SQLQueriesHelper.PASSWORD_ATTR)) {
+                if (attrName.equals("is_invalid")){
                     String attr_value = result.getString("value");
+                    if ((attr_value!=null)&&(attr_value.equals("true"))){
+                        islog = false;
+                        return islog;
+                    }
+                }
+                
+                if (attrName.equals(SQLQueriesHelper.PASSWORD_ATTR)) {
+                    String attr_value = result.getString("value");                   
                     if (attr_value.equals(String.valueOf(password.hashCode()))) {
-                        return true;
+                        islog = true;
                     }
                     else {
-                        return false;
+                        islog = false;
+                        return islog;
                     }
                 }
             }
@@ -144,6 +152,6 @@ public class LoginServlet extends HttpServlet {
             throw new ServletException(e);
         }
 
-        return false;
+        return islog;
     }
 }

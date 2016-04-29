@@ -122,13 +122,18 @@ public class VkLoginServlet extends HttpServlet {
             String sname = user.get(0).get("last_name").toString().replace('"', ' ');
             
             if (result.next()) {
-                response.getWriter().println(login(request, user_id, authToken.getParam("email"), avatar.replace('"', ' ')));
+                boolean isLog = login(request, user_id, authToken.getParam("email"), avatar.replace('"', ' '));
+                if (isLog==false){
+                    response.sendRedirect("jsp404.jsp");
+                }
+                response.getWriter().println(isLog);
                 response.getWriter().println();
                 UserAccountBean ub = (UserAccountBean) request.getSession().getAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY);
                 response.getWriter().println(ub.getId()+" "+ub.getLogin()+" "+ub.getUserPicFile());
                 response.getWriter().println("admin="+ub.isIsAdmin());
                 response.getWriter().println("moder="+ub.isIsModer());
                 response.sendRedirect("/unc-project/unc_object.jsp?id="+ub.getId());
+                
             }
             else{
                 response.setCharacterEncoding("UTF-8");
@@ -192,7 +197,7 @@ public class VkLoginServlet extends HttpServlet {
             Connection connection = null;
             Statement selectObjInfoStatement = null;
             Statement updateLastLoginDateStatement = null;
-
+            Logger log = Logger.getLogger("vklog");
             try {
                 connection = DataSource.getInstance().getConnection();
                 selectObjInfoStatement = connection.createStatement();
@@ -200,9 +205,18 @@ public class VkLoginServlet extends HttpServlet {
                 types[0] = SQLQueriesHelper.USER_TYPE_ID;
                 ResultSet results = selectObjInfoStatement.executeQuery(
                         SQLQueriesHelper.selectFullObjectInformationByName(types, login));
+                
                 while(results.next()) {
-                    String attrName = results.getString("attr_name");
                     userId = results.getBigDecimal("object_id");
+                    String attr_name = results.getString("attr_name");
+                    log.info("an="+attr_name);
+                    if ((attr_name!=null)&&(attr_name.equals("is_invalid"))){
+                        log.info("an="+attr_name);
+                            String attr_value = results.getString("value");
+                        if ((attr_value!=null)&&(attr_value.equals("true"))){
+                            return false;
+                        }
+                    }
                 }
                 updateLastLoginDateStatement = connection.createStatement();
                 updateLastLoginDateStatement.executeUpdate(

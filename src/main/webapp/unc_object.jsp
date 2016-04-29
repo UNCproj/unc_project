@@ -198,7 +198,7 @@
                             <br>
                             <div>
                                 <div ng-controller="AdminCtrl">
-                                    <button class="button-style a-outline">
+                                    <button class="button-style a-outline" ng-click="clickToDel();">
                                         В черный список!
                                     </button>
                                 </div>
