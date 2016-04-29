@@ -191,7 +191,8 @@
                             </div>
                         <% } %>
                         <div id="adminka" class="tab-pane fade in">
-                            Вы админ.
+                            <input id="user_pic_file" type="file" multiple="multiple">
+                            <script>getSuccesCountRow();</script>
                         </div>
                         <div id="adm" class="tab-pane fade in">
                             <% if ((user != null)&&user.isIsAdmin()&&("1".equals(currentObject.getParentType()))) { %>
