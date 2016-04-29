@@ -1,4 +1,4 @@
-﻿package db;
+package db;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -149,19 +149,34 @@ public class SQLQueriesHelper {
     }
     
     static public String getListReferences(String objectId) {
-        StringBuffer query = new StringBuffer("select  r.OBJECT_ID,\n" +
-                        "        o.OBJECT_NAME\n" +
-                        "from  unc_references r\n" +
-                        "  left join UNC_OBJECTS o\n" +
-                        "    on r.OBJECT_ID = o.OBJECT_ID\n" +
-                        "where r.OBJECT_REFERENCE_ID =  " + objectId +
-                        "union \n" +
-                        "select  rr.OBJECT_REFERENCE_ID,\n" +
-                        "        oo.OBJECT_NAME\n" +
-                        "from  unc_references rr\n" +
-                        "  left join UNC_OBJECTS oo\n" +
-                        "    on rr.OBJECT_REFERENCE_ID = oo.OBJECT_ID\n" +
-                        "where rr.OBJECT_ID = ");
+        String inv_id = INVALID_ATTR_ID;
+        StringBuffer query = new StringBuffer(  "select  r.OBJECT_ID,\n" +
+                                                "        o.OBJECT_NAME,\n" +
+                                                "        nvl(\n" +
+                                                "          (select value\n" +
+                                                "          from unc_params\n" +
+                                                "          where attr_id="+inv_id+" and\n" +
+                                                "                object_id=o.OBJECT_ID\n" +
+                                                "          ),\n" +
+                                                "          'false') as invalid\n" +
+                                                "from  unc_references r\n" +
+                                                "  left join UNC_OBJECTS o\n" +
+                                                "    on r.OBJECT_ID = o.OBJECT_ID\n" +
+                                                "where r.OBJECT_REFERENCE_ID =  "+objectId+" union \n" +
+                                                "select  rr.OBJECT_REFERENCE_ID,\n" +
+                                                "        oo.OBJECT_NAME,\n" +
+                                                "        nvl(\n" +
+                                                "          (select value\n" +
+                                                "          from unc_params\n" +
+                                                "          where attr_id="+inv_id+" and\n" +
+                                                "                object_id=oo.OBJECT_ID\n" +
+                                                "          ),\n" +
+                                                "          'false') as invalid\n" +
+                                                "from  unc_references rr\n" +
+                                                "  left join UNC_OBJECTS oo\n" +
+                                                "    on rr.OBJECT_REFERENCE_ID = oo.OBJECT_ID\n" +
+                                                "where rr.OBJECT_ID = "
+        );
         query.append(objectId);
         String queryString = query.toString();
         return queryString;

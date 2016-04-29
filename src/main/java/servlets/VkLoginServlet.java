@@ -145,6 +145,9 @@ public class VkLoginServlet extends HttpServlet {
                 
             }
             
+            if (con != null)
+                    con.close();
+            
         }
     }
 

@@ -26,6 +26,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -69,10 +71,14 @@ public class StatServlet extends HttpServlet {
         Logger log = Logger.getLogger("statServletLogger");
         ArrayList<VisitBean> visits;
         visits = new ArrayList<VisitBean>();
+        
+        HashMap<String, String> advertMap = new HashMap<>();
+        
         ArrayList<AdvertBean> names;
         names = new ArrayList<AdvertBean>();
         String object_id;
         object_id = request.getParameter("object_id");
+        String inv_id = SQLQueriesHelper.INVALID_ATTR_ID;
         switch (request.getServletPath()) {
             case "/StatServlet/getList": {
                 try {
@@ -84,9 +90,11 @@ public class StatServlet extends HttpServlet {
                                     "                  join unc_objects o on\n" +
                                     "                    o.OBJECT_ID = ref.OBJECT_ID\n" +
                                     "where ref.ATTR_ID = 11 and\n" +
-                                    "      ref.OBJECT_REFERENCE_ID = " + object_id +"\n"  ;
+                                    "      ref.OBJECT_REFERENCE_ID = " + object_id +"\n"+
+                                    "and \n" +
+"      nvl((select value from UNC_PARAMS where object_id = o.object_id and attr_id = "+inv_id+"),'false') != 'true'";
                     //response.getWriter().println(comm);
-                    log.info(comm);
+                    log.info("advert_list_query="+comm);
                     Connection connection = null;
                     try {
                         connection = DataSource.getInstance().getConnection();
@@ -96,15 +104,29 @@ public class StatServlet extends HttpServlet {
                     Statement st = connection.createStatement();
                     ResultSet resultSet = st.executeQuery(comm);
                     while (resultSet.next()) {
-                        AdvertBean adb = new AdvertBean();
-                        adb.setId(resultSet.getBigDecimal(1).toString());
-                        adb.setName(resultSet.getString(2));
-                        names.add(adb);
+                        advertMap.put(resultSet.getBigDecimal(1).toString(), resultSet.getString(2));
                     }
-                    String jsonvis = new Gson().toJson(names);
+                    
+                    if (connection!=null){
+                        connection.close();
+                    }
+                    
+                    String outputJson = "[";
+                    
+                    for(Entry<String, String> entry : advertMap.entrySet()) {
+                        if (outputJson.length()>1)
+                            outputJson+=",";
+                        String id = entry.getKey();
+                        String name = entry.getValue();
+                        outputJson+="{";
+                        outputJson+="\"id\": \""+id+"\""+",\"name\": \""+name+"\"";
+                        outputJson+="}";
+                    }
+                    outputJson += "]";
+                    log.info("outputJson="+outputJson);
                     response.setContentType("application/json");
                     response.setCharacterEncoding("UTF-8");
-                    response.getWriter().write(jsonvis);
+                    response.getWriter().write(outputJson);
                 } catch (SQLException e) {
                     throw new ServletException(e.getMessage(), e);
                 }
@@ -112,6 +134,7 @@ public class StatServlet extends HttpServlet {
             }
             case "/StatServlet/getStat": {
                 try {
+                    
                     BigInteger ad_id = new BigInteger(request.getParameter("ad_id"));
                     String comm
                             = "select  o.object id,\n"
@@ -162,11 +185,12 @@ public class StatServlet extends HttpServlet {
                         vis.count = resultSet.getInt("count");
                         visits.add(vis);
                     }
+                    if (connection!=null){
+                        connection.close();
+                    }
                 } catch (SQLException e) {
                     throw new ServletException(e.getMessage(), e);
                 }
-
-                //response.getWriter().write("123");
                 String jsonvis = new Gson().toJson(visits);
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");

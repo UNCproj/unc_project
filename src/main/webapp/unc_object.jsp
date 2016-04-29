@@ -41,8 +41,10 @@
             del_msg = prm_del_msg.getValue();
         if (prm_del_id != null)
             del_id = prm_del_id.getValue();
-        response.sendRedirect("ModerServlet/deleted?del_id="+del_id+"&del_msg="+del_msg);
+        //response.sendRedirect("ModerServlet/deleted?del_id="+del_id+"&del_msg="+del_msg);
+        response.sendRedirect("jsp404.jsp");
     }
+    
     
     ArrayList<String> listCategories = currentObject.selectCategory(currentObject.getType());
     
@@ -107,6 +109,9 @@
                          <%if ("4".equals(currentObject.getParentType())) {%>
                                  <li><a href="#adstatid" data-toggle="tab">Статистика просмотров</a></li>
                          <% } %>
+                         <%if ((user!=null)&&(user.isIsAdmin())&&(currentObject.getId().equals(user.getId()))) {%>
+                                 <li><a href="#adminka" data-toggle="tab">Админка</a></li>
+                         <% } %>     
                      <% } %>
                      </ul>
                      <div class="settings tab-content" id="tab_content">
@@ -175,6 +180,10 @@
                                </div>
                             </div>
                         <% } %>
+                        <div id="adminka" class="tab-pane fade in">
+                            Вы админ.
+                        </div>
+                        
                         <%if ("4".equals(currentObject.getParentType()) && user != null && user.isLoggedIn() && !currentObject.isVip()) {%>
                         <div class="robokassa-button" >
                             <ul>
@@ -195,15 +204,16 @@
                             String crc = currentObject.MD5(new String[] {sMrchLogin, sOutSum, nInvId, sMrchPass1, "shp_id_a="+shp_id_a});
                             %>
                                 <li class="robo-li">
-                                    <script language=JavaScript src='https://auth.robokassa.ru/Merchant/PaymentForm/FormSS.js?MerchantLogin=<%= sMrchLogin%>&OutSum=<%= sOutSum%>&InvoiceID=<%= nInvId%>&Description=<%= sDesc%>&shp_id_a=<%= shp_id_a%>&isTest=1&SignatureValue=<%= crc%>'></script>;
+                                    <script language=JavaScript src='https://auth.robokassa.ru/Merchant/PaymentForm/FormSS.js?MerchantLogin=<%= sMrchLogin%>&OutSum=<%= sOutSum%>&InvoiceID=<%= nInvId%>&Description=<%= sDesc%>&shp_id_a=<%= shp_id_a%>&isTest=1&SignatureValue=<%= crc%>'></script>
                                 </li>
                             </ul>
                         </div>
                         <%}%>
                             <% if ((user != null)&&user.isIsModer()&&("4".equals(currentObject.getParentType()))) { %>
+                            <br>
                             <div>
                                 <div ng-controller="ModerCtrl">
-                                    <button ng-click="clickToDel();">
+                                    <button class="button-style a-outline" ng-click="clickToDel();">
                                         Delete this!
                                     </button>
                                 </div>
@@ -217,9 +227,11 @@
                     <h4>Список обьявлений</h4>
                     <ul class="references-ul">
                         <% for (int i = 0; i < listReferences.size(); i++) { %>
+                        <% if (!listReferences.get(i)[2].equals("true")){%>
                         <li class="references-ul-li">
                             <a a href="unc_object.jsp?id=<%= listReferences.get(i)[0] %>"><%= listReferences.get(i)[1] %></a>
                         </li>
+                        <%}%>
                         <% } %>
                     </ul>
                     <%} else if ("4".equals(currentObject.getParentType())) { %>
