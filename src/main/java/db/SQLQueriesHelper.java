@@ -1,4 +1,4 @@
-package db;
+﻿package db;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -1119,7 +1119,8 @@ public class SQLQueriesHelper {
                 "p1.value as description, " +
                 "to_char(p2.DATE_VALUE,'DD:MM:YYYY HH24:MI:SS') as creation_date, " +
                 "p3.value as creation_id, " +
-                "o2.object_name as creation_login " +
+                "o2.object_name as creation_login , " +
+                "count(o.object_id) as numb_comments " +
                 "from unc_objects o " +
                 "left join unc_params p1 " +
                 "on p1.object_id = o.object_id " +
@@ -1129,6 +1130,8 @@ public class SQLQueriesHelper {
                 "on p3.object_id = o.object_id " +
                 "left join unc_objects o2 " +
                 "on o2.OBJECT_ID = p3.VALUE " +
+                "left join unc_params p4 " +
+                "on p4.value = o.object_id and p4.attr_id = 42 " +
                 "where o.object_type_id = ( " +
                 "select ot.ot_id  " +
                 "from unc_object_types ot  " +
@@ -1137,7 +1140,9 @@ public class SQLQueriesHelper {
                 ") and p1.attr_id = " + DESCRIPTION_ATTR_ID +
                 " and p2.attr_id =  " + DATE_CREATION +
                 " and p3.attr_id =  " + PERSON_CREATION +
-                " order by p2.DATE_VALUE desc";
+                " group by o.object_id, o.object_name, p1.value, to_char(p2.DATE_VALUE,'DD:MM:YYYY HH24:MI:SS'), p3.value, o2.object_name " +
+                "order by creation_date desc";
+        System.out.println(query);
         return query;
     }
     public static String selectForumsDiscussion(String id){

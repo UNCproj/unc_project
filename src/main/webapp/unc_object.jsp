@@ -1,4 +1,4 @@
-<%-- 
+﻿<%-- 
     Document   : unc_object
     Created on : 04.03.2016, 11:03:18
     Author     : Andrey
@@ -261,6 +261,14 @@
                     <h4 class="robokassa-li">Продавец : <a a href="unc_object.jsp?id=<%= listReferences.get(0)[0] %>"><%= listReferences.get(0)[1] %></a></h4>
                     <%}%>
                  </div>
+			<div>
+                             <%UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
+                                 if ("1".equals(currentObject.getType()) && userAccountBean!=null && userAccountBean.getId().equals(request.getParameter("id"))) {%>
+                             <a class="a-outline button-style" href="unc_update.jsp?id=<%=request.getParameter("id")%>" style="width: 200px">
+                                 Изменить данные
+                             </a>
+                             <%}%>
+                        </div>
             </div>
             <c:catch var="e">
                 <c:import url="/includes/object/footers/default.jspf" />
