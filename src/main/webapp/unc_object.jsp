@@ -1,4 +1,4 @@
-<%-- 
+﻿<%-- 
     Document   : unc_object
     Created on : 04.03.2016, 11:03:18
     Author     : Andrey
@@ -47,8 +47,10 @@
             del_msg = prm_del_msg.getValue();
         if (prm_del_id != null)
             del_id = prm_del_id.getValue();
-        response.sendRedirect("ModerServlet/deleted?del_id="+del_id+"&del_msg="+del_msg);
+        //response.sendRedirect("ModerServlet/deleted?del_id="+del_id+"&del_msg="+del_msg);
+        response.sendRedirect("jsp404.jsp");
     }
+    
     
     ArrayList<String> listCategories = currentObject.selectCategory(currentObject.getType());
     
@@ -113,6 +115,12 @@
                          <%if ("4".equals(currentObject.getParentType())) {%>
                                  <li><a href="#adstatid" data-toggle="tab">Статистика просмотров</a></li>
                          <% } %>
+                         <%if ((user!=null)&&(user.isIsAdmin())&&(currentObject.getId().equals(user.getId()))) {%>
+                                 <li><a href="#adminka" data-toggle="tab">Админка</a></li>
+                         <% } %>
+                         <%if ((user!=null)&&(user.isIsAdmin())&&(!currentObject.getId().equals(user.getId()))) {%>
+                                 <li><a href="#adm" data-toggle="tab">Админка</a></li>
+                         <% } %>         
                      <% } %>
                      </ul>
                      <div class="settings tab-content" id="tab_content">
@@ -123,7 +131,14 @@
                         <div id="tab<%= currentObject.getAttributeGroups().get(i)  %>" class="tab-pane fade in <%= activeSwicth1 %>">
                             <div class="table-pos">
                                 <table class="table table-params">
+                                    <% if ((currentObject.getParam("is_admin")!=null)&&
+                                                (currentObject.getParam("is_admin").getValue()!=null)&&
+                                                (currentObject.getParam("is_admin").getValue().equals("true"))
+                                            ) {%>
+                                            <img class="img" src="/unc-project/resources/img/admin_logo.png">
+                                        <%}%>
                                         <%  for (int j = 0; j < currentGroupParams.size(); j++) { %>
+                                        <% if ((currentGroupParams.get(j).getType()!=null)&&(currentGroupParams.get(j).getType().equals("2"))) {continue;}%>
                                                 <c:catch var="e">
                                                     <c:import url="/includes/object/attr_views/<%= currentObject.getType() %>.jsp" />
                                                 </c:catch>
@@ -167,7 +182,7 @@
                         <%if ("4".equals(currentObject.getParentType())) {%>
                             <div id="adstatid" class="tab-pane fade in">
 
-                                <input type="hidden" id="hidden_user_name" value="${uname}">
+                               <input type="hidden" id="hidden_user_name" value="${uname}">
                                <h3>Статистика просмотров объявления:</h3>
                                <div ng-controller="AdvertStatCtrl">
 
@@ -181,6 +196,23 @@
                                </div>
                             </div>
                         <% } %>
+                        <div id="adminka" class="tab-pane fade in">
+                            Вы админ.
+                        </div>
+                        <div id="adm" class="tab-pane fade in">
+                            <% if ((user != null)&&user.isIsAdmin()&&("1".equals(currentObject.getParentType()))) { %>
+                            <br>
+                            <div>
+                                <div ng-controller="AdminCtrl">
+                                    <button class="button-style a-outline">
+                                        В черный список!
+                                    </button>
+                                </div>
+                            </div>
+                            <%
+                            }
+                            %>
+                        </div>
                         <%if ("4".equals(currentObject.getParentType()) && user != null && user.isLoggedIn() && !currentObject.isVip()) {%>
                         <div class="robokassa-button" >
                             <ul>
@@ -201,16 +233,17 @@
                             String crc = currentObject.MD5(new String[] {sMrchLogin, sOutSum, nInvId, sMrchPass1, "shp_id_a="+shp_id_a});
                             %>
                                 <li class="robo-li">
-                                    <script language=JavaScript src='https://auth.robokassa.ru/Merchant/PaymentForm/FormSS.js?MerchantLogin=<%= sMrchLogin%>&OutSum=<%= sOutSum%>&InvoiceID=<%= nInvId%>&Description=<%= sDesc%>&shp_id_a=<%= shp_id_a%>&isTest=1&SignatureValue=<%= crc%>'></script>;
+                                    <script language=JavaScript src='https://auth.robokassa.ru/Merchant/PaymentForm/FormSS.js?MerchantLogin=<%= sMrchLogin%>&OutSum=<%= sOutSum%>&InvoiceID=<%= nInvId%>&Description=<%= sDesc%>&shp_id_a=<%= shp_id_a%>&isTest=1&SignatureValue=<%= crc%>'></script>
                                 </li>
                             </ul>
                         </div>
                         <%}%>
-                            <% if ((user != null)&&user.isIsModer()&&("4".equals(currentObject.getParentType()))) { %>
+                            <% if ((user != null)&&user.isIsModer()&&user.isIsAdmin()&&("4".equals(currentObject.getParentType()))) { %>
+                            <br>
                             <div>
                                 <div ng-controller="ModerCtrl">
-                                    <button ng-click="clickToDel();">
-                                        Delete this!
+                                    <button class="btn btn-primary" ng-click="clickToDel();">
+                                        <nobr>Удалить объявление</nobr>
                                     </button>
                                 </div>
                             </div>
@@ -223,15 +256,18 @@
                     <h4>Список обьявлений</h4>
                     <ul class="references-ul">
                         <% for (int i = 0; i < listReferences.size(); i++) { %>
+                        <% if (!listReferences.get(i)[2].equals("true")){%>
                         <li class="references-ul-li">
                             <a a href="unc_object.jsp?id=<%= listReferences.get(i)[0] %>"><%= listReferences.get(i)[1] %></a>
                         </li>
+                        <%}%>
                         <% } %>
                     </ul>
                     <%} else if ("4".equals(currentObject.getParentType())) { %>
                     <h4 class="robokassa-li">Продавец : <a a href="unc_object.jsp?id=<%= listReferences.get(0)[0] %>"><%= listReferences.get(0)[1] %></a></h4>
                     <%}%>
                  </div>
+<<<<<<< HEAD
                  <div class="related">
                      <%
                          RecommenderBean recommenderBean = new RecommenderBean();
@@ -285,6 +321,16 @@
                          <%--</div>--%>
                      <%--</div>--%>
                  </div>
+=======
+			<div>
+                             <%UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
+                                 if ("1".equals(currentObject.getType()) && userAccountBean!=null && userAccountBean.getId().equals(request.getParameter("id"))) {%>
+                             <a class="a-outline button-style" href="unc_update.jsp?id=<%=request.getParameter("id")%>" style="width: 200px">
+                                 Изменить данные
+                             </a>
+                             <%}%>
+                        </div>
+>>>>>>> da8610a5f2ae04ee40a60198376a52706609e655
             </div>
             <c:catch var="e">
                 <c:import url="/includes/object/footers/default.jspf" />

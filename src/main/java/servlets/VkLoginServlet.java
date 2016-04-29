@@ -141,9 +141,13 @@ public class VkLoginServlet extends HttpServlet {
                         +"&ava="+avatar.replace('"', ' ')
                         +"&fname="+URLEncoder.encode(fname,"UTF-8")
                         +"&sname="+URLEncoder.encode(sname,"UTF-8")
+                        +"&redirect=true"
                         );
                 
             }
+            
+            if (con != null)
+                    con.close();
             
         }
     }

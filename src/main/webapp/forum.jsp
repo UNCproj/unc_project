@@ -13,7 +13,6 @@
 <html>
 <head>
     <title>Форум</title>
-    <title>Title</title>
     <script src="resources/scripts/jquery-1.12.0.min.js"></script>
     <script src="resources/scripts/angular.min.js"></script>
     <script src="resources/scripts/bootstrap.min.js"></script>
@@ -39,8 +38,8 @@
 
             if (type == null && id == null) {
         %>
-        <div class="name-forum">
-            <p>Форум</p>
+        <div class="header-forum page-header">
+            <h1>Форум</h1>
         </div>
             <%
             Connection connection = null;
@@ -51,10 +50,19 @@
                 while (resultSet.next()) {
         %>
 
-        <div class="forum-theme">
-            <a class="forum-theme-a" href="forum.jsp?type=<%=resultSet.getString("ot_name")%>">
+        <div class="forum-theme" onclick="location.href='forum.jsp?type=<%=resultSet.getString("ot_name")%>'">
+            <div class="forum-theme-title">
                 <%=resultSet.getString("ot_name")%>
-            </a>
+            </div>
+            <div class="forum-theme-description">
+                <%if (resultSet.getString("ot_name").equals("Обсуждение")) {%>
+                Данный раздел предназначен для обсуждения.
+                <%} else if (resultSet.getString("ot_name").equals("Вопросы")) {%>
+                Здесь вы можете задать свои вопросы.
+                <%} else if (resultSet.getString("ot_name").equals("Предложения")) {%>
+                Оставляйте свои пожелания и предложения по улучшению работы сайта.
+                <%}%>
+            </div>
         </div>
             <%
                 }
@@ -63,6 +71,12 @@
             }
         } else if (type != null && id == null) {
             type = URLDecoder.decode(type, "UTF-8");
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + type);
+            %>
+        <div class="header-forum page-header">
+            <h1><%=type%></h1>
+        </div>
+            <%
             Connection connection = null;
             try {
                 connection = DataSource.getInstance().getConnection();
@@ -70,12 +84,13 @@
                 ResultSet resultSet = statement.executeQuery(SQLQueriesHelper.selectselectForumTopicsWithAttrs(type));
                 while (resultSet.next()) {
         %>
-        <div class="forum-topic">
-            <a class="forum-topic-a" href="forum.jsp?id=<%=resultSet.getString("object_id")%>">
+        <div class="forum-topic" onclick="location.href='forum.jsp?id=<%=resultSet.getString("object_id")%>'">
+            <div class="forum-topic-title">
                 <%=resultSet.getString("object_name")%>
-            </a>
+            </div>
             <div class="forum-topic-create">
-                Создано:<%=resultSet.getString("creation_date")%>
+                <%=resultSet.getString("creation_date")%><br>
+                Комментарии:<%=resultSet.getString("numb_comments")%>
             </div>
         </div>
             <%
@@ -88,7 +103,9 @@
                 String userId = userAccountBean.getId();
         %>
         <div class="forum-create-topic">
-            <a href="unc_add.jsp?type=forum_topic&name=<%=type%>">Создать обсуждение</a>
+            <%--<a href="unc_add.jsp?type=forum_topic&name=<%=type%>">Создать обсуждение</a>--%>
+            <a class="a-outline button-style" href="unc_add.jsp?type=forum_topic&name=<%=type%>" style="width: 200px">Создать
+                обсуждение</a>
         </div>
             <%
         } else {
@@ -110,46 +127,47 @@
                 while (resultSet.next()) {
         %>
         <div class="forum-question">
-            <div class="question-name"><%=resultSet.getString("object_name")%>
-                <div id="question-description"><%=resultSet.getString("description")%>
-                    <div class="question-create"><%=resultSet.getString("creation_date")%>
-                        <a href="unc_object.jsp?id=<%=resultSet.getString("creation_id")%>">
-                            <%=resultSet.getString("creation_login")%>
-                        </a>
-                    </div>
-                </div>
-                <%
+            <div class="question-name"><%=resultSet.getString("object_name")%></div>
+            <div class="question-description"><%=resultSet.getString("description")%></div>
+            <div class="question-create"><%=resultSet.getString("creation_date")%>
+                <a href="unc_object.jsp?id=<%=resultSet.getString("creation_id")%>">
+                    <%=resultSet.getString("creation_login")%>
+                </a>
+            </div>
+        </div>
+            <%
                     Statement statement1 = connection.createStatement();
                     ResultSet resultSet1 = statement1.executeQuery(SQLQueriesHelper.selectForumComments(id));
                     while (resultSet1.next()) {
                 %>
-                <div class="forum-comment">
-                    <div class="comment-text"><%=resultSet1.getString("object_name")%>
-                    </div>
-                    <div class="comment-create"><%=resultSet1.getString("date_creation")%>
-                        <a href="unc_object.jsp?id=<%=resultSet1.getString("id_creation")%>">
-                            <%=resultSet1.getString("login_creation")%>
-                        </a>
-                    </div>
-                </div>
-                <%
+        <div class="forum-comment">
+            <div class="comment-text"><%=resultSet1.getString("object_name")%>
+            </div>
+            <div class="comment-create"><%=resultSet1.getString("date_creation")%>
+                <a href="unc_object.jsp?id=<%=resultSet1.getString("id_creation")%>">
+                    <%=resultSet1.getString("login_creation")%>
+                </a>
+            </div>
+        </div>
+            <%
                     }
                     UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
                     if (userAccountBean != null) {
                         String userId = userAccountBean.getId();
                 %>
-                <div class="forum-create-comment">
-                    <a href="unc_add.jsp?type=forum_comment&id=<%=request.getParameter("id")%>">Оставить комментарий</a>
-                </div>
-                <%
+        <div class="forum-create-comment">
+            <a class="a-outline button-style" href="unc_add.jsp?type=forum_comment&id=<%=request.getParameter("id")%>"
+               style="width: 230px">Оставить комментарий</a>
+        </div>
+            <%
                 } else {
                 %>
-                <div class="forum-information">
-                    <p>Чтобы оставить комментарий <a href="reg-and-login.jsp">войдите под своим аккаунтом или
-                        зарегестрируйтесь</a>
-                    </p>
-                </div>
-                <%
+        <div class="forum-information">
+            <p>Чтобы оставить комментарий <a href="reg-and-login.jsp">войдите под своим аккаунтом или
+                зарегестрируйтесь</a>
+            </p>
+        </div>
+            <%
                                 }
                             }
                         } finally {
@@ -159,10 +177,8 @@
 
                     }
                 %>
-            </div>
-
-            <c:catch var="e">
-                <c:import url="/includes/object/footers/default.jspf"/>
-            </c:catch>
+        <c:catch var="e">
+            <c:import url="/includes/object/footers/default.jspf"/>
+        </c:catch>
 </body>
 </html>

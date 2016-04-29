@@ -41,6 +41,7 @@ public class RegistrationServlet extends HttpServlet {
         String avatar = request.getParameter("ava");
         String fname = request.getParameter("fname");
         String sname = request.getParameter("sname");
+        String uid = "";
         UserRegistrationValidationBean registrationValidationBean =
                 new UserRegistrationValidationBean(login, pass, retypePass, email);
         String constrViolationsJSON = registrationValidationBean.validate();
@@ -64,7 +65,7 @@ public class RegistrationServlet extends HttpServlet {
 
                 results.next();
                 BigDecimal userId = results.getBigDecimal("object_id");
-
+                uid = userId.toString();
                 statement3 = connection.createStatement();
                 statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.LOGIN_ATTR_ID, login, null));
 
@@ -122,5 +123,9 @@ public class RegistrationServlet extends HttpServlet {
         }
 
         out.print(constrViolationsJSON);
+        
+        if ((request.getParameter("redirect")!=null)&&(request.getParameter("redirect").equals("true"))){
+            response.sendRedirect("unc_object.jsp?id="+uid);
+        }
     }
 }

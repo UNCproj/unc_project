@@ -187,10 +187,12 @@ public class UncObject {
         {
             ArrayList<String[]> list = new ArrayList<>();
             ResultSet results = statement.executeQuery(SQLQueriesHelper.getListReferences(id));
+            log.info("DCP="+SQLQueriesHelper.getListReferences(id));
             while (results.next()) {
-                String[] mass = new String[2];
+                String[] mass = new String[3];
                 mass[0] = results.getString("OBJECT_ID");
                 mass[1] = results.getString("OBJECT_NAME");
+                mass[2] = results.getString("invalid");
                 list.add(mass);
             }
             return list;
@@ -309,7 +311,8 @@ public class UncObject {
                 
             }
             
-            if (parentType!=null && parentType.equals(SQLQueriesHelper.ADVERT_TYPE_ID) && id!=null){
+            if (parentType!=null && parentType.equals(SQLQueriesHelper.ADVERT_TYPE_ID) && 
+                    id!=null && ((getParam("is_invalid")!= null && !getParam("is_invalid").getValue().equals("true")) || getParam("is_invalid")==null)){
                 statement.execute(SQLQueriesHelper.insertAdStat(id));
                 connection.commit();
             }

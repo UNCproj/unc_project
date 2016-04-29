@@ -1,4 +1,4 @@
-package db;
+﻿package db;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -149,19 +149,34 @@ public class SQLQueriesHelper {
     }
     
     static public String getListReferences(String objectId) {
-        StringBuffer query = new StringBuffer("select  r.OBJECT_ID,\n" +
-                        "        o.OBJECT_NAME\n" +
-                        "from  unc_references r\n" +
-                        "  left join UNC_OBJECTS o\n" +
-                        "    on r.OBJECT_ID = o.OBJECT_ID\n" +
-                        "where r.OBJECT_REFERENCE_ID =  " + objectId +
-                        "union \n" +
-                        "select  rr.OBJECT_REFERENCE_ID,\n" +
-                        "        oo.OBJECT_NAME\n" +
-                        "from  unc_references rr\n" +
-                        "  left join UNC_OBJECTS oo\n" +
-                        "    on rr.OBJECT_REFERENCE_ID = oo.OBJECT_ID\n" +
-                        "where rr.OBJECT_ID = ");
+        String inv_id = INVALID_ATTR_ID;
+        StringBuffer query = new StringBuffer(  "select  r.OBJECT_ID,\n" +
+                                                "        o.OBJECT_NAME,\n" +
+                                                "        nvl(\n" +
+                                                "          (select value\n" +
+                                                "          from unc_params\n" +
+                                                "          where attr_id="+inv_id+" and\n" +
+                                                "                object_id=o.OBJECT_ID\n" +
+                                                "          ),\n" +
+                                                "          'false') as invalid\n" +
+                                                "from  unc_references r\n" +
+                                                "  left join UNC_OBJECTS o\n" +
+                                                "    on r.OBJECT_ID = o.OBJECT_ID\n" +
+                                                "where r.OBJECT_REFERENCE_ID =  "+objectId+" union \n" +
+                                                "select  rr.OBJECT_REFERENCE_ID,\n" +
+                                                "        oo.OBJECT_NAME,\n" +
+                                                "        nvl(\n" +
+                                                "          (select value\n" +
+                                                "          from unc_params\n" +
+                                                "          where attr_id="+inv_id+" and\n" +
+                                                "                object_id=oo.OBJECT_ID\n" +
+                                                "          ),\n" +
+                                                "          'false') as invalid\n" +
+                                                "from  unc_references rr\n" +
+                                                "  left join UNC_OBJECTS oo\n" +
+                                                "    on rr.OBJECT_REFERENCE_ID = oo.OBJECT_ID\n" +
+                                                "where rr.OBJECT_ID = "
+        );
         query.append(objectId);
         String queryString = query.toString();
         return queryString;
@@ -1102,9 +1117,10 @@ public class SQLQueriesHelper {
         String query = "select o.object_id, " +
                 "o.object_name, " +
                 "p1.value as description, " +
-                "to_char(p2.DATE_VALUE,'YYYY:MM:DD HH24:MI:SS') as creation_date, " +
+                "to_char(p2.DATE_VALUE,'DD:MM:YYYY HH24:MI:SS') as creation_date, " +
                 "p3.value as creation_id, " +
-                "o2.object_name as creation_login " +
+                "o2.object_name as creation_login , " +
+                "count(o.object_id) as numb_comments " +
                 "from unc_objects o " +
                 "left join unc_params p1 " +
                 "on p1.object_id = o.object_id " +
@@ -1114,6 +1130,8 @@ public class SQLQueriesHelper {
                 "on p3.object_id = o.object_id " +
                 "left join unc_objects o2 " +
                 "on o2.OBJECT_ID = p3.VALUE " +
+                "left join unc_params p4 " +
+                "on p4.value = o.object_id and p4.attr_id = 42 " +
                 "where o.object_type_id = ( " +
                 "select ot.ot_id  " +
                 "from unc_object_types ot  " +
@@ -1122,14 +1140,16 @@ public class SQLQueriesHelper {
                 ") and p1.attr_id = " + DESCRIPTION_ATTR_ID +
                 " and p2.attr_id =  " + DATE_CREATION +
                 " and p3.attr_id =  " + PERSON_CREATION +
-                " order by p2.DATE_VALUE desc";
+                " group by o.object_id, o.object_name, p1.value, to_char(p2.DATE_VALUE,'DD:MM:YYYY HH24:MI:SS'), p3.value, o2.object_name " +
+                "order by creation_date desc";
+        System.out.println(query);
         return query;
     }
     public static String selectForumsDiscussion(String id){
         String query = "select o.object_id, " +
                 "o.object_name, " +
                 "p1.value as description, " +
-                "to_char(p2.DATE_VALUE,'YYYY:MM:DD HH24:MI:SS') as creation_date, " +
+                "to_char(p2.DATE_VALUE,'DD:MM:YYYY HH24:MI:SS') as creation_date, " +
                 "p3.value as creation_id, " +
                 "o2.object_name as creation_login " +
                 "from unc_objects o " +
@@ -1151,7 +1171,7 @@ public class SQLQueriesHelper {
     }
     public static String selectForumComments (String forumTopicId){
         String query = "select  o.object_name, " +
-                "to_char(p1.date_value, 'YYYY:MM:DD HH24:MI:SS') as date_creation, " +
+                "to_char(p1.date_value, 'DD:MM:YYYY HH24:MI:SS') as date_creation, " +
                 "p2.value as id_creation, " +
                 "o2.object_name as login_creation " +
                 "from unc_objects o " +
@@ -1169,5 +1189,34 @@ public class SQLQueriesHelper {
                 "p3.attr_id = 42 and " +
                 "p3.value = " + forumTopicId;
         return query;
+    }
+    
+    static String insertUser(String id, String name) {
+        String query = "insert into UNC_OBJECTS values(" + id + ", 1, '" + name + "', null)";
+        return query;
+    }
+    
+    static String insertParam(String id, String type, String value, String date) {
+        StringBuilder query = new StringBuilder("insert into UNC_PARAMS values(" + id + ", " + type + ", ");
+        query.append(value == null ? "null, " : "'" + value + "'");
+        query.append(date == null ? "null, " : "TO_DATE('" + date + "', 'dd.mm.yy')");
+        query.append("null)");
+        return query.toString();
+    }
+
+    static String getTypeIdByName(String name) {
+        StringBuilder query = new StringBuilder("select  ATTR_ID\n" +
+                    "  from  UNC_ATTRIBUTES\n" +
+                    "  where ATTR_NAME = ");
+        query.append("'" + name + "'");
+        return query.toString();
+    }
+    
+    static String checkLogin(String login) {
+        StringBuilder query = new StringBuilder("select OBJECT_ID\n" +
+                    "  from UNC_OBJECTS\n" +
+                    "  where OBJECT_TYPE_ID = 1 and OBJECT_NAME = ");
+        query.append("'" + login + "'");
+        return query.toString();
     }
 }
