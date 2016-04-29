@@ -13,7 +13,6 @@
 <html>
 <head>
     <title>Форум</title>
-    <title>Title</title>
     <script src="resources/scripts/jquery-1.12.0.min.js"></script>
     <script src="resources/scripts/angular.min.js"></script>
     <script src="resources/scripts/bootstrap.min.js"></script>
@@ -72,10 +71,10 @@
             }
         } else if (type != null && id == null) {
             type = URLDecoder.decode(type, "UTF-8");
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + type);
             %>
         <div class="header-forum page-header">
-            <h1><%=type%>
-            </h1>
+            <h1><%=type%></h1>
         </div>
             <%
             Connection connection = null;
