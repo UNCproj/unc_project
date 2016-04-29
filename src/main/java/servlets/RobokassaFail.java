@@ -33,7 +33,7 @@ public class RobokassaFail extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-                String id_advert = request.getParameter("shp_id_a");
+                String id_advert = (String)request.getAttribute("shp_id_a");
                 response.sendRedirect("/unc-project/unc_object.jsp?id=" + id_advert); 
         }
     }
