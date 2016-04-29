@@ -9,7 +9,7 @@
                 ${param.attr_value}
             </c:when>
             <c:when test="${param.attr_type.equals(\"2\")}">
-                'Скрыто'
+                
             </c:when>
             <c:when test="${param.attr_type.equals(\"3\")}">
                 <c:choose>

@@ -111,7 +111,10 @@
                          <% } %>
                          <%if ((user!=null)&&(user.isIsAdmin())&&(currentObject.getId().equals(user.getId()))) {%>
                                  <li><a href="#adminka" data-toggle="tab">Админка</a></li>
-                         <% } %>     
+                         <% } %>
+                         <%if ((user!=null)&&(user.isIsAdmin())&&(!currentObject.getId().equals(user.getId()))) {%>
+                                 <li><a href="#adm" data-toggle="tab">Админка</a></li>
+                         <% } %>         
                      <% } %>
                      </ul>
                      <div class="settings tab-content" id="tab_content">
@@ -122,7 +125,14 @@
                         <div id="tab<%= currentObject.getAttributeGroups().get(i)  %>" class="tab-pane fade in <%= activeSwicth1 %>">
                             <div class="table-pos">
                                 <table class="table table-params">
+                                    <% if ((currentObject.getParam("is_admin")!=null)&&
+                                                (currentObject.getParam("is_admin").getValue()!=null)&&
+                                                (currentObject.getParam("is_admin").getValue().equals("true"))
+                                            ) {%>
+                                            <img class="img" src="/unc-project/resources/img/admin_logo.png">
+                                        <%}%>
                                         <%  for (int j = 0; j < currentGroupParams.size(); j++) { %>
+                                        <% if ((currentGroupParams.get(j).getType()!=null)&&(currentGroupParams.get(j).getType().equals("2"))) {continue;}%>
                                                 <c:catch var="e">
                                                     <c:import url="/includes/object/attr_views/<%= currentObject.getType() %>.jsp" />
                                                 </c:catch>
@@ -166,7 +176,7 @@
                         <%if ("4".equals(currentObject.getParentType())) {%>
                             <div id="adstatid" class="tab-pane fade in">
 
-                                <input type="hidden" id="hidden_user_name" value="${uname}">
+                               <input type="hidden" id="hidden_user_name" value="${uname}">
                                <h3>Статистика просмотров объявления:</h3>
                                <div ng-controller="AdvertStatCtrl">
 
@@ -183,7 +193,20 @@
                         <div id="adminka" class="tab-pane fade in">
                             Вы админ.
                         </div>
-                        
+                        <div id="adm" class="tab-pane fade in">
+                            <% if ((user != null)&&user.isIsAdmin()&&("1".equals(currentObject.getParentType()))) { %>
+                            <br>
+                            <div>
+                                <div ng-controller="AdminCtrl">
+                                    <button class="button-style a-outline">
+                                        В черный список!
+                                    </button>
+                                </div>
+                            </div>
+                            <%
+                            }
+                            %>
+                        </div>
                         <%if ("4".equals(currentObject.getParentType()) && user != null && user.isLoggedIn() && !currentObject.isVip()) {%>
                         <div class="robokassa-button" >
                             <ul>
@@ -209,12 +232,12 @@
                             </ul>
                         </div>
                         <%}%>
-                            <% if ((user != null)&&user.isIsModer()&&("4".equals(currentObject.getParentType()))) { %>
+                            <% if ((user != null)&&user.isIsModer()&&user.isIsAdmin()&&("4".equals(currentObject.getParentType()))) { %>
                             <br>
                             <div>
                                 <div ng-controller="ModerCtrl">
-                                    <button class="button-style a-outline" ng-click="clickToDel();">
-                                        Delete this!
+                                    <button class="btn btn-primary" ng-click="clickToDel();">
+                                        <nobr>Удалить объявление</nobr>
                                     </button>
                                 </div>
                             </div>
