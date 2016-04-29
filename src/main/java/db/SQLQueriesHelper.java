@@ -1,4 +1,4 @@
-﻿package db;
+package db;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;

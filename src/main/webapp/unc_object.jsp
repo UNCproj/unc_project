@@ -268,7 +268,6 @@
                     <h4 class="robokassa-li">Продавец : <a a href="unc_object.jsp?id=<%= listReferences.get(0)[0] %>"><%= listReferences.get(0)[1] %></a></h4>
                     <%}%>
                  </div>
-<<<<<<< HEAD
                  <div class="related">
                      <%
                          RecommenderBean recommenderBean = new RecommenderBean();
@@ -322,7 +321,6 @@
                          <%--</div>--%>
                      <%--</div>--%>
                  </div>
-=======
 			<div>
                              <%UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
                                  if ("1".equals(currentObject.getType()) && userAccountBean!=null && userAccountBean.getId().equals(request.getParameter("id"))) {%>
@@ -331,7 +329,6 @@
                              </a>
                              <%}%>
                         </div>
->>>>>>> da8610a5f2ae04ee40a60198376a52706609e655
             </div>
             <c:catch var="e">
                 <c:import url="/includes/object/footers/default.jspf" />
