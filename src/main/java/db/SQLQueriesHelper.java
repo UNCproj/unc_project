@@ -1185,4 +1185,33 @@ public class SQLQueriesHelper {
                 "p3.value = " + forumTopicId;
         return query;
     }
+    
+    static String insertUser(String id, String name) {
+        String query = "insert into UNC_OBJECTS values(" + id + ", 1, '" + name + "', null)";
+        return query;
+    }
+    
+    static String insertParam(String id, String type, String value, String date) {
+        StringBuilder query = new StringBuilder("insert into UNC_PARAMS values(" + id + ", " + type + ", ");
+        query.append(value == null ? "null, " : "'" + value + "'");
+        query.append(date == null ? "null, " : "TO_DATE('" + date + "', 'dd.mm.yy')");
+        query.append("null)");
+        return query.toString();
+    }
+
+    static String getTypeIdByName(String name) {
+        StringBuilder query = new StringBuilder("select  ATTR_ID\n" +
+                    "  from  UNC_ATTRIBUTES\n" +
+                    "  where ATTR_NAME = ");
+        query.append("'" + name + "'");
+        return query.toString();
+    }
+    
+    static String checkLogin(String login) {
+        StringBuilder query = new StringBuilder("select OBJECT_ID\n" +
+                    "  from UNC_OBJECTS\n" +
+                    "  where OBJECT_TYPE_ID = 1 and OBJECT_NAME = ");
+        query.append("'" + login + "'");
+        return query.toString();
+    }
 }
