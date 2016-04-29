@@ -23,6 +23,10 @@ public class AdvertBean {
         setDescription(description);
     }
 
+    public AdvertBean(HashMap<String, String> attributes) {
+        attributesMap = attributes;
+    }
+
     public String getId() {
         return getAttribute("id");
     }

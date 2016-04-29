@@ -111,4 +111,35 @@ public class AdvertsSearchBean {
 
         return searchRequestBuilder.execute().actionGet();
     }
+
+    public SearchResponse searchById(String advertId) {
+        Client client = elasticSearchManager.getClient();
+
+        SearchRequestBuilder searchRequestBuilder = client.prepareSearch("adverts")
+                .setSearchType(SearchType.DEFAULT);
+
+        searchRequestBuilder.setPostFilter(QueryBuilders.termQuery("id", advertId));
+
+        return searchRequestBuilder.execute().actionGet();
+    }
+
+    public SearchResponse searchByIds(String[] advertsIds) {
+        Client client = elasticSearchManager.getClient();
+
+        SearchRequestBuilder searchRequestBuilder = client.prepareSearch("adverts")
+                .setSearchType(SearchType.DEFAULT);
+
+        searchRequestBuilder.setPostFilter(QueryBuilders.termsQuery("id", advertsIds));
+
+        return searchRequestBuilder.execute().actionGet();
+    }
+
+    public SearchResponse getAllAdverts() {
+        Client client = elasticSearchManager.getClient();
+
+        SearchRequestBuilder searchRequestBuilder = client.prepareSearch("adverts")
+                .setSearchType(SearchType.DEFAULT);
+
+        return searchRequestBuilder.execute().actionGet();
+    }
 }

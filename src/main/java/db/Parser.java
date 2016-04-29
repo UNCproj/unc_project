@@ -29,10 +29,15 @@ import org.apache.poi.ss.usermodel.Sheet;
  * @author Andrey
  */
 public class Parser {
-    private ArrayList<String> listErr;
+    private ArrayList<String> listErr = new ArrayList<>();
+    private int countRow = 0;
     
     public ArrayList<String> getListErr() {
         return listErr;
+    }
+    
+    public int getCountRow() {
+        return countRow;
     }
     
     public void migrationUser(String file) {
@@ -54,11 +59,12 @@ public class Parser {
     
     private ArrayList<ArrayList<String>> readFromExcel(String file) {
         try (InputStream in = new FileInputStream(file);
-             HSSFWorkbook wb = new HSSFWorkbook(in)) {
+            HSSFWorkbook wb = new HSSFWorkbook(in)) {
             Sheet sheet = wb.getSheetAt(0);
             Iterator<Row> it = sheet.iterator();
             ArrayList<ArrayList<String>> list = new ArrayList<>();
             int i = 0;
+            System.out.println("Fail read succes");
             while (it.hasNext()) {
                 list.add(new ArrayList<>());
                 Row row = it.next();
@@ -95,6 +101,7 @@ public class Parser {
                     statement.executeUpdate(SQLQueriesHelper.insertParam(id, SQLQueriesHelper.PASSWORD_ATTR_ID, String.valueOf(list.get(i).get(1).hashCode()), null));
                     statement.executeUpdate(SQLQueriesHelper.insertParam(id, SQLQueriesHelper.REG_DATE_ATTR_ID, null, list.get(i).get(2)));
                     statement.executeUpdate(SQLQueriesHelper.insertParam(id, SQLQueriesHelper.PHONE_ATTR_ID, list.get(i).get(3), null));
+                    countRow++;
                 }
                 else{
                     listErr.add(list.get(i).get(0));
@@ -115,11 +122,8 @@ public class Parser {
                     ResultSet results = (statement.executeQuery(SQLQueriesHelper.newId()));
                     results.next();
                     String id = results.getString("id");
-                    statement.executeUpdate(SQLQueriesHelper.insertAdvert(id, list.get(i).get(0), typeId));
-                    statement.executeUpdate(SQLQueriesHelper.insertParam(id, SQLQueriesHelper.LOGIN_ATTR_ID, list.get(i).get(0), null));
-                    statement.executeUpdate(SQLQueriesHelper.insertParam(id, SQLQueriesHelper.PASSWORD_ATTR_ID, String.valueOf(list.get(i).get(1).hashCode()), null));
-                    statement.executeUpdate(SQLQueriesHelper.insertParam(id, SQLQueriesHelper.REG_DATE_ATTR_ID, null, list.get(i).get(2)));
-                    statement.executeUpdate(SQLQueriesHelper.insertParam(id, SQLQueriesHelper.PHONE_ATTR_ID, list.get(i).get(3), null));
+                    //statement.executeUpdate(SQLQueriesHelper.insertAdvert(id, list.get(i).get(0), typeObjectbyName("","")));
+                    
                 }
                 else {
                     listErr.add(list.get(i).get(0));
