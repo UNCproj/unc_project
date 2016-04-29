@@ -3,17 +3,23 @@
     Created on : 04.03.2016, 11:03:18
     Author     : Andrey
 --%>
-<%@page import="org.jboss.logging.Logger"%>
-<%@ page import="beans.BeansHelper" %>
+<%@page import="beans.BeansHelper"%>
+<%@ page import="beans.RecommenderBean" %>
 <%@ page import="beans.UserAccountBean" %>
-<%@page import="unc.helpers.Param"%>
-<%@page import="java.util.ArrayList"%>
+<%@page import="org.jboss.as.naming.InitialContext"%>
+<%@page import="org.jboss.logging.Logger"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="unc.helpers.Param" %>
 <%@ page import="unc.helpers.UncObject" %>
+<%@ page import="javax.naming.Context" %>
 <%@ page import="java.beans.PropertyVetoException" %>
 <%@ page import="java.sql.SQLException" %>
-<%@ page import="java.net.URL" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Properties" %>
+<%@ page import="java.util.Hashtable" %>
+<%@ page import="javax.ejb.EJB" %>
+<%@ page import="beans.AdvertsManager" %>
 <%
     Logger log = Logger.getLogger("unc_obj_log");
     String objectId = request.getParameter("id");
@@ -225,6 +231,59 @@
                     <%} else if ("4".equals(currentObject.getParentType())) { %>
                     <h4 class="robokassa-li">Продавец : <a a href="unc_object.jsp?id=<%= listReferences.get(0)[0] %>"><%= listReferences.get(0)[1] %></a></h4>
                     <%}%>
+                 </div>
+                 <div class="related">
+                     <%
+                         RecommenderBean recommenderBean = new RecommenderBean();
+                     %>
+                     <%--<div class="related-item">--%>
+                         <%--<div class="img">--%>
+                             <%--<img ng-src="{{adv.image != undefined ? adv.image : '${initParam.get("default.advert.image")}'}}">--%>
+                         <%--</div>--%>
+                         <%--<div class="main-content">--%>
+                             <%--<div class="name">--%>
+                                 <%--<h3>{{adv.name}}</h3>--%>
+                             <%--</div>--%>
+                             <%--<div class="description">--%>
+                                 <%--{{adv.description}}--%>
+                             <%--</div>--%>
+                             <%--<div class="price">--%>
+                                 <%--{{adv.price}} руб.--%>
+                             <%--</div>--%>
+                         <%--</div>--%>
+                     <%--</div>--%>
+                     <%--<div class="related-item">--%>
+                         <%--<div class="img">--%>
+                             <%--<img ng-src="{{adv.image != undefined ? adv.image : '${initParam.get("default.advert.image")}'}}">--%>
+                         <%--</div>--%>
+                         <%--<div class="main-content">--%>
+                             <%--<div class="name">--%>
+                                 <%--<h3>{{adv.name}}</h3>--%>
+                             <%--</div>--%>
+                             <%--<div class="description">--%>
+                                 <%--{{adv.description}}--%>
+                             <%--</div>--%>
+                             <%--<div class="price">--%>
+                                 <%--{{adv.price}} руб.--%>
+                             <%--</div>--%>
+                         <%--</div>--%>
+                     <%--</div>--%>
+                     <%--<div class="related-item">--%>
+                         <%--<div class="img">--%>
+                             <%--<img ng-src="{{adv.image != undefined ? adv.image : '${initParam.get("default.advert.image")}'}}">--%>
+                         <%--</div>--%>
+                         <%--<div class="main-content">--%>
+                             <%--<div class="name">--%>
+                                 <%--<h3>{{adv.name}}</h3>--%>
+                             <%--</div>--%>
+                             <%--<div class="description">--%>
+                                 <%--{{adv.description}}--%>
+                             <%--</div>--%>
+                             <%--<div class="price">--%>
+                                 <%--{{adv.price}} руб.--%>
+                             <%--</div>--%>
+                         <%--</div>--%>
+                     <%--</div>--%>
                  </div>
             </div>
             <c:catch var="e">
