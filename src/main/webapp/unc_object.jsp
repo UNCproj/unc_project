@@ -25,7 +25,6 @@
     String objectId = request.getParameter("id");
     UncObject currentObject = new UncObject(objectId, null, true);
     request.setAttribute("currentObjectType", currentObject.getParentType());
-    
     if (currentObject.getType()==null){
         response.sendRedirect("jsp404.jsp");   
     }
@@ -36,7 +35,6 @@
         e.printStackTrace();
         response.sendRedirect("error.jsp");
     }
-    
     
     Param prm = currentObject.getParam("is_invalid");
     Param prm_del_msg = currentObject.getParam("delete_msg");
@@ -213,6 +211,44 @@
                             <%
                             }
                             %>
+                            <% if ((user != null)&&user.isIsModer()&&user.isIsAdmin()&&("4".equals(currentObject.getParentType()))) { %>
+                            <br>
+                            <div>
+                                <div ng-controller="ModerCtrl">
+                                    <button class="btn btn-primary" ng-click="clickToDel();">
+                                        <nobr>Удалить объявление</nobr>
+                                    </button>
+                                </div>
+                            </div>
+                            <%
+                            }
+                            %>
+                            <% if ((user != null)&&user.isIsAdmin()&&("1".equals(currentObject.getParentType()))&&
+                                    ((currentObject.getParam("is_moderator").getValue()==null)||("false".equals(currentObject.getParam("is_moderator").getValue())))) { %>
+                            <br>
+                            <div>
+                                <div ng-controller="AdminCtrl">
+                                    <button class="btn btn-primary" ng-click="clickToModer('true');">
+                                        <nobr>Дать права модератора</nobr>
+                                    </button>
+                                </div>
+                            </div>
+                            <%
+                            }
+                            %>
+                            <% if ((user != null)&&user.isIsAdmin()&&("1".equals(currentObject.getParentType()))&&
+                                    ((currentObject.getParam("is_moderator").getValue()!=null)&&("true".equals(currentObject.getParam("is_moderator").getValue())))) { %>
+                            <br>
+                            <div>
+                                <div ng-controller="AdminCtrl">
+                                    <button class="btn btn-primary" ng-click="clickToModer('false');">
+                                        <nobr>Снять права модератора</nobr>
+                                    </button>
+                                </div>
+                            </div>
+                            <%
+                            }
+                            %>
                         </div>
                         <%if ("4".equals(currentObject.getParentType()) && user != null && user.isLoggedIn() && !currentObject.isVip()) {%>
                         <div class="robokassa-button" >
@@ -239,18 +275,7 @@
                             </ul>
                         </div>
                         <%}%>
-                            <% if ((user != null)&&user.isIsModer()&&user.isIsAdmin()&&("4".equals(currentObject.getParentType()))) { %>
-                            <br>
-                            <div>
-                                <div ng-controller="ModerCtrl">
-                                    <button class="btn btn-primary" ng-click="clickToDel();">
-                                        <nobr>Удалить объявление</nobr>
-                                    </button>
-                                </div>
-                            </div>
-                            <%
-                            }
-                            %>
+                            
                  <div class="references">
                     <% ArrayList<String[]> listReferences = currentObject.lisrReferences(); %>
                     <% if ("1".equals(currentObject.getType())) { %>

@@ -110,6 +110,18 @@
                         scope: $scope
                     });
                 };
+                
+                $scope.clickToModer = function(value){
+                    $.ajax({
+                    url: "/unc-project/ModerServlet/setModerRights",
+                    async:false,
+                    data: {"id": getUrlParameter("id"),
+                            "value":value
+                          }
+                    }).done(function(data) {
+                        console.log("moder success!");
+                    });
+                };
              
             });
 })();
