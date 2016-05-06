@@ -121,7 +121,7 @@
                          <%if ((user!=null)&&(user.isIsAdmin())&&(currentObject.getId().equals(user.getId()))) {%>
                                  <li><a href="#adminka" data-toggle="tab">Админка</a></li>
                          <% } %>
-                         <%if ((user!=null)&&(user.isIsAdmin())&&(!currentObject.getId().equals(user.getId()))) {%>
+                         <%if ((user!=null)&&(user.isIsAdmin()||user.isIsModer())&&(!currentObject.getId().equals(user.getId()))) {%>
                                  <li><a href="#adm" data-toggle="tab">Админка</a></li>
                          <% } %>         
                      <% } %>
@@ -205,11 +205,11 @@
                             <script>getSuccesCountRow();</script>
                         </div>
                         <div id="adm" class="tab-pane fade in">
-                            <% if ((user != null)&&user.isIsAdmin()&&("1".equals(currentObject.getParentType()))) { %>
+                            <% if ((user != null)&&(user.isIsAdmin()||user.isIsModer())&&("1".equals(currentObject.getParentType()))) { %>
                             <br>
                             <div>
                                 <div ng-controller="AdminCtrl">
-                                    <button class="button-style a-outline">
+                                    <button class="button-style a-outline" ng-click="clickToDel();">
                                         В черный список!
                                     </button>
                                 </div>
