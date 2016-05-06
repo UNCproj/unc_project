@@ -76,11 +76,14 @@ public class VkLoginServlet extends HttpServlet {
                 .buildQueryMessage();
         if ((request.getParameter("code") == null) && (request.getSession().getAttribute(BeansHelper.VK_CODE) == null)) {
             //response.getWriter().println(oacr.getLocationUri());
+            log.info("getcode!");
             response.sendRedirect(oacr.getLocationUri()+"&scope=email");
         } else if ((request.getParameter("code") != null) && (request.getSession().getAttribute(BeansHelper.VK_CODE) == null)) {
+            log.info("getcode!"+request.getParameter("code"));
             request.getSession().setAttribute(BeansHelper.VK_CODE, request.getParameter("code"));
             response.sendRedirect(redirect_path);
         } else if (request.getSession().getAttribute(BeansHelper.VK_AUTHORIZATION_KEY) == null) {
+            log.info("getkey!");
             try{
             OAuthJSONAccessTokenResponse token = getAuthKeyInfo(response, request, vk);
             request.getSession().setAttribute(BeansHelper.VK_AUTHORIZATION_KEY, token.getAccessToken());
@@ -92,15 +95,16 @@ public class VkLoginServlet extends HttpServlet {
                 response.getWriter().println(e.toString());
             }
         } else {
+            log.info("oauth complete!");
             OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
             OAuthJSONAccessTokenResponse authToken = (OAuthJSONAccessTokenResponse)(request.getSession().getAttribute(BeansHelper.VK_TOKEN));
             response.getWriter().println("запросы");
             response.getWriter().println((String)request.getSession().getAttribute(BeansHelper.VK_AUTHORIZATION_KEY));
             response.getWriter().println(((OAuthJSONAccessTokenResponse)(request.getSession().getAttribute(BeansHelper.VK_TOKEN))).getExpiresIn());
-            
+            log.info("oauth complete1!");
             String user_id = ((OAuthJSONAccessTokenResponse)(request.getSession().getAttribute(BeansHelper.VK_TOKEN))).getParam("user_id");
             String auth = (String)request.getSession().getAttribute(BeansHelper.VK_AUTHORIZATION_KEY);
-            
+            log.info("oauth complete2!");
             ArrayList<Param> list = new ArrayList<>();
             list.add(new Param("owner_id", user_id));
             list.add(new Param("album_id", "profile"));
@@ -116,15 +120,16 @@ public class VkLoginServlet extends HttpServlet {
             types[0] = "1";
             types[1] = "2";
             ResultSet result = statement.executeQuery(SQLQueriesHelper.selectFullObjectInformationByName(types, user_id));
-            
+            log.info("oauth complete3!");
             list = new ArrayList<>();
             list.add(new Param("user_ids", user_id));
             JsonNode user = doQuery(response, "users.get", auth, list);
             response.getWriter().println("user="+user.get(0));
             String fname = user.get(0).get("first_name").toString().replace('"', ' ');
             String sname = user.get(0).get("last_name").toString().replace('"', ' ');
-            
+            log.info("oauth complete4!");
             if (result.next()) {
+                log.info("oauth complete5!");
                 boolean isLog = login(request, user_id, authToken.getParam("email"), avatar.replace('"', ' '));
                 if (isLog==false){
                     response.sendRedirect("jsp404.jsp");
@@ -139,6 +144,7 @@ public class VkLoginServlet extends HttpServlet {
                 
             }
             else{
+                log.info("oauth complete6!");
                 response.setCharacterEncoding("UTF-8");
                 request.setCharacterEncoding("UTF-8");
                 response.sendRedirect("/unc-project/registration"
@@ -161,6 +167,7 @@ public class VkLoginServlet extends HttpServlet {
     }
 
     OAuthJSONAccessTokenResponse getAuthKeyInfo(HttpServletResponse response, HttpServletRequest request, VkOauthLogin vk) throws OAuthSystemException, OAuthProblemException, IOException {
+        Logger.getLogger("auth_logger").info("getauthkey!");
         OAuthJSONAccessTokenResponse tokenResponse = null;
         OAuthClientRequest rq = OAuthClientRequest.tokenLocation("https://oauth.vk.com/access_token")
                 .setClientId(vk.getClientID())
