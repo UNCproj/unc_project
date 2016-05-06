@@ -9,6 +9,8 @@ chat.controller('chatController', function($scope, $http){
 
     $scope.publish = function(){
         var mesText = $("#textMessage").val();
+
+        console.log(mesText);
         if (mesText!=""){
             $("#textMessage").val("");
             $scope.start();

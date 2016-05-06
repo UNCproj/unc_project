@@ -1276,4 +1276,145 @@ public class SQLQueriesHelper {
         
         return comm;
     }
+static public String selectAllUsersDialog (String id){
+        String query = "select  o1.object_id as mess_id, " +
+                "p1.value as sender, " +
+                "p2.value as recipient, " +
+                "p3.value as mess_text, " +
+                "p4.date_value as mess_date, " +
+                "case " +
+                "when o2.object_name = o4.object_name then  " +
+                "o3.object_name " +
+                "else " +
+                "o2.object_name " +
+                "end as login " +
+                "from  unc_objects o1 " +
+                "left join unc_params p1 " +
+                "on p1.object_id = o1.object_id " +
+                "left join unc_params p2 " +
+                "on p2.object_id = o1.object_id " +
+                "left join unc_params p3 " +
+                "on p3.object_id = o1.object_id " +
+                "left join unc_params p4 " +
+                "on p4.object_id = o1.object_id " +
+                "left join unc_objects o2 " +
+                "on o2.object_id = p1.value " +
+                "left join unc_objects o3 " +
+                "on o3.object_id = p2.value " +
+                "left join unc_objects o4 " +
+                "on o4.object_id = " + id +
+                " where  o1.object_type_id = 3 and " +
+                "p1.attr_id = 33 and " +
+                "p2.attr_id = 34 and " +
+                "(p1.value = "+ id +" or p2.value = "+ id +") and " +
+                "p3.attr_id = 31 and " +
+                "p4.attr_id = 32 and " +
+                "(p1.value in ( " +
+                "select  t1.recipient " +
+                "from  ( " +
+                "select  o1.object_id as mess_id, " +
+                "case  " +
+                "when p1.value = "+ id +" then  " +
+                "p1.value  " +
+                "else " +
+                "p2.value " +
+                "end as sender, " +
+                "case  " +
+                "when p2.value = "+ id +" then  " +
+                "p1.value  " +
+                "else " +
+                "p2.value " +
+                "end as recipient, " +
+                "p3.value as mess_text, " +
+                "p4.date_value as mess_date " +
+                "from  unc_objects o1 " +
+                "left join unc_params p1 " +
+                "on p1.object_id = o1.object_id " +
+                "left join unc_params p2 " +
+                "on p2.object_id = o1.object_id " +
+                "left join unc_params p3 " +
+                "on p3.object_id = o1.object_id " +
+                "left join unc_params p4 " +
+                "on p4.object_id = o1.object_id " +
+                "where  o1.object_type_id = 3 and " +
+                "p1.attr_id = 33 and " +
+                "p2.attr_id = 34 and " +
+                "(p1.value = "+ id +" or p2.value = "+ id +") and " +
+                "p3.attr_id = 31 and " +
+                "p4.attr_id = 32 " +
+                ") t1 " +
+                "group  by t1.recipient " +
+                ") or p2.value in ( " +
+                "select  t1.recipient " +
+                "from  ( " +
+                "select  o1.object_id as mess_id, " +
+                "case  " +
+                "when p1.value = "+ id +" then  " +
+                "p1.value  " +
+                "else " +
+                "p2.value " +
+                "end as sender, " +
+                "case  " +
+                "when p2.value = "+ id +" then  " +
+                "p1.value  " +
+                "else " +
+                "p2.value " +
+                "end as recipient, " +
+                "p3.value as mess_text, " +
+                "p4.date_value as mess_date " +
+                "from  unc_objects o1 " +
+                "left join unc_params p1 " +
+                "on p1.object_id = o1.object_id " +
+                "left join unc_params p2 " +
+                "on p2.object_id = o1.object_id " +
+                "left join unc_params p3 " +
+                "on p3.object_id = o1.object_id " +
+                "left join unc_params p4 " +
+                "on p4.object_id = o1.object_id " +
+                "where  o1.object_type_id = 3 and " +
+                "p1.attr_id = 33 and " +
+                "p2.attr_id = 34 and " +
+                "(p1.value = "+ id +" or p2.value = "+ id +") and " +
+                "p3.attr_id = 31 and " +
+                "p4.attr_id = 32 " +
+                ") t1 " +
+                "group  by t1.recipient " +
+                ")) and p4.date_value in ( " +
+                "select  max(t1.mess_date) " +
+                "from  ( " +
+                "select  o1.object_id as mess_id, " +
+                "case  " +
+                "when p1.value = "+ id +" then  " +
+                "p1.value  " +
+                "else " +
+                "p2.value " +
+                "end as sender, " +
+                "case  " +
+                "when p2.value = "+ id +" then  " +
+                "p1.value  " +
+                "else " +
+                "p2.value " +
+                "end as recipient, " +
+                "p3.value as mess_text, " +
+                "p4.date_value as mess_date " +
+                "from  unc_objects o1 " +
+                "left join unc_params p1 " +
+                "on p1.object_id = o1.object_id " +
+                "left join unc_params p2 " +
+                "on p2.object_id = o1.object_id " +
+                "left join unc_params p3 " +
+                "on p3.object_id = o1.object_id " +
+                "left join unc_params p4 " +
+                "on p4.object_id = o1.object_id " +
+                "where  o1.object_type_id = 3 and " +
+                "p1.attr_id = 33 and " +
+                "p2.attr_id = 34 and " +
+                "(p1.value = "+ id +" or p2.value = "+ id +") and " +
+                "p3.attr_id = 31 and " +
+                "p4.attr_id = 32 " +
+                ") t1 " +
+                "group  by t1.recipient " +
+                ") order by p4.date_value ";
+        return query;
+    }
 }

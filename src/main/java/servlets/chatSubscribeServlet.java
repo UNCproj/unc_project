@@ -56,7 +56,7 @@ public class chatSubscribeServlet extends HttpServlet {
                             lastMessageId,senderId,recipientId));
                     if(resultSetOutputMessagees.next()) {
                         break;
-                    }else if(step==100){
+                    }else if(step==60){
                         break;
                     }else{
                         Thread myThread = Thread.currentThread();
