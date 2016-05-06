@@ -1221,12 +1221,50 @@ public class SQLQueriesHelper {
         return query.toString();
     }
     
+    static String insertUser(BigDecimal id, String name) {
+        String query = "insert into UNC_OBJECTS values(" + id + ", 1, '" + name + "', null)";
+        System.out.println(query);
+        return query;
+    }
+    
     static String checkLogin(String login) {
         StringBuilder query = new StringBuilder("select OBJECT_ID\n" +
                     "  from UNC_OBJECTS\n" +
                     "  where OBJECT_TYPE_ID = 1 and OBJECT_NAME = ");
         query.append("'" + login + "'");
+        System.out.println(query.toString());
         return query.toString();
+    }
+    
+    static String getTypePropertyAdvertByTypeNameWithSubCategory(String category, String subcategory, String action) {
+        StringBuilder query = new StringBuilder("select  ctg.OT_ID\n" +
+                    "  from (select  u.OT_NAME,\n" +
+                    "                u.OT_ID,\n" +
+                    "                u.PARENT_ID\n" +
+                    "          from UNC_OBJECT_TYPES u\n" +
+                    "          CONNECT BY prior u.OT_ID = u.PARENT_ID\n" +
+                    "          start with u.OT_NAME = '" + category + "') ctg\n" +
+                    "  where ctg.OT_NAME = '"+ subcategory +"'\n" +
+                    "  CONNECT BY prior ctg.OT_ID = ctg.PARENT_ID\n" +
+                    "  start with ctg.OT_NAME = '" + action + "'");
+        System.out.println(query.toString());
+        return query.toString();
+    }
+    
+    static String getTypePropertyAdvertByTypeNameWithOutSubCategory(String category, String action) {
+        StringBuilder query = new StringBuilder("select  ctg.OT_ID\n" +
+                    "  from  UNC_OBJECT_TYPES ctg\n" +
+                    "  where ctg.OT_NAME = '" + action + "'\n" +
+                    "  CONNECT BY prior ctg.OT_ID = ctg.PARENT_ID\n" +
+                    "  start with ctg.OT_NAME = '" + category + "'");
+        System.out.println(query.toString());
+        return query.toString();
+    }
+    
+    static String insertPropertyAdvert(BigDecimal id, String type, String name) {
+        String query = "insert into UNC_OBJECTS values(" + id + ", " + type + ", '" + name + "', null)";
+        System.out.println(query);
+        return query;
     }
     
     public static String mergeParamValue(String id, String attr_id, String newValue){

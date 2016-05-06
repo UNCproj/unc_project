@@ -1,5 +1,5 @@
 (function(){
-            var app = angular.module('objectSettings', ['chart.js','ngDialog']);
+            var app = angular.module('objectSettings', ['chart.js', 'ngDialog', 'flow']);
             console.log('start');           
             var getUrlParameter = function getUrlParameter(sParam) {
                 var sPageURL = decodeURIComponent(window.location.search.substring(1)),
@@ -83,7 +83,46 @@
             $scope.onClick = function (points, evt) {
                         console.log(points, evt);
             };
-            }); 
+            });
+            
+             app.controller("MigrationUser", function ($scope) {
+                $scope.CountRowUser;
+                $scope.listerr;
+                $scope.uploader = {};
+                
+                $scope.fileAdded = function ($file, $event, $flow) {
+                $event.preventDefault();
+                $scope.uploader.flow.files[0] = $file;
+                $scope.uploader.flow.files[0].name = '/excel/1.xls';
+                $scope.uploader.flow.upload();
+                };
+                
+                $scope.success = function ($message) {
+                    var params = JSON.parse($message);
+                    $scope.CountRowUser = params.countRowUser;
+                    $scope.listerr = params.listErrUser;
+                };
+            
+        });
+            app.controller("MigrationAdvert", function ($scope) {
+                $scope.CountRowAdvert;
+                $scope.listerr;
+                $scope.uploader = {};
+                
+                $scope.fileAdded = function ($file, $event, $flow) {
+                $event.preventDefault();
+                $scope.uploader.flow.files[0] = $file;
+                $scope.uploader.flow.files[0].name = '/excel/1.xls';
+                $scope.uploader.flow.upload();
+                };
+                
+                $scope.success = function ($message) {
+                    var params = JSON.parse($message);
+                    $scope.CountRowAdvert = params.countRowAdvert;
+                    $scope.listerr = params.listErrAdvert;
+                };
+            
+        });
             
             app.controller("AdminCtrl", function ($scope, ngDialog){
                console.log("adminmoder ready!");

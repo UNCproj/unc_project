@@ -201,8 +201,40 @@
                             </div>
                         <% } %>
                         <div id="adminka" class="tab-pane fade in">
-                            <input id="user_pic_file" type="file" multiple="multiple">
-                            <script>getSuccesCountRow();</script>
+                            <div ng-controller="MigrationUser" class="references">
+                                <div
+                                    flow-init="{target: '/unc-project/MigrationUserServlet', testChunks:false}"
+                                    flow-file-added="fileAdded($file, $event, $flow)"
+                                    flow-name="uploader.flow"
+                                    flow-file-success="success($message)">
+                                   <h3>Миграция пользователей</h3>
+                                   <button type="button" flow-btn>Выбрать excel</button>
+                                </div>
+                                    <h3>Успешно {{CountRowUser}}</h3>
+                                    <h3>С ошибкой </h3>
+                                    <ul class="references-ul">
+                                        <li class="references-ul-li" ng-repeat="x in listerr">
+                                            {{ x }}
+                                        </li>
+                                    </ul>
+                            </div>
+                            <div ng-controller="MigrationAdvert" class="references">
+                                <div
+                                    flow-init="{target: '/unc-project/MigrationAdvertServlet', testChunks:false}"
+                                    flow-file-added="fileAdded($file, $event, $flow)"
+                                    flow-name="uploader.flow"
+                                    flow-file-success="success($message)">
+                                   <h3>Миграция обьявлений</h3>
+                                   <button type="button" flow-btn>Выбрать excel</button>
+                                </div>
+                                    <h3>Успешно {{CountRowAdvert}}</h3>
+                                    <h3>С ошибкой </h3>
+                                    <ul class="references-ul">
+                                        <li class="references-ul-li" ng-repeat="x in listerr">
+                                            {{ x }}
+                                        </li>
+                                    </ul>
+                            </div>
                         </div>
                         <div id="adm" class="tab-pane fade in">
                             <% if ((user != null)&&(user.isIsAdmin()||user.isIsModer())&&("1".equals(currentObject.getParentType()))) { %>
