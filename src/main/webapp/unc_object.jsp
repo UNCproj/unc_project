@@ -121,10 +121,13 @@
                          <%if ((user!=null)&&(user.isIsAdmin())&&(currentObject.getId().equals(user.getId()))) {%>
                                  <li><a href="#adminka" data-toggle="tab">Админка</a></li>
                          <% } %>
-                         <%if ((user!=null)&&(user.isIsAdmin()||user.isIsModer())&&(!currentObject.getId().equals(user.getId()))) {%>
+                         <%if ((user!=null)&&(user.isIsAdmin())&&(!currentObject.getId().equals(user.getId()))) {%>
                                  <li><a href="#adm" data-toggle="tab">Админка</a></li>
-                         <% } %>         
-                     <% } %>
+                         <% } %>
+                         <%if ("1".equals(currentObject.getType()) && user!=null && user.getId().equals(request.getParameter("id"))) {%>
+                                 <li><a href="#messages" data-toggle="tab">Мои сообщения</a></li>
+                         <% } %>
+                        <% } %>
                      </ul>
                      <div class="settings tab-content" id="tab_content">
                         <% String activeSwicth1 = "active", s; %>
@@ -150,7 +153,6 @@
                                                         <c:param name="attr_name" value="<%= currentGroupParams.get(j).getName()%>" />
                                                         <c:param name="attr_name_ru" value="<%= currentGroupParams.get(j).getRuName()%>" />
                                                         <c:param name="attr_value" value="<%= currentGroupParams.get(j).getValue()%>" />
-                                                        <c:param name="attr_type" value="<%= currentGroupParams.get(j).getType()%>" />
                                                         <c:param name="attr_type" value="<%= currentGroupParams.get(j).getType()%>" />
                                                     </c:import>
                                                 </c:if>       
@@ -205,7 +207,7 @@
                             <script>getSuccesCountRow();</script>
                         </div>
                         <div id="adm" class="tab-pane fade in">
-                            <% if ((user != null)&&(user.isIsAdmin()||user.isIsModer())&&("1".equals(currentObject.getParentType()))) { %>
+                            <% if ((user != null)&&user.isIsAdmin()&&("1".equals(currentObject.getParentType()))) { %>
                             <br>
                             <div>
                                 <div ng-controller="AdminCtrl">
@@ -256,6 +258,13 @@
                             }
                             %>
                         </div>
+						<%if ("1".equals(currentObject.getType()) && user!=null && user.getId().equals(request.getParameter("id"))){%>
+                         <div id="messages" class="tab-pane fade in">
+                            <div ng-controller="MessagesController">
+                                <div class="message-list"></div>
+                            </div>
+                            </div>
+                         <% } %>
                         <%if ("4".equals(currentObject.getParentType()) && user != null && user.isLoggedIn() && !currentObject.isVip()) {%>
                         <div class="robokassa-button" >
                             <ul>
@@ -281,7 +290,18 @@
                             </ul>
                         </div>
                         <%}%>
-                            
+                            <% if ((user != null)&&user.isIsModer()&&user.isIsAdmin()&&("4".equals(currentObject.getParentType()))) { %>
+                            <br>
+                            <div>
+                                <div ng-controller="ModerCtrl">
+                                    <button class="btn btn-primary" ng-click="clickToDel();">
+                                        <nobr>Удалить объявление</nobr>
+                                    </button>
+                                </div>
+                            </div>
+                            <%
+                            }
+                            %>
                  <div class="references">
                     <% ArrayList<String[]> listReferences = currentObject.lisrReferences(); %>
                     <% if ("1".equals(currentObject.getType())) { %>
@@ -299,7 +319,6 @@
                     <h4 class="robokassa-li">Продавец : <a a href="unc_object.jsp?id=<%= listReferences.get(0)[0] %>"><%= listReferences.get(0)[1] %></a></h4>
                     <%}%>
                  </div>
-
                  <div class="related">
                      <%
                          RecommenderBean recommenderBean = new RecommenderBean();
@@ -353,15 +372,22 @@
                          <%--</div>--%>
                      <%--</div>--%>
                  </div>
-			<div>
-                             <%UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
-                                 if ("1".equals(currentObject.getType()) && userAccountBean!=null && userAccountBean.getId().equals(request.getParameter("id"))) {%>
-                             <a class="a-outline button-style" href="unc_update.jsp?id=<%=request.getParameter("id")%>" style="width: 200px">
-                                 Изменить данные
-                             </a>
-                             <%}%>
-                        </div>
-            </div>
+             <div>
+                 <%UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
+                     if ("1".equals(currentObject.getType()) && userAccountBean!=null && userAccountBean.getId().equals(request.getParameter("id"))) {%>
+                 <a class="a-outline button-style" href="unc_update.jsp?id=<%=request.getParameter("id")%>" style="width: 200px">
+                     Изменить данные
+                 </a>
+                 <%}%>
+             </div>
+             </div>
+                         <%if ("1".equals(currentObject.getType())){%>
+             <div>
+                 <a class="a-outline button-style" href="chat.jsp?id=<%=request.getParameter("id")%>" style="width: 230px">
+                     Отправить сообщение
+                 </a>
+             </div>
+                     <%}%>
             <c:catch var="e">
                 <c:import url="/includes/object/footers/default.jspf" />
             </c:catch>

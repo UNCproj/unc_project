@@ -1,12 +1,12 @@
 (function(){
             var app = angular.module('objectSettings', ['chart.js','ngDialog']);
-            console.log('start');           
+            console.log('start');
             var getUrlParameter = function getUrlParameter(sParam) {
                 var sPageURL = decodeURIComponent(window.location.search.substring(1)),
                     sURLVariables = sPageURL.split('&'),
                     sParameterName,
                     i;
-                for (i = 0; i < sURLVariables.length; i++) {                 
+                for (i = 0; i < sURLVariables.length; i++) {
                     sParameterName = sURLVariables[i].split('=');
                     if (sParameterName[0] === sParam) {
                         return sParameterName[1] === undefined ? true : sParameterName[1];
@@ -19,7 +19,7 @@
             var labels = [];
             var data = [];
             var adverts = [];
-            
+
             function isExistData(){
                 console.log("check!");
                     $.ajax({
@@ -38,14 +38,14 @@
                     return false;
                 }
                 $('#ifempty').html('');
-                
+
                 return true;
             };
-            
+
             $scope.isExistData = isExistData();
             $scope.subjects = adverts;
             $scope.selectedItem = adverts[0];
-            
+
             $scope.dropboxitemselected = function (item) {
                 console.log('query!');
                 if (!$scope.isExistData) { return; }
@@ -63,7 +63,7 @@
                         data.push(visit.count);
                     });
                 console.log('query1!');
-                if (labels.length == 0) 
+                if (labels.length == 0)
                 {
                     labels = ['0']; data = ['0'];
                 }
@@ -78,13 +78,13 @@
                 console.log($scope.data);
             });
             };
-            
+
             $scope.dropboxitemselected($scope.selectedItem);
             $scope.onClick = function (points, evt) {
                         console.log(points, evt);
             };
-            }); 
-            
+            });
+
             app.controller("AdminCtrl", function ($scope, ngDialog){
                console.log("adminmoder ready!");
                 $scope.del_model = {};
@@ -104,14 +104,13 @@
                     $scope.close_diag.close();
                 });
                };
-               
+
                 $scope.clickToDel = function (){
                         $scope.close_diag = ngDialog.open({ template: 'directives/delete.html',
                         scope: $scope
                     });
                 };
-                
-                $scope.clickToModer = function(value){
+				$scope.clickToModer = function(value){
                     $.ajax({
                     url: "/unc-project/ModerServlet/setModerRights",
                     async:false,
@@ -122,6 +121,33 @@
                         console.log("moder success!");
                     });
                 };
-             
+
+            });
+            app.controller("MessagesController", function ($scope, $http){
+                $.urlParam = function(name){
+                    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+                    return results[1] || 0;
+                };
+                $scope.object = {};
+                $scope.object.id = $.urlParam('id');
+                $("ul#tab_name li a[href$='#messages']").click(function(){
+                    $("div.message-list").empty();
+                    $scope.loadMess();
+                });
+                $scope.loadMess = function(){
+                    $http({
+                        url: '/unc-project/loadMesList',
+                        method: 'POST',
+                        params: $scope.object
+                    })
+                        .success(function (data) {
+                            for(var i=0; i<data.length;i++){
+                                $("div.message-list").append('<div class="users-message" onclick=\"location.href=\'chat.jsp?id='+data[i].recipientId +'\'\"></div>');
+                                $("div.message-list div.users-message:last").append('<div class="message-login">' + data[i].recipientLogin + '</div>');
+                                $("div.message-list div.users-message:last").append('<div class="message-date">' + data[i].date + '</div>');
+                                $("div.message-list div.users-message:last").append('<div class="message-text">' + data[i].text + '</div>');
+                            }
+                        });
+                };
             });
 })();
