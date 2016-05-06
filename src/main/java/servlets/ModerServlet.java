@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author artem
  */
-@WebServlet(name = "ModerServlet", urlPatterns = {"/ModerServlet/delAdvert", "/ModerServlet/deleted"})
+@WebServlet(name = "ModerServlet", urlPatterns = {"/ModerServlet/delAdvert", "/ModerServlet/deleted", "/ModerServlet/setModerRights"})
 public class ModerServlet extends HttpServlet {
 
     /**
@@ -86,7 +86,7 @@ public class ModerServlet extends HttpServlet {
         String delId = request.getParameter("uid");
         UserAccountBean user = (UserAccountBean) request.getSession().getAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY);
         
-        if ((user == null) || (!user.isIsModer())) {
+        if ((user == null) || (!user.isIsModer()) || (!user.isIsAdmin())) {
             return;
         }
             try {
@@ -115,8 +115,10 @@ public class ModerServlet extends HttpServlet {
                 log.info("checktype2 " + comm);
                 res = st.executeQuery(comm);
                 res.next();
-                if (!res.getString(1).equals(SQLQueriesHelper.ADVERT_TYPE_ID)) {
-                    response.getWriter().println("Некорректный тип объекта!");
+                String type = res.getString(1);
+                if (!type.equals(SQLQueriesHelper.ADVERT_TYPE_ID)&&!type.equals(SQLQueriesHelper.USER_TYPE_ID)) {
+                    log.info("Некорректный тип объекта!");
+                    log.info(type);
                     return;
                 }
                 comm = "select value from unc_params where "
@@ -221,7 +223,28 @@ public class ModerServlet extends HttpServlet {
                 out.println("</body>");
                 out.println("</html>");
             }
-        } 
+        } else if (request.getServletPath().equals("/ModerServlet/setModerRights")) {
+            String del_id = request.getParameter("id");
+            try {
+                connection = DataSource.getInstance().getConnection();
+                st = connection.createStatement();
+            } catch (SQLException ex) {
+                Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (PropertyVetoException ex) {
+                Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            String id = request.getParameter("id");
+            String attr_id = SQLQueriesHelper.MODER_ATTR_ID;
+            String value = request.getParameter("value");
+            String comm = SQLQueriesHelper.mergeParamValue(id,attr_id, value);
+            log.info("moderR="+comm);
+            try {
+                st.executeUpdate(comm);
+            } catch (SQLException ex) {
+                Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     /**

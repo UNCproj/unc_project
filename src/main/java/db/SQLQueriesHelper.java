@@ -65,6 +65,8 @@ public class SQLQueriesHelper {
     static public final String PERSON_CREATION = "39";
     static public final String DEL_MSG_ATTR_ID = "40";
     static public final String DEL_ID_ATTR_ID = "41";
+    static public final String MODER_ATTR_ID = "35";
+    static public final String ADMIN_ATTR_ID = "36";
     //static public final String DEFAULT_USER_PIC_FILE = "/unc-project/resources/img/user-pics/default.png";
 
     static public String selectFullObjectInformationByName(String[] typesIds, String objectName) {
@@ -1225,5 +1227,15 @@ public class SQLQueriesHelper {
                     "  where OBJECT_TYPE_ID = 1 and OBJECT_NAME = ");
         query.append("'" + login + "'");
         return query.toString();
+    }
+    
+    public static String mergeParamValue(String id, String attr_id, String newValue){
+        String comm = "MERGE INTO unc_params up\n" +
+"USING (SELECT "+id+" object_id, " + attr_id + " attr_id, '" + newValue +"' value, null date_value, null lv_id from dual) s\n" +
+"ON ((up.object_id = s.object_id) and (up.attr_id = s.attr_id))\n" +
+"WHEN MATCHED THEN UPDATE SET up.value = s.value\n" +
+"WHEN NOT MATCHED THEN INSERT (object_id, attr_id, value, date_value, lv_id) VALUES (s.object_id, s.attr_id, s.value, s.date_value, s.lv_id)";
+        
+        return comm;
     }
 }

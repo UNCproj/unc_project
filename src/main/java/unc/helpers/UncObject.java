@@ -187,7 +187,6 @@ public class UncObject {
         {
             ArrayList<String[]> list = new ArrayList<>();
             ResultSet results = statement.executeQuery(SQLQueriesHelper.getListReferences(id));
-            log.info("DCP="+SQLQueriesHelper.getListReferences(id));
             while (results.next()) {
                 String[] mass = new String[3];
                 mass[0] = results.getString("OBJECT_ID");
