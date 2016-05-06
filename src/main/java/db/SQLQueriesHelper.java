@@ -1,4 +1,4 @@
-﻿package db;
+package db;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by Денис on 15.12.2015.
+ * Created by ????? on 15.12.2015.
  */
 public class SQLQueriesHelper {
     static public final String USER_TYPE_ID = "1";
@@ -576,7 +576,8 @@ public class SQLQueriesHelper {
                         "                  max(pic) as pic,\n" +
                         "                  max(city) as city,\n" +
                         "                  max(registration_date) as registration_date,\n" +
-                        "                  max(is_invalid) as is_invalid\n" +
+                        "                  max(is_invalid) as is_invalid,\n" +
+                        "                  max(map_coordinates) as map_coordinates\n" +
                         "            from  (\n" +
                         "                  select  object_id,\n" +
                         "                          object_name,\n" +
@@ -623,7 +624,13 @@ public class SQLQueriesHelper {
                         "                              then attr_value\n" +
                         "                            else\n" +
                         "                              null\n" +
-                        "                          end as is_invalid\n" +
+                        "                          end as is_invalid,\n" +
+                        "                          case\n" +
+                        "                            when attr_name = 'map_coordinates'\n" +
+                        "                              then attr_value\n" +
+                        "                            else\n" +
+                        "                              null\n" +
+                        "                          end as map_coordinates\n" +
                         "                    from  (\n" +
                         "                  select  o.object_id,\n" +
                         "                          o.object_name,\n" +

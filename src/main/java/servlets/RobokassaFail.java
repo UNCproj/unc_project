@@ -5,13 +5,13 @@
  */
 package servlets;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  *
@@ -33,7 +33,7 @@ public class RobokassaFail extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-                String id_advert = (String)request.getAttribute("shp_id_a");
+                String id_advert = (String)request.getParameter("shp_id_a");
                 response.sendRedirect("/unc-project/unc_object.jsp?id=" + id_advert); 
         }
     }

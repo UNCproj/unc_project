@@ -46,10 +46,6 @@
     cursor: pointer;
 }
 
-.subcategory-attributes div div {
-    height: 30px;
-}
-
 .subcategory-attributes .add-input-item {
     cursor: pointer;
     color: #28a4c9;
@@ -71,11 +67,32 @@
     margin: 0 auto;
 }
 
+.attributes .attr-input-wrapper {
+    display: inline-block;
+    width: 120px;
+    margin: 5px;
+}
+
+.attributes .attr-input-wrapper input {
+    height: 25px;
+}
+
+.attributes .attr-input-wrapper .glyphicon {
+    padding: 4px;
+    color: #ddd;
+    pointer-events: all;
+}
+
+.attributes .attr-input-wrapper .glyphicon:hover {
+    color: #2b669a;
+    cursor: pointer;
+}
+
 .attributes .attr-input {
     display: inline-block;
-    width: 90px;
-    height: 20px;
-    margin: 0 5px;
+    height: 25px;
+    width: 120px;
+    margin: 5px;
 }
 
 .pagination-wrapper, .ordering-wrapper {
@@ -239,3 +256,25 @@
     margin-top: 5px;
     margin-right: -10px;
 }
+
+/*inner input addon*/
+/* enable absolute positioning */
+.inner-addon {
+    position: relative;
+}
+
+/* style icon */
+.inner-addon .glyphicon {
+    position: absolute;
+    padding: 10px;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* align icon */
+.left-addon .glyphicon  { left:  0px;}
+.right-addon .glyphicon { right: 0px;}
+
+/* add padding  */
+.left-addon input  { padding-left:  30px; }
+.right-addon input { padding-right: 30px; }

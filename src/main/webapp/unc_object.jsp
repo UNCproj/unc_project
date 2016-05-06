@@ -80,6 +80,9 @@
     </c:if>
 </head>
     <body>
+        <script type="application/javascript">
+            var uncObjectType = ${currentObjectType};
+        </script>
         <div class="main">
                  <c:catch>
                        <%@ include file="/includes/object/headers/default.jsp" %>
@@ -147,6 +150,7 @@
                                                         <c:param name="attr_name" value="<%= currentGroupParams.get(j).getName()%>" />
                                                         <c:param name="attr_name_ru" value="<%= currentGroupParams.get(j).getRuName()%>" />
                                                         <c:param name="attr_value" value="<%= currentGroupParams.get(j).getValue()%>" />
+                                                        <c:param name="attr_type" value="<%= currentGroupParams.get(j).getType()%>" />
                                                         <c:param name="attr_type" value="<%= currentGroupParams.get(j).getType()%>" />
                                                     </c:import>
                                                 </c:if>       
@@ -268,7 +272,7 @@
                     <h4 class="robokassa-li">Продавец : <a a href="unc_object.jsp?id=<%= listReferences.get(0)[0] %>"><%= listReferences.get(0)[1] %></a></h4>
                     <%}%>
                  </div>
-<<<<<<< HEAD
+
                  <div class="related">
                      <%
                          RecommenderBean recommenderBean = new RecommenderBean();
@@ -322,7 +326,6 @@
                          <%--</div>--%>
                      <%--</div>--%>
                  </div>
-=======
 			<div>
                              <%UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
                                  if ("1".equals(currentObject.getType()) && userAccountBean!=null && userAccountBean.getId().equals(request.getParameter("id"))) {%>
@@ -331,7 +334,6 @@
                              </a>
                              <%}%>
                         </div>
->>>>>>> da8610a5f2ae04ee40a60198376a52706609e655
             </div>
             <c:catch var="e">
                 <c:import url="/includes/object/footers/default.jspf" />

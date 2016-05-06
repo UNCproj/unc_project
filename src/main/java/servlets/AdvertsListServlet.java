@@ -4,6 +4,7 @@ import beans.AdvertsManager;
 import beans.AdvertsSearchBean;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.internal.LinkedTreeMap;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -19,7 +20,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Type;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -33,6 +37,7 @@ import java.util.stream.Collectors;
  * get_adverts_attributes - получить атрибуты заданного типа объявлений
  * get_attributes_autocomplete - получить автодополнение для атрибута
  * get_parent_categories - получить иерархию категорий от advert до заданного типа
+ * get_adverts_geo_query - получить список объявлений, находящихся на определенном расстоянии от заданного
  */
 @WebServlet(name = "AdvertsListServlet", urlPatterns = "/advertsList")
 public class AdvertsListServlet extends HttpServlet {
@@ -59,8 +64,10 @@ public class AdvertsListServlet extends HttpServlet {
                 getAdvertsAttributes(request, response);
             } else if (action.equals("get_attributes_autocomplete")) {
                 getAttributesAutocomplete(request, response);
-            }else if (action.equals("get_parent_categories")) {
+            } else if (action.equals("get_parent_categories")) {
                 getParentCategories(request, response);
+            } else if (action.equals("get_adverts_geo_query")) {
+                getAdvertsGeoQuery(request, response);
             }
         } catch (SQLException | PropertyVetoException e) {
             throw new ServletException(e);
@@ -93,8 +100,7 @@ public class AdvertsListServlet extends HttpServlet {
             query = null;
         }
 
-        SearchResponse searchResponse = searchBean.advertsSearch(query, adCategoryId,
-                adCategoryName, additionalAttributes);
+        SearchResponse searchResponse = searchBean.advertsSearch(query, adCategoryId, adCategoryName);
 
         SearchHit[] searchHits = searchResponse.getHits().getHits();
 
@@ -105,26 +111,11 @@ public class AdvertsListServlet extends HttpServlet {
             foundedAdverts.add(mappedRes);
         }
 
+        foundedAdverts = applyFiltering(foundedAdverts, additionalAttributes);
+
         foundedAdverts = applySortAndCount(
                 foundedAdverts,
-                (o1, o2) -> {
-                    String sortingParamValue1 = (String) o1.get(sortingParam);
-                    String sortingParamValue2 = (String) o2.get(sortingParam);
-
-                    int compared;
-
-                    try {
-                        int sortingParamIntValue1 = Integer.parseInt(sortingParamValue1);
-                        int sortingParamIntValue2 = Integer.parseInt(sortingParamValue2);
-
-                        compared = sortingParamIntValue1 - sortingParamIntValue2;
-                    }
-                    catch (Exception e) {
-                        compared = sortingParamValue1.compareTo(sortingParamValue2);
-                    }
-
-                    return sortingOrder.equalsIgnoreCase("desc") ? -compared : compared;
-                },
+                createAdvertsComparator(sortingParam, sortingOrder),
                 adsStartingNum,
                 adsCount
         );
@@ -148,7 +139,7 @@ public class AdvertsListServlet extends HttpServlet {
 
         QueryBuilder query = QueryBuilders.matchPhrasePrefixQuery("name", adNamePattern).maxExpansions(10);
 
-        SearchResponse searchResponse = searchBean.advertsSearch(query, adCategoryId, adCategoryName, additionalAttributes);
+        SearchResponse searchResponse = searchBean.advertsSearch(query, adCategoryId, adCategoryName);
 
         SearchHit[] searchHits = searchResponse.getHits().getHits();
 
@@ -219,7 +210,7 @@ public class AdvertsListServlet extends HttpServlet {
 
         SearchResponse searchResponse = null;
         try {
-            searchResponse = searchBean.advertsSearch(query, adCategoryId, adCategoryName, additionalAttributes);
+            searchResponse = searchBean.advertsSearch(query, adCategoryId, adCategoryName);
         }
         catch (Exception e) {
             e.getMessage();
@@ -266,8 +257,7 @@ public class AdvertsListServlet extends HttpServlet {
 
         QueryBuilder query = QueryBuilders.matchPhrasePrefixQuery(attrName, attrValuePattern).maxExpansions(10);
 
-        SearchResponse searchResponse = searchBean.advertsSearch(query, adCategoryId,
-                adCategoryName, additionalAttributes);
+        SearchResponse searchResponse = searchBean.advertsSearch(query, adCategoryId, adCategoryName);
 
         SearchHit[] searchHits = searchResponse.getHits().getHits();
 
@@ -303,13 +293,179 @@ public class AdvertsListServlet extends HttpServlet {
         }
     }
 
+    private void getAdvertsGeoQuery(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String adCategoryId = request.getParameter("adCategoryId");
+        String adCategoryName = request.getParameter("adCategoryName");
+        String adCenterLat = request.getParameter("adCenterCoords[lat]");
+        String adCenterLng = request.getParameter("adCenterCoords[lon]");
+        String radius = request.getParameter("radius");
+        String adsCount = request.getParameter("adsCount");
+
+        SearchResponse searchResponse = searchBean.geoQuery(Double.parseDouble(adCenterLat),
+                Double.parseDouble(adCenterLng), Double.parseDouble(radius));
+
+        SearchHit[] searchHits = searchResponse.getHits().getHits();
+
+        List<Map<String, Object>> foundedAdverts = new ArrayList<>();
+
+        for (SearchHit res : searchHits) {
+            Map<String, Object> mappedRes = res.getSource();
+            foundedAdverts.add(mappedRes);
+        }
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String advListJson = gson.toJson(foundedAdverts, foundedAdverts.getClass());
+
+        response.setContentType("text/html; charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            out.print(advListJson);
+        }
+    }
+
     private <T> List<T> applySortAndCount(List<T> srcArray, Comparator<T> comparator,
                                           String adsStartingNum, String adsCount) {
+        adsStartingNum = adsStartingNum == null ? "0" : adsStartingNum;
+        adsCount = adsCount == null ? "5000" : adsCount;
+
         return srcArray
                 .stream()
                 .sorted(comparator)
                 .skip(Integer.parseInt(adsStartingNum))
                 .limit(Integer.parseInt(adsCount))
                 .collect(Collectors.toList());
+    }
+
+    private <T extends Map<String, Object>> List<T> applyFiltering(List<T> srcArray, String[] additionalAttributes) {
+        List<T> outputArray = srcArray;
+
+        if (additionalAttributes != null) {
+            Gson inputAttrsJson = new GsonBuilder().setPrettyPrinting().create();
+
+            Type type = Object.class;
+
+            for (String additionalAttribute : additionalAttributes) {
+                LinkedTreeMap attributeInfo = inputAttrsJson.fromJson(additionalAttribute, type);
+
+                String attrName = (String) attributeInfo.get("name");
+                String attrType = (String) attributeInfo.get("type");
+                ArrayList<String> attrValues = (ArrayList<String>) attributeInfo.get("values");
+
+                if (attrValues == null || attrValues.size() == 0) {
+                    continue;
+                }
+
+                if (attrType != null) {
+                    switch (attrType) {
+                        case "discrete_multi":
+                            List<String> filtrationValues = attrValues.stream()
+                                    .filter(val -> val != null && !val.equals(""))
+                                    .collect(Collectors.toList());
+
+                            if (filtrationValues != null && filtrationValues.size() > 0) {
+                                outputArray = outputArray.stream()
+                                        .filter(t -> {
+                                            String attrValue =  (String) t.get(attrName);
+
+                                            for (String filtrationValue: filtrationValues) {
+                                                if (attrValue.equals(filtrationValue)) {
+                                                    return true;
+                                                }
+                                            }
+
+                                            return false;
+                                        })
+                                        .collect(Collectors.toList());
+                            }
+                            break;
+
+                        case "continous":
+                            outputArray = outputArray.stream()
+                                    .filter(t -> {
+                                        String attrValue =  (String)t.get(attrName);
+
+                                        Integer attrDigitValue = tryParseInt(attrValue);
+
+                                        if (attrDigitValue == null) {
+                                            Date attrDateValue = tryParseDate(attrValue);
+
+                                            if (attrDateValue == null) {
+                                                return isBetween(attrValue, attrValues.get(0), attrValues.get(1));
+                                            }
+                                            else {
+                                                Date fromDateValue = tryParseDate(attrValues.get(0));
+                                                Date toDateValue = tryParseDate(attrValues.get(1));
+
+                                                return isBetween(attrDateValue, fromDateValue, toDateValue);
+                                            }
+                                        }
+                                        else {
+                                            Integer fromDigitValue = tryParseInt(attrValues.get(0));
+                                            Integer toDigitValue = tryParseInt(attrValues.get(1));
+
+                                            return isBetween(attrDigitValue, fromDigitValue, toDigitValue);
+                                        }
+                                    })
+                                    .collect(Collectors.toList());
+                            break;
+                    }
+                }
+            }
+        }
+
+        return outputArray;
+    }
+
+    private <T extends Comparable<T>> boolean isBetween(T inputValue, T fromValue, T toValue) {
+        if (fromValue != null && inputValue.compareTo(fromValue) < 0) {
+            return false;
+        }
+
+        if (toValue != null && inputValue.compareTo(toValue) > 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private <T extends Map<String, Object>> Comparator<T> createAdvertsComparator(String sortingParam, String sortingOrder) {
+        final String SORTING_PARAM = sortingParam == null ? "name" : sortingParam;
+        final String SORTING_ORDER = sortingOrder == null ? "asc" : sortingOrder;
+
+        return (o1, o2) -> {
+            String sortingParamValue1 = (String) o1.get(SORTING_PARAM);
+            String sortingParamValue2 = (String) o2.get(SORTING_PARAM);
+
+            int compared;
+
+            try {
+                int sortingParamIntValue1 = Integer.parseInt(sortingParamValue1);
+                int sortingParamIntValue2 = Integer.parseInt(sortingParamValue2);
+
+                compared = sortingParamIntValue1 - sortingParamIntValue2;
+            }
+            catch (Exception e) {
+                compared = sortingParamValue1.compareTo(sortingParamValue2);
+            }
+
+            return SORTING_ORDER.equalsIgnoreCase("desc") ? -compared : compared;
+        };
+    }
+
+    private Integer tryParseInt(String inputString) {
+        try {
+            return Integer.parseInt(inputString);
+        }
+        catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private Date tryParseDate(String inputString) {
+        try {
+            return DateFormat.getDateInstance().parse(inputString);
+        }
+        catch (ParseException e) {
+            return null;
+        }
     }
 }

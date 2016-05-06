@@ -108,8 +108,6 @@
 
                 $scope.loadParentCategories($scope.selectedCategory.id, $scope.selectedCategory.name);
                 $scope.$parent.search();
-
-                $scope.$broadcast('categorySelected');
             };
         }
     ]);
@@ -229,6 +227,8 @@
                     }
                 })
                     .success(function (data) {
+                        $scope.searchAttributes.length = 0;
+
                         for (var i = 0; i < data.length; i++) {
                             data[i][5] = i;
                             $scope.searchAttributes.push({
@@ -256,21 +256,41 @@
             },
             controller: ['$scope', '$http',
                 function($scope, $http) {
-                    $scope.multiInputItems = [{
-                        num: 0,
-                        placeholder: 'Введите значение'
-                    }];
+                    if ($scope.attrType == 'discrete_multi') {
 
-                    $scope.addInputItem = function() {
-                        var lastValue = $scope.searchAttrs[$scope.attrNum].values[$scope.multiInputItems.length - 1];
+                        $scope.multiInputItems = [{
+                            num: 0,
+                            placeholder: 'Введите значение'
+                        }];
 
-                        if (lastValue != null && lastValue != '') {
-                            $scope.multiInputItems.push({
-                                num: $scope.multiInputItems.length,
-                                placeholder: 'Введите значение'
-                            });
+                        $scope.addInputItem = function () {
+                            var lastValue = $scope.searchAttrs[$scope.attrNum].values[$scope.multiInputItems.length - 1];
+
+                            if (lastValue != null && lastValue != '') {
+                                $scope.multiInputItems.push({
+                                    num: $scope.multiInputItems.length,
+                                    placeholder: 'Введите значение'
+                                });
+                            }
+                        };
+
+                        $scope.removeInputItem = function (valueNum) {
+                            if ($scope.multiInputItems.length > 1) {
+                                $scope.multiInputItems.splice(valueNum, 1);
+                            }
+
+                            $scope.searchAttrs[$scope.attrNum].values[valueNum] = "";
+                        };
+                    }
+                    else if ($scope.attrType == 'date') {
+                        $scope.DATE_FORMAT = 'dd.MM.yyyy';
+                        $scope.fromDatePickerOpened = false;
+                        $scope.toDatePickerOpened = false;
+
+                        $scope.openFrom = function() {
+                            $scope.fromDatePickerOpened = true;
                         }
-                    };
+                    }
 
                     $scope.typeAhead = function(attrName, attrValue) {
                         return $http({

@@ -1,10 +1,7 @@
 package serializers;
 
 import beans.AdvertBean;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import com.google.gson.*;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -30,6 +27,7 @@ public class AdvertSerializer implements JsonSerializer<AdvertBean> {
 
         for (Map.Entry<String, String> attr: src.getAttributesMap().entrySet()) {
             String attrKey = attr.getKey();
+            String attrValue = attr.getValue();
 
             if (attrsPseudonims != null && attrsPseudonims.containsKey(attrKey)) {
                 attrKey = attrsPseudonims.get(attrKey);
@@ -43,7 +41,11 @@ public class AdvertSerializer implements JsonSerializer<AdvertBean> {
                 attrKey = "name";
             }
 
-            jsonObject.addProperty(attrKey, attr.getValue());
+//            if (attrKey.equals("map_coordinates") && attrValue != null) {
+//                attrValue = "{\"aaa\":\"bbb\"}";
+//            }
+
+            jsonObject.addProperty(attrKey, attrValue);
         }
 
         return jsonObject;

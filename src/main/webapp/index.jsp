@@ -148,6 +148,10 @@
                             </div>
                         </div>
                     </div>
+
+                    <button type="submit" class="btn btn-primary col-md-2 col-md-offset-5" ng-if="searchButtonClicked || defaultCategoryChanged" ng-click="$parent.search()">
+                        Найти
+                    </button>
                 </form>
 
                 <div class="clearfix"></div>

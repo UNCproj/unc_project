@@ -1,11 +1,16 @@
 
 <link rel="stylesheet" href="resources/css/ngDialog.css">
 <link rel="stylesheet" href="resources/css/ngDialog-theme-default.css">
+<link rel="stylesheet" href="resources/css/bootstrap.min.css">
+<link rel="stylesheet" href="resources/css/bootstrap-modal-carousel.min.css">
+<link rel="stylesheet" href="resources/css/mapAttr.css">
 <script src="resources/scripts/jquery-1.12.0.min.js"></script>
 <script src="resources/scripts/angular.min.js"></script>
+<script src="resources/scripts/mapAttr.js"></script>
 <script src="resources/scripts/advertStat.js"></script>
 <script type="text/javascript" src="resources/scripts/Chart.js"></script>
 <script type="text/javascript" src="resources/scripts/angular-chart.js"></script>
 <script type="text/javascript" src="resources/scripts/ngDialog.js"></script>
 
 <script src="resources/scripts/bootstrap.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDhpSFPZwg079hJYU1k7QmZ9Vsfy8VWLWo&sensor=false"></script>

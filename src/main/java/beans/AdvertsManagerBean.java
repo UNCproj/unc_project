@@ -64,6 +64,8 @@ public class AdvertsManagerBean implements AdvertsManager {
                         adv.setAttribute(SQLQueriesHelper.REG_DATE_ATTR,
                                 advListResults.getString(SQLQueriesHelper.REG_DATE_ATTR));
 
+                        adv.setAttribute("map_coordinates", advListResults.getString("map_coordinates"));
+
                         adverts.add(adv);
                     }
                 }

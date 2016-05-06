@@ -5,18 +5,19 @@
  */
 package servlets;
 
+import unc.helpers.UncObject;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import unc.helpers.UncObject;
 
 /**
  *
@@ -38,7 +39,7 @@ public class RobokassaSuccess extends HttpServlet {
             throws ServletException, IOException, SQLException, PropertyVetoException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-                String id_advert = (String)request.getAttribute("shp_id_a");
+                String id_advert = (String)request.getParameter("shp_id_a");
                 UncObject advert = new UncObject();
                 advert.vipAdvert(id_advert);
                 response.sendRedirect("/unc-project/unc_object.jsp?id=" + id_advert); 
