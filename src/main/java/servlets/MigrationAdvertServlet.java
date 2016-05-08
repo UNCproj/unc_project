@@ -6,24 +6,26 @@
 package servlets;
 
 import com.google.gson.Gson;
+import db.Parser;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import db.Parser;
+import javax.servlet.http.Part;
 
 /**
  *
  * @author Andrey
  */
-@WebServlet(name = "MigrationServlet", urlPatterns = {"/MigrationServlet"})
-public class MigrationServlet extends HttpServlet {
+@WebServlet(name = "MigrationAdvertServlet", urlPatterns = {"/MigrationAdvertServlet"})
+@MultipartConfig
+public class MigrationAdvertServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,15 +40,17 @@ public class MigrationServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            Parser p1 = new Parser();
-            p1.migrationUser(request.getParameter("file"));
-            String json1 = new Gson().toJson(p1.getCountRow());
-            String json2 = new Gson().toJson(p1.getListErr());
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(json1);
-            response.getWriter().write(json2);
+            Part filePart = request.getPart("file");
+            String fileName = request.getParameter("flowFilename");
+            File uploadDir = new File(getServletContext().getInitParameter("upload.location"));
+            File uploadFile = new File(uploadDir, fileName);
+
+            try(InputStream input = filePart.getInputStream()) {
+                Parser p = new Parser();
+                p.migrationAdvertAuto(input);
+                Gson g = new Gson();
+                out.print(g.toJson(p.getParams()));
+            }
         }
     }
 

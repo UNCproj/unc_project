@@ -72,8 +72,8 @@ public class ElasticSearchManager {
     }
 
     public void reindex() {
-        deleteIndex();
-        createIndex();
+        //deleteIndex();
+        //createIndex();
     }
 
     public void createIndex() {

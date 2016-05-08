@@ -1221,12 +1221,50 @@ public class SQLQueriesHelper {
         return query.toString();
     }
     
+    static String insertUser(BigDecimal id, String name) {
+        String query = "insert into UNC_OBJECTS values(" + id + ", 1, '" + name + "', null)";
+        System.out.println(query);
+        return query;
+    }
+    
     static String checkLogin(String login) {
         StringBuilder query = new StringBuilder("select OBJECT_ID\n" +
                     "  from UNC_OBJECTS\n" +
                     "  where OBJECT_TYPE_ID = 1 and OBJECT_NAME = ");
         query.append("'" + login + "'");
+        System.out.println(query.toString());
         return query.toString();
+    }
+    
+    static String getTypePropertyAdvertByTypeNameWithSubCategory(String category, String subcategory, String action) {
+        StringBuilder query = new StringBuilder("select  ctg.OT_ID\n" +
+                    "  from (select  u.OT_NAME,\n" +
+                    "                u.OT_ID,\n" +
+                    "                u.PARENT_ID\n" +
+                    "          from UNC_OBJECT_TYPES u\n" +
+                    "          CONNECT BY prior u.OT_ID = u.PARENT_ID\n" +
+                    "          start with u.OT_NAME = '" + category + "') ctg\n" +
+                    "  where ctg.OT_NAME = '"+ subcategory +"'\n" +
+                    "  CONNECT BY prior ctg.OT_ID = ctg.PARENT_ID\n" +
+                    "  start with ctg.OT_NAME = '" + action + "'");
+        System.out.println(query.toString());
+        return query.toString();
+    }
+    
+    static String getTypePropertyAdvertByTypeNameWithOutSubCategory(String category, String action) {
+        StringBuilder query = new StringBuilder("select  ctg.OT_ID\n" +
+                    "  from  UNC_OBJECT_TYPES ctg\n" +
+                    "  where ctg.OT_NAME = '" + action + "'\n" +
+                    "  CONNECT BY prior ctg.OT_ID = ctg.PARENT_ID\n" +
+                    "  start with ctg.OT_NAME = '" + category + "'");
+        System.out.println(query.toString());
+        return query.toString();
+    }
+    
+    static String insertPropertyAdvert(BigDecimal id, String type, String name) {
+        String query = "insert into UNC_OBJECTS values(" + id + ", " + type + ", '" + name + "', null)";
+        System.out.println(query);
+        return query;
     }
     
     public static String mergeParamValue(String id, String attr_id, String newValue){
@@ -1237,5 +1275,146 @@ public class SQLQueriesHelper {
 "WHEN NOT MATCHED THEN INSERT (object_id, attr_id, value, date_value, lv_id) VALUES (s.object_id, s.attr_id, s.value, s.date_value, s.lv_id)";
         
         return comm;
+    }
+static public String selectAllUsersDialog (String id){
+        String query = "select  o1.object_id as mess_id, " +
+                "p1.value as sender, " +
+                "p2.value as recipient, " +
+                "p3.value as mess_text, " +
+                "p4.date_value as mess_date, " +
+                "case " +
+                "when o2.object_name = o4.object_name then  " +
+                "o3.object_name " +
+                "else " +
+                "o2.object_name " +
+                "end as login " +
+                "from  unc_objects o1 " +
+                "left join unc_params p1 " +
+                "on p1.object_id = o1.object_id " +
+                "left join unc_params p2 " +
+                "on p2.object_id = o1.object_id " +
+                "left join unc_params p3 " +
+                "on p3.object_id = o1.object_id " +
+                "left join unc_params p4 " +
+                "on p4.object_id = o1.object_id " +
+                "left join unc_objects o2 " +
+                "on o2.object_id = p1.value " +
+                "left join unc_objects o3 " +
+                "on o3.object_id = p2.value " +
+                "left join unc_objects o4 " +
+                "on o4.object_id = " + id +
+                " where  o1.object_type_id = 3 and " +
+                "p1.attr_id = 33 and " +
+                "p2.attr_id = 34 and " +
+                "(p1.value = "+ id +" or p2.value = "+ id +") and " +
+                "p3.attr_id = 31 and " +
+                "p4.attr_id = 32 and " +
+                "(p1.value in ( " +
+                "select  t1.recipient " +
+                "from  ( " +
+                "select  o1.object_id as mess_id, " +
+                "case  " +
+                "when p1.value = "+ id +" then  " +
+                "p1.value  " +
+                "else " +
+                "p2.value " +
+                "end as sender, " +
+                "case  " +
+                "when p2.value = "+ id +" then  " +
+                "p1.value  " +
+                "else " +
+                "p2.value " +
+                "end as recipient, " +
+                "p3.value as mess_text, " +
+                "p4.date_value as mess_date " +
+                "from  unc_objects o1 " +
+                "left join unc_params p1 " +
+                "on p1.object_id = o1.object_id " +
+                "left join unc_params p2 " +
+                "on p2.object_id = o1.object_id " +
+                "left join unc_params p3 " +
+                "on p3.object_id = o1.object_id " +
+                "left join unc_params p4 " +
+                "on p4.object_id = o1.object_id " +
+                "where  o1.object_type_id = 3 and " +
+                "p1.attr_id = 33 and " +
+                "p2.attr_id = 34 and " +
+                "(p1.value = "+ id +" or p2.value = "+ id +") and " +
+                "p3.attr_id = 31 and " +
+                "p4.attr_id = 32 " +
+                ") t1 " +
+                "group  by t1.recipient " +
+                ") or p2.value in ( " +
+                "select  t1.recipient " +
+                "from  ( " +
+                "select  o1.object_id as mess_id, " +
+                "case  " +
+                "when p1.value = "+ id +" then  " +
+                "p1.value  " +
+                "else " +
+                "p2.value " +
+                "end as sender, " +
+                "case  " +
+                "when p2.value = "+ id +" then  " +
+                "p1.value  " +
+                "else " +
+                "p2.value " +
+                "end as recipient, " +
+                "p3.value as mess_text, " +
+                "p4.date_value as mess_date " +
+                "from  unc_objects o1 " +
+                "left join unc_params p1 " +
+                "on p1.object_id = o1.object_id " +
+                "left join unc_params p2 " +
+                "on p2.object_id = o1.object_id " +
+                "left join unc_params p3 " +
+                "on p3.object_id = o1.object_id " +
+                "left join unc_params p4 " +
+                "on p4.object_id = o1.object_id " +
+                "where  o1.object_type_id = 3 and " +
+                "p1.attr_id = 33 and " +
+                "p2.attr_id = 34 and " +
+                "(p1.value = "+ id +" or p2.value = "+ id +") and " +
+                "p3.attr_id = 31 and " +
+                "p4.attr_id = 32 " +
+                ") t1 " +
+                "group  by t1.recipient " +
+                ")) and p4.date_value in ( " +
+                "select  max(t1.mess_date) " +
+                "from  ( " +
+                "select  o1.object_id as mess_id, " +
+                "case  " +
+                "when p1.value = "+ id +" then  " +
+                "p1.value  " +
+                "else " +
+                "p2.value " +
+                "end as sender, " +
+                "case  " +
+                "when p2.value = "+ id +" then  " +
+                "p1.value  " +
+                "else " +
+                "p2.value " +
+                "end as recipient, " +
+                "p3.value as mess_text, " +
+                "p4.date_value as mess_date " +
+                "from  unc_objects o1 " +
+                "left join unc_params p1 " +
+                "on p1.object_id = o1.object_id " +
+                "left join unc_params p2 " +
+                "on p2.object_id = o1.object_id " +
+                "left join unc_params p3 " +
+                "on p3.object_id = o1.object_id " +
+                "left join unc_params p4 " +
+                "on p4.object_id = o1.object_id " +
+                "where  o1.object_type_id = 3 and " +
+                "p1.attr_id = 33 and " +
+                "p2.attr_id = 34 and " +
+                "(p1.value = "+ id +" or p2.value = "+ id +") and " +
+                "p3.attr_id = 31 and " +
+                "p4.attr_id = 32 " +
+                ") t1 " +
+                "group  by t1.recipient " +
+                ") order by p4.date_value ";
+        return query;
     }
 }

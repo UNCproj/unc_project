@@ -30,6 +30,7 @@ public class chatPublishServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html");
 
+        System.out.println("!!!!!!!!!!!!!!" + request.getParameter("message"));
         String message = noQuotes(request.getParameter("message"));
         String recipientId = request.getParameter("recipientId");
         UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
@@ -75,12 +76,13 @@ public class chatPublishServlet extends HttpServlet {
     }
     public String noQuotes (String text){
         String message = text;
-
-        for (int i=0; i<text.length();i++){
-            if(text.charAt(i)=='\''){
-                message=text.substring(0,i+1) + "'" + text.substring(i+1);
-                text=message;
-                i++;
+        if(text != null) {
+            for (int i = 0; i < text.length(); i++) {
+                if (text.charAt(i) == '\'') {
+                    message = text.substring(0, i + 1) + "'" + text.substring(i + 1);
+                    text = message;
+                    i++;
+                }
             }
         }
         System.out.println(message);
