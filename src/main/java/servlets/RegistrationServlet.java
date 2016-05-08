@@ -1,5 +1,6 @@
 package servlets;
 
+import com.google.gson.JsonObject;
 import db.DataSource;
 import db.SQLQueriesHelper;
 import validation.UserRegistrationValidationBean;
@@ -12,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,18 +38,20 @@ public class RegistrationServlet extends HttpServlet {
         String pass = request.getParameter("pass");
         String retypePass = request.getParameter("retypePass");
         String email = request.getParameter("email");
-        String avatar = request.getParameter("ava");
-        String fname = request.getParameter("fname");
-        String sname = request.getParameter("sname");
         String uid = "";
+
         UserRegistrationValidationBean registrationValidationBean =
                 new UserRegistrationValidationBean(login, pass, retypePass, email);
-        String constrViolationsJSON = registrationValidationBean.validate();
+
+        JsonObject constrViolationsJSON = registrationValidationBean.validate();
+
         if (registrationValidationBean.isValid()) {
             Connection connection = null;
             Statement statement1 = null;
             Statement statement2 = null;
             Statement statement3 = null;
+
+
 
             try {
                 connection = DataSource.getInstance().getConnection();
@@ -66,6 +68,7 @@ public class RegistrationServlet extends HttpServlet {
                 results.next();
                 BigDecimal userId = results.getBigDecimal("object_id");
                 uid = userId.toString();
+
                 statement3 = connection.createStatement();
                 statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.LOGIN_ATTR_ID, login, null));
 
@@ -80,15 +83,6 @@ public class RegistrationServlet extends HttpServlet {
 
                 statement3 = connection.createStatement();
                 statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.EMAIL_ATTR_ID, email, null));
-
-                statement3 = connection.createStatement();
-                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.USER_PIC_FILE_ATTR_ID, avatar.equals("") ? "":avatar, null));
-                
-                statement3 = connection.createStatement();
-                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.FIRST_NAME_ATTR_ID, fname.equals("") ? "":fname, null));
-                
-                statement3 = connection.createStatement();
-                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.SURNAME_ATTR_ID, sname.equals("") ? "":sname, null));
 
                 connection.commit();
             } catch (Exception e) {
@@ -123,9 +117,5 @@ public class RegistrationServlet extends HttpServlet {
         }
 
         out.print(constrViolationsJSON);
-        
-        if ((request.getParameter("redirect")!=null)&&(request.getParameter("redirect").equals("true"))){
-            response.sendRedirect("unc_object.jsp?id="+uid);
-        }
     }
 }

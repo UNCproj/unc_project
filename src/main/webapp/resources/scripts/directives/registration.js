@@ -21,9 +21,9 @@
                 }
             })
                 .success(function (data) {
-                    if (data["registred"] == "true") {
+                    if (data["registred"]) {
                         login($http, context, function (data) {
-                            window.location = "/unc-project/account?accountLogin=" + context.login;
+                            window.location = "/unc-project/unc_update.jsp?id=" + data["userId"];
                         });
                     }
                     else {

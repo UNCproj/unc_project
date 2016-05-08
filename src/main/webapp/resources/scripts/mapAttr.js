@@ -6,6 +6,7 @@ $(function() {
         var mapElem = $('#map');
         var coordsAttr = mapElem.attr('coords');
         centerCoords = JSON.parse(coordsAttr);
+        centerCoords = {lat: centerCoords["lat"], lng: centerCoords["lon"]};
 
         var map = new google.maps.Map(mapElem.get(0), {
             center: centerCoords,
@@ -47,7 +48,7 @@ $(function() {
 
         $('#mapModal').on('shown.bs.modal', function (e) {
             google.maps.event.trigger(mapExtended, "resize");
-            mapExtended.setCenter(coords);
+            mapExtended.setCenter({lat: coords["lat"], lng: coords["lon"]});
             mapExtended.setZoom(16);
         });
     }
@@ -61,11 +62,11 @@ $(function() {
         const CLOSEST_MARKERS_COUNT = 10;
 
         var lat = centralMarker.position.lat;
-        var lng = centralMarker.position.lng;
+        var lng = centralMarker.position.lon;
 
         for(var i = 0; i < markers.length; i++ ) {
             var mlat = markers[i].position.lat;
-            var mlng = markers[i].position.lng;
+            var mlng = markers[i].position.lon;
             var dLat  = rad(mlat - lat);
             var dLong = rad(mlng - lng);
             var a = Math.sin(dLat/2) * Math.sin(dLat/2) +

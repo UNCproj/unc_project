@@ -10,7 +10,7 @@
 
         this.submit = function() {
             login($http, this, function (data) {
-                if (data["logged"] == "true") {
+                if (data["logged"]) {
                     window.location = "/unc-project/index";
                 }
                 else {

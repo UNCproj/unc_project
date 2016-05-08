@@ -4,7 +4,6 @@ import beans.UserAccountBean;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -12,7 +11,7 @@ import java.io.IOException;
 /**
  * Created by alex on 01.04.2016.
  */
-@WebFilter(urlPatterns = {"/unc_add.jsp","/chat.jsp"})
+@WebFilter(urlPatterns = {"/unc_add.jsp","/chat.jsp","/esmanagement"})
 //@WebFilter(urlPatterns = {"/chat.jsp"})
 public class LoginFilter implements Filter {
     @Override

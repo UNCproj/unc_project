@@ -279,6 +279,19 @@ $(function(){
                             "быстрее, воспользуйтесь услугой VIP-статус.</p>");
 
                     };
+                }else if (a_type==8) {
+                    $("div.attributes table.table-params tbody").append(
+                        '<tr>' +
+                            '<td>' +
+                                a_ru_name +
+                            '</td>'+
+                            '<td>' +
+                                '<div id="map" style="width: 300; height:300"></div>' +
+                            '</td>'+
+                        '</tr>'
+
+                    );
+                    initMap();
                 }
             };
 
@@ -427,7 +440,43 @@ $(function(){
                 "Ярославль"
             ];
 
+            function initMap() {
+                var mapElem = $('#map');
+                var map;
+                var marker = null;
+                var centerCoords;
+                var obj = $scope.object;
 
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        centerCoords = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+
+                        map = new google.maps.Map(mapElem.get(0), {
+                            center: centerCoords,
+                            zoom: 16
+                        });
+
+                        google.maps.event.addListener(map, 'click', function(event) {
+                            placeMarker(event.latLng, map);
+                        });
+                    });
+                }
+
+                function placeMarker(location, map) {
+                    if (marker == null) {
+                        marker = new google.maps.Marker({
+                            position: location,
+                            map: map
+                        });
+                    }
+
+                    marker.setPosition(location);
+                    obj.map_coordinates = location;
+                }
+            }
         }
     ]);
 })();

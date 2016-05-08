@@ -41,11 +41,13 @@ public class AdvertSerializer implements JsonSerializer<AdvertBean> {
                 attrKey = "name";
             }
 
-//            if (attrKey.equals("map_coordinates") && attrValue != null) {
-//                attrValue = "{\"aaa\":\"bbb\"}";
-//            }
-
-            jsonObject.addProperty(attrKey, attrValue);
+            if (attrKey.equals("map_coordinates") && attrValue != null) {
+                JsonElement attrValueElem = new JsonParser().parse(attrValue);
+                jsonObject.add(attrKey, attrValueElem);
+            }
+            else {
+                jsonObject.addProperty(attrKey, attrValue);
+            }
         }
 
         return jsonObject;
