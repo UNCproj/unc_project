@@ -83,7 +83,7 @@
             $scope.onClick = function (points, evt) {
                         console.log(points, evt);
             };
-
+            });   
              app.controller("MigrationUser", function ($scope) {
                 $scope.CountRowUser;
                 $scope.listerr;
@@ -189,5 +189,4 @@
                         });
                 };
             });
-            })();
-    });
+})();
