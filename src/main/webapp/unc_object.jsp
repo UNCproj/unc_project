@@ -212,8 +212,8 @@
                                    <h3>Миграция пользователей</h3>
                                    <button type="button" flow-btn>Выбрать excel</button>
                                 </div>
-                                    <h3>Успешно {{CountRowUser}}</h3>
-                                    <h3>С ошибкой </h3>
+                                    <h3>{{CountRowUser}}</h3>
+                                    <h3>{{err}}</h3>
                                     <ul class="references-ul">
                                         <li class="references-ul-li" ng-repeat="x in listerr">
                                             {{ x }}
@@ -229,8 +229,8 @@
                                    <h3>Миграция обьявлений</h3>
                                    <button type="button" flow-btn>Выбрать excel</button>
                                 </div>
-                                    <h3>Успешно {{CountRowAdvert}}</h3>
-                                    <h3>С ошибкой </h3>
+                                    <h3>{{CountRowAdvert}}</h3>
+                                    <h3>{{err}}</h3>
                                     <ul class="references-ul">
                                         <li class="references-ul-li" ng-repeat="x in listerr">
                                             {{ x }}
@@ -412,6 +412,7 @@
                  </a>
                  <%}%>
              </div>
+             <br>
              </div>
                          <%if ("1".equals(currentObject.getType())){%>
              <div>

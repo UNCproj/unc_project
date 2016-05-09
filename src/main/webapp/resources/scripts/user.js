@@ -87,6 +87,8 @@
              app.controller("MigrationUser", function ($scope) {
                 $scope.CountRowUser;
                 $scope.listerr;
+                $scope.err;
+                
                 $scope.uploader = {};
                 
                 $scope.fileAdded = function ($file, $event, $flow) {
@@ -98,7 +100,8 @@
                 
                 $scope.success = function ($message) {
                     var params = JSON.parse($message);
-                    $scope.CountRowUser = params.countRowUser;
+                    $scope.CountRowUser = 'Успешно ' + params.countRowUser;
+                    $scope.err = "С ошибкой";
                     $scope.listerr = params.listErrUser;
                 };
             
@@ -106,6 +109,7 @@
             app.controller("MigrationAdvert", function ($scope) {
                 $scope.CountRowAdvert;
                 $scope.listerr;
+                $scope.err;
                 
                 $scope.uploader = {};
                 
@@ -118,7 +122,8 @@
                 
                 $scope.success = function ($message) {
                     var params = JSON.parse($message);
-                    $scope.CountRowAdvert = params.countRowAdvert;
+                    $scope.CountRowAdvert = 'Успешно ' + params.countRowAdvert;
+                    $scope.err = "С ошибкой";
                     $scope.listerr = params.listErrAdvert;
                 };
             
