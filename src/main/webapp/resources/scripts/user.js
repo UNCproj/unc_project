@@ -106,6 +106,7 @@
             app.controller("MigrationAdvert", function ($scope) {
                 $scope.CountRowAdvert;
                 $scope.listerr;
+                
                 $scope.uploader = {};
                 
                 $scope.fileAdded = function ($file, $event, $flow) {
@@ -188,4 +189,5 @@
                         });
                 };
             });
-})();
+            })();
+    });

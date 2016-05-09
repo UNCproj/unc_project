@@ -138,7 +138,6 @@ public class SQLQueriesHelper {
     }
     static public String setVipAdvert(String id_advert) {
         StringBuffer query = new StringBuffer("insert into UNC_PARAMS values( " + id_advert + ", 20, 'Gold', sysdate, null)");
-        query.append(id_advert);
         String queryString = query.toString();
         return queryString;
     }
