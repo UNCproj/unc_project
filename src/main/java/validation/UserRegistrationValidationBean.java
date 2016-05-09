@@ -1,17 +1,16 @@
 package validation;
 
+import com.google.gson.JsonObject;
+import db.DataSource;
 import db.SQLQueriesHelper;
 import org.hibernate.validator.constraints.Email;
 
-import db.DataSource;
-import javax.servlet.ServletException;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -43,25 +42,22 @@ public class UserRegistrationValidationBean {
         this.email = email;
     }
 
-    public String validate() {
+    public JsonObject validate() {
         isValid = false;
         ValidatorFactory vf = Validation.buildDefaultValidatorFactory();
         Validator val = vf.getValidator();
 
         Set<ConstraintViolation<Object>> constraintViolations = val.validate(this);
 
-        StringBuffer outputJSON = new StringBuffer("{");
+        JsonObject outputJSON = new JsonObject();
+
         if (constraintViolations.size() > 0) {
-            outputJSON.append("\"registred\":\"false\",");
+            outputJSON.addProperty("registred", false);
 
             for (ConstraintViolation<Object> cv : constraintViolations) {
                 String propertyName = cv.getPropertyPath().toString();
-
-                outputJSON.append(String.format("\"%s\":\"%s\",",
-                                                propertyName,
-                                                cv.getMessage()));
+                outputJSON.addProperty(propertyName, cv.getMessage());
             }
-            outputJSON.delete(outputJSON.length() - 1, outputJSON.length());
         }
         else {
             if (password.equals(retypePassword)) {
@@ -77,6 +73,7 @@ public class UserRegistrationValidationBean {
                     params[1] = SQLQueriesHelper.EMAIL_ATTR;
                     ResultSet results = statement.executeQuery(SQLQueriesHelper.selectParams(types, null, params, null));
 
+                    //checking attributes
                     while (results.next()) {
                         String attrName = results.getString("attr_name");
                         String value = results.getString("value");
@@ -87,47 +84,46 @@ public class UserRegistrationValidationBean {
 
                         if (attrName.equals(SQLQueriesHelper.LOGIN_ATTR)) {
                             if (value.equals(login)) {
-                                outputJSON.append("\"registred\":\"false\",");
-                                outputJSON.append("\"login\":\"Login already exists\"");
+                                outputJSON.addProperty("registred", false);
+                                outputJSON.addProperty("login", "Login already exists");
                                 break;
                             }
                         }
                         else if (attrName.equals(SQLQueriesHelper.EMAIL_ATTR)) {
                             if (value.equals(email)) {
-                                outputJSON.append("\"registred\":\"false\",");
-                                outputJSON.append("\"email\":\"Email already exists\"");
+                                outputJSON.addProperty("registred", false);
+                                outputJSON.addProperty("email", "Email already exists");
                                 break;
                             }
                         }
                     }
 
-                    //if login info passed conditions in while
-                    if (outputJSON.length() < 2) {
+                    //if attributes in while checked
+                    if (outputJSON.entrySet().size() == 0) {
                         isValid = true;
-                        outputJSON.append("\"registred\":\"true\"");
+                        outputJSON.addProperty("registred", true);
                     }
                 } catch (SQLException|IOException|java.beans.PropertyVetoException e) {
-                    outputJSON.append("\"registred\":\"false\",");
-                    outputJSON.append("\"server\":\"Cannot connect to login server\"");
+                    outputJSON.addProperty("registred", false);
+                    outputJSON.addProperty("server", "Cannot connect to login server");
                 }
                 finally {
                     try {
                         connection.close();
                     }
                     catch (SQLException e) {
-                        outputJSON.append("\"registred\":\"false\",");
-                        outputJSON.append("\"server\":\"Cannot connect to login server\"");
+                        outputJSON.addProperty("registred", false);
+                        outputJSON.addProperty("server", "Cannot connect to login server");
                     }
                 }
             }
             else {
-                outputJSON.append("\"registred\":\"false\",");
-                outputJSON.append("\"retypePassword\":\"Passwords must be the same\"");
+                outputJSON.addProperty("registred", false);
+                outputJSON.addProperty("retypePassword", "Passwords must be the same");
             }
         }
-        outputJSON.append("}");
 
-        return outputJSON.toString();
+        return outputJSON;
     }
 
     public boolean isValid() {

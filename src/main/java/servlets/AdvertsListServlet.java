@@ -297,7 +297,7 @@ public class AdvertsListServlet extends HttpServlet {
         String adCategoryId = request.getParameter("adCategoryId");
         String adCategoryName = request.getParameter("adCategoryName");
         String adCenterLat = request.getParameter("adCenterCoords[lat]");
-        String adCenterLng = request.getParameter("adCenterCoords[lon]");
+        String adCenterLng = request.getParameter("adCenterCoords[lng]");
         String radius = request.getParameter("radius");
         String adsCount = request.getParameter("adsCount");
 
@@ -434,6 +434,14 @@ public class AdvertsListServlet extends HttpServlet {
         return (o1, o2) -> {
             String sortingParamValue1 = (String) o1.get(SORTING_PARAM);
             String sortingParamValue2 = (String) o2.get(SORTING_PARAM);
+
+            if (sortingParamValue1 == null) {
+                return -1;
+            }
+
+            if (sortingParamValue2 == null) {
+                return 1;
+            }
 
             int compared;
 

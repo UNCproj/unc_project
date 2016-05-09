@@ -2,15 +2,16 @@ package servlets;
 
 import beans.BeansHelper;
 import beans.UserAccountBean;
+import com.google.gson.JsonObject;
 import db.DataSource;
 import db.SQLQueriesHelper;
-import java.beans.PropertyVetoException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
@@ -32,8 +33,8 @@ public class LoginServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         boolean isLoggedIn = logIn(request.getParameter("login"), request.getParameter("pass"));
         PrintWriter out;
-        StringBuffer responseJSON = new StringBuffer("{");
-        boolean isDeleted = false;
+        JsonObject responseJSON = new JsonObject();
+
         try {
             out = response.getWriter();
         }
@@ -41,8 +42,9 @@ public class LoginServlet extends HttpServlet {
             throw new ServletException(e);
         }
 
+        BigDecimal userId = null;
+
         if (isLoggedIn) {
-            BigDecimal userId = null;
             String email = null;
             String userPicFile = null;
             Connection connection = null;
@@ -82,14 +84,17 @@ public class LoginServlet extends HttpServlet {
             }
             finally {
                 try {
-                    if (connection != null)
+                    if (connection != null) {
                         connection.close();
+                    }
 
-                    if (selectObjInfoStatement != null)
+                    if (selectObjInfoStatement != null) {
                         selectObjInfoStatement.close();
+                    }
 
-                    if (updateLastLoginDateStatement != null)
+                    if (updateLastLoginDateStatement != null) {
                         updateLastLoginDateStatement.close();
+                    }
                 }
                 catch (SQLException e) {
                     throw new ServletException(e);
@@ -110,7 +115,8 @@ public class LoginServlet extends HttpServlet {
             request.getSession().setAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY, userAccountBean);
         }
 
-        responseJSON.append("\"logged\":\"" + isLoggedIn + "\"}");
+        responseJSON.addProperty("logged", isLoggedIn);
+        responseJSON.addProperty("userId", userId);
         out.print(responseJSON);
     }
 
