@@ -53,3 +53,11 @@ a.list-group-item:focus{
 .width-full{
     width: 100%;
 }
+.invalid{
+    border: 2px solid rgba(222, 14, 0, 0.8);
+}
+#information{
+    margin-left: 15px;
+    font-size: 15px;
+    color: red;
+}

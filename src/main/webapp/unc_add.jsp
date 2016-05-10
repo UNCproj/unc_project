@@ -90,6 +90,7 @@
             <div id="<%= attrGroupName %>" class="tab-pane fade in">
                 <div class="table-pos">
                     <form enctype="multipart/form-data">
+                        <div id="information"></div>
                         <%if (currentObject.getType().equals("4")) {%>
                         <div id="category" class="col-md-12">
                             <label class="col-md-12 category-label">Выберите категорию</label>

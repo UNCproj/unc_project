@@ -31,11 +31,6 @@ public class AddServlet extends HttpServlet {
         String topicId = request.getParameter("topicId");
         String objectName = request.getParameter("name");
 
-        System.out.println(topicId);
-        System.out.println(request.getParameter("type"));
-        System.out.println(request.getParameter("name"));
-        System.out.println(request.getParameter("description"));
-
         Enumeration<String> paramsNames = request.getParameterNames();
 
         UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
@@ -54,6 +49,12 @@ public class AddServlet extends HttpServlet {
             e.printStackTrace();
         } catch (PropertyVetoException e) {
             e.printStackTrace();
+        }finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         UncObject obj = new UncObject(null, objectName, objectType, userId);
