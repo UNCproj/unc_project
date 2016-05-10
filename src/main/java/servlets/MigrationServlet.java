@@ -5,26 +5,32 @@
  */
 package servlets;
 
-import unc.helpers.UncObject;
-
+import com.google.gson.Gson;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.beans.PropertyVetoException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import db.Parser;
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.http.Part;
 
 /**
  *
  * @author Andrey
  */
-@WebServlet(name = "RobokassaSuccess", urlPatterns = {"/RobokassaSuccess"})
-public class RobokassaSuccess extends HttpServlet {
+@WebServlet(name = "MigrationUserServlet", urlPatterns = {"/MigrationUserServlet"})
+@MultipartConfig
+public class MigrationServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,16 +42,20 @@ public class RobokassaSuccess extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, SQLException, PropertyVetoException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-                //String id_advert = (String)request.getParameter("shp_id_a");
-                String id = "29215754962117639761";
-                UncObject advert = new UncObject();
-                //advert.vipAdvert(id_advert);
-                 advert.vipAdvert(id);
-                //response.sendRedirect("/unc-project/unc_object.jsp?id=" + id_advert); 
-                response.sendRedirect("/unc-project/unc_object.jsp?id=" + id); 
+            Part filePart = request.getPart("file");
+            String fileName = request.getParameter("flowFilename");
+            File uploadDir = new File(getServletContext().getInitParameter("upload.location"));
+            File uploadFile = new File(uploadDir, fileName);
+
+            try(InputStream input = filePart.getInputStream()) {
+                Parser p = new Parser();
+                p.migrationUser(input);
+                Gson g = new Gson();
+                out.print(g.toJson(p.getParams()));
+            }
         }
     }
 
@@ -61,13 +71,7 @@ public class RobokassaSuccess extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            processRequest(request, response);
-        } catch (SQLException ex) {
-            Logger.getLogger(RobokassaSuccess.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (PropertyVetoException ex) {
-            Logger.getLogger(RobokassaSuccess.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        processRequest(request, response);
     }
 
     /**
@@ -81,13 +85,7 @@ public class RobokassaSuccess extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            processRequest(request, response);
-        } catch (SQLException ex) {
-            Logger.getLogger(RobokassaSuccess.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (PropertyVetoException ex) {
-            Logger.getLogger(RobokassaSuccess.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        processRequest(request, response);
     }
 
     /**
