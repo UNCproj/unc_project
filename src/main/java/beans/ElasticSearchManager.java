@@ -2,6 +2,7 @@ package beans;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import db.SQLQueriesHelper;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
@@ -72,8 +73,8 @@ public class ElasticSearchManager {
     }
 
     public void reindex() {
-        //deleteIndex();
-        //createIndex();
+        deleteIndex();
+        createIndex();
     }
 
     public void createIndex() {
@@ -96,7 +97,21 @@ public class ElasticSearchManager {
                 .registerTypeAdapter(AdvertBean.class, new AdvertSerializer(attrsPseudonims))
                 .create();
 
-        client.admin().indices().prepareCreate("adverts").execute().actionGet();
+        JsonObject mappings = new JsonObject();
+        JsonObject advert = new JsonObject();
+        JsonObject properties = new JsonObject();
+        JsonObject map_coordinates = new JsonObject();
+
+        map_coordinates.addProperty("type", "geo_point");
+        properties.add("map_coordinates", map_coordinates);
+        advert.add("properties", properties);
+        mappings.add("advert", advert);
+
+        client.admin().indices()
+                .prepareCreate("adverts")
+                .addMapping("advert", gson.toJson(mappings))
+                .execute()
+                .actionGet();
 
         for (AdvertBean adv: indexingAdverts) {
             String advertJson = gson.toJson(adv);

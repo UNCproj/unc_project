@@ -22,6 +22,31 @@
                     .success(function (data) {
                         alert("updated successfully");
                     });
-            }
+            };
+
+            $scope.fileAdded = function ($file, $event, $flow) {
+                $event.preventDefault();
+                $scope.uploader.flow.files[0] = $file;
+                $scope.uploader.flow.files[0].name = '/img/user-pics/ava_' + initialUserId + ".png";
+                $scope.uploader.flow.upload();
+            };
+
+            $scope.complete = function () {
+                $http({
+                    url: '/unc-project/imageResize',
+                    method: 'POST',
+                    params: {
+                        "imageName": $scope.uploader.flow.files[0].name
+                    }
+                })
+                    .success(function(data) {
+                        var avatarImgElem = $('#avatar_img');
+                        avatarImgElem.attr('src', avatarImgElem.attr('src') + "?" + Date.now());
+                        $scope.isAvatarChanged = true;
+                        $timeout(function(){
+                            $scope.isAvatarChanged = false;
+                        }, 5000);
+                    });
+            };
         }]);
 })();

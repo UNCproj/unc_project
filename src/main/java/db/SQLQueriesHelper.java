@@ -456,6 +456,52 @@ public class SQLQueriesHelper {
         return query;
     }
 
+    static public String mergeParam(BigDecimal id, String attrId, String value, Date dateValue)
+    {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        String query =  "merge  into unc_params p\n" +
+                        "using  (select" + id + " object_id, " +
+                                           attrId + " attr_id, " +
+                                           value + " value, " +
+                                           df.format(dateValue) + " date_value \n" +
+                        "          from dual) s\n" +
+                        "        on (p.object_id = s.object_id and p.attr_id = s.attr_id)\n" +
+                        " when  matched then update set p.value = s.value, p.date_value = s.date_value\n" +
+                        " when  not matched then insert (object_id, attr_id, value, date_value) \n" +
+                        "                        values (s.object_id, s.attr_id, s.value, s.date_value)";
+
+        return query;
+    }
+
+    static public String mergeParamByName(BigDecimal id, String attrName, String value, Date dateValue)
+    {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        String query =  "merge  into unc_params p\n" +
+                        "using  (select" + id + " object_id,\n" +
+                        "              " + attrName + " attr_name,\n" +
+                        "              " + value + " value,\n" +
+                        "              " + df.format(dateValue) + " date_value\n" +
+                        "          from dual) s\n" +
+                        "       on (p.object_id = s.object_id and p.attr_id in \n" +
+                        "                        (select attr_id\n" +
+                        "                           from unc_attributes a\n" +
+                        "                          where a.attr_name = s.attr_name))\n" +
+                        "when  matched then update set p.value = s.value, p.date_value = s.date_value\n" +
+                        "when  not matched then insert (object_id, attr_id, value, date_value)\n" +
+                        "                       values (\n" +
+                        "                               s.object_id, \n" +
+                        "                               (select attr_id\n" +
+                        "                                  from unc_attributes a\n" +
+                        "                                 where a.attr_name = " + attrName + "), \n" +
+                        "                               s.value, \n" +
+                        "                               s.date_value\n" +
+                        "                              )";
+
+        return query;
+    }
+
     static public String getAllAttributes(String type) {
         String query =  "select * " +
                 "  from unc_attr_object_types uao " +

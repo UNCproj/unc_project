@@ -85,6 +85,7 @@ public class RegistrationServlet extends HttpServlet {
                 statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.EMAIL_ATTR_ID, email, null));
 
                 connection.commit();
+                connection.setAutoCommit(true);
             } catch (Exception e) {
                 try {
                     if (connection != null)

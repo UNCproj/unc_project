@@ -199,9 +199,14 @@ public class UncObject {
     }
 
     public void updateInDB() throws PropertyVetoException, SQLException, IOException {
-        try(Connection connection = DataSource.getInstance().getConnection();
-            Statement statement = connection.createStatement())
+        Connection connection = null;
+        Statement statement = null;
+
+        try
         {
+            connection = DataSource.getInstance().getConnection();
+            statement = connection.createStatement();
+
             connection.setAutoCommit(false);
             if (type != null && type.length() > 0) {
                 ResultSet results = statement.executeQuery(SQLQueriesHelper.getTypeIdByTypeName(type));
@@ -217,18 +222,31 @@ public class UncObject {
             if (params != null) {
                 for (Param param : params) {
                     if (param.getAttrId() == null) {
-                        statement.executeUpdate(SQLQueriesHelper.updateParamByName(
+                        statement.executeUpdate(SQLQueriesHelper.mergeParamByName(
                                 new BigDecimal(id), param.getName(), param.getValue(), param.getDateValue()
                         ));
                     }
                     else {
-                        statement.executeUpdate(SQLQueriesHelper.updateParam(
+                        statement.executeUpdate(SQLQueriesHelper.mergeParam(
                                 new BigDecimal(id), param.getAttrId(), param.getValue(), param.getDateValue()
                         ));
                     }
                 }
             }
             connection.commit();
+            connection.setAutoCommit(true);
+        }
+        catch (SQLException e) {
+            connection.rollback();
+        }
+        finally {
+            if (connection != null) {
+                connection.close();
+            }
+
+            if (statement != null) {
+                statement.close();
+            }
         }
     }
 

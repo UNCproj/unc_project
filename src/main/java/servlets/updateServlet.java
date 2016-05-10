@@ -30,6 +30,10 @@ public class updateServlet extends HttpServlet {
                 continue;
             }
 
+            if (paramName.equals("login")) {
+                continue;
+            }
+
             String paramValue = request.getParameter(paramName);
             obj.setParam(paramName, paramValue);
         }

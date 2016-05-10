@@ -15,6 +15,11 @@
     </context-param>
 
     <context-param>
+        <param-name>default.image</param-name>
+        <param-value>resources/img/default.png</param-value>
+    </context-param>
+
+    <context-param>
         <param-name>default.userpic</param-name>
         <param-value>resources/img/user-pics/default.png</param-value>
     </context-param>
@@ -27,7 +32,7 @@
     <env-entry>
         <env-entry-name>elastic.reindex-while-starting</env-entry-name>
         <env-entry-type>java.lang.Boolean</env-entry-type>
-        <env-entry-value>false</env-entry-value>
+        <env-entry-value>true</env-entry-value>
     </env-entry>
 
     <servlet>

@@ -42,7 +42,7 @@ public class LoginServlet extends HttpServlet {
             throw new ServletException(e);
         }
 
-        BigDecimal userId = null;
+        String userId = null;
 
         if (isLoggedIn) {
             String email = null;
@@ -72,12 +72,12 @@ public class LoginServlet extends HttpServlet {
                             break;
                     }
 
-                    userId = results.getBigDecimal("object_id");
+                    userId = results.getString("object_id");
                 }
 
                 updateLastLoginDateStatement = connection.createStatement();
                 updateLastLoginDateStatement.executeUpdate(
-                        SQLQueriesHelper.updateParam(userId, SQLQueriesHelper.LAST_VISIT_DATE_ATTR_ID, null, new Date()));
+                        SQLQueriesHelper.updateParam(new BigDecimal(userId), SQLQueriesHelper.LAST_VISIT_DATE_ATTR_ID, null, new Date()));
             }
             catch (Exception e) {
                 throw new ServletException(e);
@@ -116,7 +116,9 @@ public class LoginServlet extends HttpServlet {
         }
 
         responseJSON.addProperty("logged", isLoggedIn);
-        responseJSON.addProperty("userId", userId);
+        if (userId != null) {
+            responseJSON.addProperty("userId", userId.toString());
+        }
         out.print(responseJSON);
     }
 

@@ -18,7 +18,7 @@ import java.util.HashMap;
 /**
  * Created by Денис on 20.04.2016.
  */
-@WebFilter(filterName = "IndexNewAdvertFilter", servletNames = "AddServlet")
+@WebFilter(filterName = "IndexNewAdvertFilter", urlPatterns = {"/uncadd"})
 public class IndexNewAdvertFilter implements Filter {
     @EJB
     private AdvertsManager advertsManagerBean;

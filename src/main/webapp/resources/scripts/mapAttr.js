@@ -1,5 +1,6 @@
 $(function() {
     var isOpenedOnce = false;
+    var mapExtended;
     var centerCoords;
 
     function initMap() {
@@ -33,7 +34,7 @@ $(function() {
 
         var mapExtendedElem = $('#mapExtended');
 
-        var mapExtended = new google.maps.Map(mapExtendedElem.get(0), {
+        mapExtended = new google.maps.Map(mapExtendedElem.get(0), {
             center: centerCoords,
             zoom: 8,
             disableDefaultUI: true
@@ -44,43 +45,14 @@ $(function() {
             map: mapExtended
         });
 
-        var closestMarkers = findClosestMarkers(getMarkers());
+
+        getMarkers();
 
         $('#mapModal').on('shown.bs.modal', function (e) {
             google.maps.event.trigger(mapExtended, "resize");
-            mapExtended.setCenter({lat: coords["lat"], lng: coords["lon"]});
+            mapExtended.setCenter(centerCoords);
             mapExtended.setZoom(16);
         });
-    }
-
-    function rad(x) {
-        return x * Math.PI / 180;
-    }
-
-    function findClosestMarkers(centralMarker, markers) {
-        const EARTH_RADIUS = 6371;
-        const CLOSEST_MARKERS_COUNT = 10;
-
-        var lat = centralMarker.position.lat;
-        var lng = centralMarker.position.lon;
-
-        for(var i = 0; i < markers.length; i++ ) {
-            var mlat = markers[i].position.lat;
-            var mlng = markers[i].position.lon;
-            var dLat  = rad(mlat - lat);
-            var dLong = rad(mlng - lng);
-            var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(rad(lat)) * Math.cos(rad(lat)) * Math.sin(dLong/2) * Math.sin(dLong/2);
-            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
-            markers[i].distance = EARTH_RADIUS * c;
-        }
-
-        markers.sort(function(a, b) {
-            return a.distance - b.distance;
-        });
-
-        return markers.slice(0, CLOSEST_MARKERS_COUNT);
     }
 
     function getUrlParameter(sParam) {
@@ -111,15 +83,43 @@ $(function() {
             })
             .done(function(data) {
                 var markers = [];
+                data = JSON.parse(data);
 
                 $.each(data, function(index, value) {
-                    markers[index] = new google.maps.Marker({
-                        position: value
-                    });
+                    var coords = value.map_coordinates;
+
+                    if (coords.lat != centerCoords.lat || coords.lng != centerCoords.lon) {
+                        var pinColor = "0000AA";
+                        var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
+                            new google.maps.Size(21, 34),
+                            new google.maps.Point(0, 0),
+                            new google.maps.Point(10, 34));
+
+                        markers[index] = new google.maps.Marker({
+                            position: {lat: coords["lat"], lng: coords["lon"]},
+                            icon: pinImage,
+                            map: mapExtended
+                        });
+
+                        var contentString = "<h3>"  + value.name + "</h3><span>Цена: " + value.price + "</span>";
+
+                        var infowindow = new google.maps.InfoWindow({
+                            content: contentString
+                        });
+
+                        markers[index].addListener('mouseover', function() {
+                            infowindow.open(mapExtended, markers[index]);
+                        });
+
+                        markers[index].addListener('mouseout', function() {
+                            infowindow.close(mapExtended, markers[index]);
+                        });
+
+                        markers[index].addListener('click', function() {
+                            window.location.href = "unc_object.jsp?id=" + value.id;
+                        });
+                    }
                 });
-            })
-            .fail(function() {
-                return [];
             });
     }
 

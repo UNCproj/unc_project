@@ -187,6 +187,8 @@ $(function(){
             };
 
             $scope.postAdd = function(p){
+                p.map_coordinates = $scope.map_coordinates;
+
                 $http({
                     url: '/unc-project/uncadd',
                     method: 'POST',
@@ -286,7 +288,8 @@ $(function(){
                                 a_ru_name +
                             '</td>'+
                             '<td>' +
-                                '<div id="map" style="width: 300; height:300"></div>' +
+                                '<input id="addr-input" class="controls" type="text" placeholder="Введите адрес">' +
+                                '<div id="map" style="width: 500px; height:300px"></div>' +
                             '</td>'+
                         '</tr>'
 
@@ -442,10 +445,13 @@ $(function(){
 
             function initMap() {
                 var mapElem = $('#map');
-                var map;
                 var marker = null;
                 var centerCoords;
-                var obj = $scope.object;
+                var scope = $scope;
+
+                var map = new google.maps.Map(mapElem.get(0), {
+                    zoom: 16
+                });
 
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(function(position) {
@@ -454,16 +460,41 @@ $(function(){
                             lng: position.coords.longitude
                         };
 
-                        map = new google.maps.Map(mapElem.get(0), {
-                            center: centerCoords,
-                            zoom: 16
-                        });
+                        map.setCenter(centerCoords);
 
                         google.maps.event.addListener(map, 'click', function(event) {
                             placeMarker(event.latLng, map);
                         });
                     });
                 }
+
+                var input = $('#addr-input')[0];
+                var searchBox = new google.maps.places.SearchBox(input);
+                map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+                map.addListener('bounds_changed', function() {
+                    searchBox.setBounds(map.getBounds());
+                });
+
+                searchBox.addListener('places_changed', function() {
+                    var places = searchBox.getPlaces();
+
+                    if (places.length == 0) {
+                        return;
+                    }
+
+                    // For each place, get the icon, name and location.
+                    var bounds = new google.maps.LatLngBounds();
+                    places.forEach(function(place) {
+                        if (place.geometry.viewport) {
+                            // Only geocodes have viewport.
+                            bounds.union(place.geometry.viewport);
+                        } else {
+                            bounds.extend(place.geometry.location);
+                        }
+                    });
+                    map.fitBounds(bounds);
+                });
 
                 function placeMarker(location, map) {
                     if (marker == null) {
@@ -474,7 +505,7 @@ $(function(){
                     }
 
                     marker.setPosition(location);
-                    obj.map_coordinates = location;
+                    $scope.map_coordinates = {lat: location.lat(), lon: location.lng()};
                 }
             }
         }
