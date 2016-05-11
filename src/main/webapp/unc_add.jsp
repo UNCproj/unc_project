@@ -103,7 +103,7 @@
                                         ResultSet resultSet = statement.executeQuery(SQLQueriesHelper.selectTypes("advert"));
                                         while (resultSet.next()) {
                                 %>
-                                <a class="list-group-item a-category"><%=resultSet.getString("ot_name")%></a>
+                                <a class="category-font list-group-item a-category"><%=resultSet.getString("ot_name")%></a>
                                 <%
                                         }
                                     } finally {

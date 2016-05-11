@@ -35,6 +35,7 @@ public class chatSubscribeServlet extends HttpServlet {
 
         String lastMessageId = request.getParameter("lastMessageId");
         String recipientId = request.getParameter("recipientId");
+        System.out.println("lastMessageId - " + lastMessageId + ", recipientId = " + recipientId);
 
         UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
         String senderId = userAccountBean.getId();

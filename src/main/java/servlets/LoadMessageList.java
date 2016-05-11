@@ -28,6 +28,9 @@ import java.util.ArrayList;
 public class LoadMessageList extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
         String id = request.getParameter("id");
         UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
         String senderId = userAccountBean.getId();

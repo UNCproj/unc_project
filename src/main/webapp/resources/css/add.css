@@ -1,14 +1,16 @@
 body{
-    font-family: Serif;
+    /*font-family: Serif;*/
     margin: 0px;
     padding: 0px;
 }
 .list-group{
+    font-size: 18px;
     margin: 0px;
     padding: 0px;
 }
-.list-group-item{
-    font-size: 15px;
+
+a.list-group-item{
+    font-size: 17px;
     padding: 5px;
 }
 
@@ -60,4 +62,7 @@ a.list-group-item:focus{
     margin-left: 15px;
     font-size: 15px;
     color: red;
+}
+a.list-group-item{
+    font-size: 17px;
 }

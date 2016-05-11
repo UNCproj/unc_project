@@ -414,7 +414,7 @@
              </div>
              <br>
              </div>
-                         <%if ("1".equals(currentObject.getType())){%>
+                         <%if ("1".equals(currentObject.getType()) && !userAccountBean.getId().equals(request.getParameter("id"))){%>
              <div>
                  <a class="a-outline button-style" href="chat.jsp?id=<%=request.getParameter("id")%>" style="width: 230px">
                      Отправить сообщение
