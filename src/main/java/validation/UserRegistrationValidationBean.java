@@ -19,18 +19,18 @@ import java.sql.Statement;
 import java.util.Set;
 
 public class UserRegistrationValidationBean {
-    @NotNull(message = "Login must be specified")
+    @NotNull(message = "Необходимо указать логин")
     private String login;
 
-    @NotNull(message = "Password must be specified")
-    @Size(min = 6, message = "Password must be at least 6 symbols length")
+    @NotNull(message = "Необходимо указать пароль")
+    @Size(min = 6, message = "Пароль должен быть не короче 6 символов")
     private String password;
 
-    @NotNull(message = "Password must be retyped")
+    @NotNull(message = "Необходимо повторно ввести пароль")
     private String retypePassword;
 
-    @NotNull(message = "Email must be specified")
-    @Email
+    @NotNull(message = "Необходимо указать email")
+    @Email(message = "Неверный формат email")
     private String email;
 
     private boolean isValid = false;
@@ -85,14 +85,14 @@ public class UserRegistrationValidationBean {
                         if (attrName.equals(SQLQueriesHelper.LOGIN_ATTR)) {
                             if (value.equals(login)) {
                                 outputJSON.addProperty("registred", false);
-                                outputJSON.addProperty("login", "Login already exists");
+                                outputJSON.addProperty("login", "Логин занят");
                                 break;
                             }
                         }
                         else if (attrName.equals(SQLQueriesHelper.EMAIL_ATTR)) {
                             if (value.equals(email)) {
                                 outputJSON.addProperty("registred", false);
-                                outputJSON.addProperty("email", "Email already exists");
+                                outputJSON.addProperty("email", "Email уже зарегистрирован");
                                 break;
                             }
                         }
@@ -105,7 +105,7 @@ public class UserRegistrationValidationBean {
                     }
                 } catch (SQLException|IOException|java.beans.PropertyVetoException e) {
                     outputJSON.addProperty("registred", false);
-                    outputJSON.addProperty("server", "Cannot connect to login server");
+                    outputJSON.addProperty("server", "Ошибка соединения с сервером авторизации");
                 }
                 finally {
                     try {
@@ -113,13 +113,13 @@ public class UserRegistrationValidationBean {
                     }
                     catch (SQLException e) {
                         outputJSON.addProperty("registred", false);
-                        outputJSON.addProperty("server", "Cannot connect to login server");
+                        outputJSON.addProperty("server", "Ошибка соединения с сервером авторизации");
                     }
                 }
             }
             else {
                 outputJSON.addProperty("registred", false);
-                outputJSON.addProperty("retypePassword", "Passwords must be the same");
+                outputJSON.addProperty("retypePass", "Пароли не совпадают");
             }
         }
 

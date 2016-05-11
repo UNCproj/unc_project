@@ -460,10 +460,10 @@ public class SQLQueriesHelper {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         String query =  "merge  into unc_params p\n" +
-                        "using  (select" + id + " object_id, " +
+                        "using  (select " + id + " object_id, " +
                                            attrId + " attr_id, " +
-                                           value + " value, " +
-                                           df.format(dateValue) + " date_value \n" +
+                                           (value != null && value.length() > 0 ? "'" + value + "'" : null) + " value, " +
+                                           (dateValue != null ? "to_date('" + df.format(dateValue) + "', 'yyyy-MM-dd HH24:mi:ss')" : "null") + " date_value \n" +
                         "          from dual) s\n" +
                         "        on (p.object_id = s.object_id and p.attr_id = s.attr_id)\n" +
                         " when  matched then update set p.value = s.value, p.date_value = s.date_value\n" +
@@ -478,10 +478,10 @@ public class SQLQueriesHelper {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         String query =  "merge  into unc_params p\n" +
-                        "using  (select" + id + " object_id,\n" +
-                        "              " + attrName + " attr_name,\n" +
-                        "              " + value + " value,\n" +
-                        "              " + df.format(dateValue) + " date_value\n" +
+                        "using  (select " + id + " object_id,\n" +
+                        "              '" + attrName + "' attr_name,\n" +
+                        "               " + (value != null && value.length() > 0 ? "'" + value + "'" : null) + " value,\n" +
+                        "               " + (dateValue != null ? "to_date('" + df.format(dateValue) + "', 'yyyy-MM-dd HH24:mi:ss')" : "null") + " date_value\n" +
                         "          from dual) s\n" +
                         "       on (p.object_id = s.object_id and p.attr_id in \n" +
                         "                        (select attr_id\n" +
@@ -493,7 +493,7 @@ public class SQLQueriesHelper {
                         "                               s.object_id, \n" +
                         "                               (select attr_id\n" +
                         "                                  from unc_attributes a\n" +
-                        "                                 where a.attr_name = " + attrName + "), \n" +
+                        "                                 where a.attr_name = '" + attrName + "'), \n" +
                         "                               s.value, \n" +
                         "                               s.date_value\n" +
                         "                              )";

@@ -31,7 +31,9 @@
                 <img id="${param.attr_name}"
                      src="${(param.attr_value != null && param.attr_value.length() > 0) ?
                                                         param.attr_value :
-                                                        initParam["default.image"]}" />
+                                                        initParam["default.image"]}"
+                     style="width: 300px; height: 225px"
+                />
                 <br/>
                 <label for="load-avatar">Загрузить аватар:</label>
                 <div id="load-avatar" class="alert bg-primary" flow-drop>

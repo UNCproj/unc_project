@@ -31,7 +31,7 @@ public class DataSource {
         Locale.setDefault(Locale.ENGLISH);
         this.userName = "unc_user";
         this.password = "pass123";
-        this.host = "jdbc:oracle:thin:@vinokurov2.no-ip.biz:1521:xe";
+        this.host = "jdbc:oracle:thin:@localhost:1521:xe";
         cpds = new ComboPooledDataSource();
         cpds.setDriverClass("oracle.jdbc.OracleDriver"); //loads the jdbc driver
         cpds.setJdbcUrl(this.host);

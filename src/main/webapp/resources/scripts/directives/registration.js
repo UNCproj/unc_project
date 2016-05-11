@@ -1,33 +1,25 @@
 (function() {
     var app = angular.module('registration', []);
 
-    app.controller('registrationController', ['$http', function($http) {
-        this.login;
-        this.pass;
-        this.retypePass;
-        this.email;
-        this.isRegistrationFailed = false;
-        var context = this;
+    app.controller('registrationController', ['$http', '$scope', function($http, $scope) {
+        $scope.registrationObj = {};
+        $scope.failedInfo = {};
+
 
         this.submit = function () {
             $http({
                 url: '/unc-project/registration',
                 method: 'GET',
-                params: {
-                    'login': this.login,
-                    'pass': this.pass,
-                    'retypePass': this.retypePass,
-                    'email': this.email
-                }
+                params: $scope.registrationObj
             })
                 .success(function (data) {
                     if (data["registred"]) {
-                        login($http, context, function (data) {
+                        login($http, $scope.registrationObj, function (data) {
                             window.location = "/unc-project/unc_update.jsp?id=" + data["userId"];
                         });
                     }
                     else {
-                        context.isRegistrationFailed = true;
+                        $scope.failedInfo = data;
                     }
                 });
         };
@@ -39,32 +31,13 @@
             };
         });
 
-    app.directive('compareTo', function(){
-        return {
-            restrict: 'A',
-            scope: {
-                otherModelValue: "=compareTo"
-            },
-            require: 'ngModel',
-            link: function($scope, iElm, iAttrs, ngModel) {
-                ngModel.$validators.compareTo = function (modelValue) {
-                    return modelValue == $scope.otherModelValue;
-                };
-
-                $scope.$watch("otherModelValue", function () {
-                    ngModel.$validate();
-                });
-            }
-        };
-    });
-
     function login ($http, context, onSuccess) {
         $http({
             url: '/unc-project/login',
             method: 'GET',
             params: {
                 'login': context.login,
-                'pass': context.pass
+                'pass': context.password
             }
         })
             .success(onSuccess);

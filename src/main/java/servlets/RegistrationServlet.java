@@ -35,7 +35,7 @@ public class RegistrationServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         request.setCharacterEncoding("UTF-8");
         String login = request.getParameter("login");
-        String pass = request.getParameter("pass");
+        String pass = request.getParameter("password");
         String retypePass = request.getParameter("retypePass");
         String email = request.getParameter("email");
         String uid = "";

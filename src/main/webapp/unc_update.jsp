@@ -52,9 +52,9 @@
         <ul class="custom-tabs nav nav-tabs tabs">
         <% String activeSwicth1 = "active"; %>
         <% if (currentObject.getAttributeGroups() != null && currentObject.getAttributeGroups().size() != 0) {%>
-            <li class="active"><a href="#<%= currentObject.getAttributeGroups().get(0) %>" data-toggle="tab"><%=currentObject.getAttributeGroups().get(0)%></a></li>
+            <li class="active"><a href="#<%= currentObject.getAttributeGroups().get(0) %>" data-toggle="tab">Основная информация</a></li>
             <% for (int i = 1; i < currentObject.getAttributeGroups().size(); i++) { %>
-                <li><a href="#<%= currentObject.getAttributeGroups().get(i) %>" data-toggle="tab"><%=currentObject.getAttributeGroups().get(i)%></a></li>
+                <li><a href="#<%= currentObject.getAttributeGroups().get(i) %>" data-toggle="tab">Дополнительная информация</a></li>
             <% } %>
         <% } %>
         </ul>
@@ -83,6 +83,7 @@
                         </form>
                     </table>
                     <input type="button" onclick="location.href='unc_object.jsp?id=<%= request.getParameter("id") %>'" class="button-style a-outline button-update" value="Обновить" ng-click="update()" />
+                    <input type="button" onclick="location.href='unc_object.jsp?id=<%= request.getParameter("id") %>'" class="button-style a-outline button-update" value="Назад" />
                 </div>
             </div>
             <% activeSwicth1 = ""; %>

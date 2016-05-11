@@ -12,3 +12,12 @@
 .ng-valid.ng-dirty {
 	border-color: #78FA89;
 }
+
+.errors-wrapper div {
+	margin: 0 auto;
+	text-align: center;
+}
+
+a {
+	cursor: pointer !important;
+}
