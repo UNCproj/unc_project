@@ -1,0 +1,16 @@
+.desk {
+    width: 100%;
+    z-index: 4;
+}
+
+.sticker {
+    position: absolute;
+    z-index: 5;
+    width: 35%;
+    top: 53%;
+    left: 34%;
+}
+
+.sticker img {
+    width: 100%;
+}

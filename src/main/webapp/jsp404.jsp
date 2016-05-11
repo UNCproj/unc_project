@@ -22,6 +22,7 @@
     <link rel="stylesheet" type="text/css" href="resources/css/angular-chart.css">
     <link rel="stylesheet" type="text/css" href="resources/css/template.css">
     <link rel="stylesheet" type="text/css" href="resources/css/params.css">
+    <link rel="stylesheet" href="resources/css/jsp404.css">
 </head>
 <body>
 <div class="main">
@@ -31,7 +32,13 @@
         </ul>
     </div>
     <div class="content">
-        <h1 align="center" style="font-size: 200px">Произошла ошибка</h1>
+        <img src="resources/img/desk.png" alt="" class="desk">
+        <c:if test="${param.message != null}">
+            <div class="sticker">
+                <div class="message">${param.message}</div>
+                <img src="resources/img/sticker.png" alt="">
+            </div>
+        </c:if>
     </div>
     <c:catch var="e">
         <c:import url="/includes/object/footers/default.jspf" />
