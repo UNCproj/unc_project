@@ -1,5 +1,7 @@
-<link rel="stylesheet" type="text/css" href="resources/css/bootstrap.min.css">
-<link rel="stylesheet" type="text/css" href="resources/css/angular-chart.css">
-<link rel="stylesheet" type="text/css" href="resources/css/template.css">
-<link rel="stylesheet" type="text/css" href="resources/css/params.css">
-<link rel="stylesheet" type="text/css" href="resources/css/message-list.css">
+
+<link rel="stylesheet" type="text/css" href="resources/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="resources/css/bootstrap-theme.min.css" />
+<link rel="stylesheet" type="text/css" href="resources/css/angular-chart.css"/>
+<link rel="stylesheet" type="text/css" href="resources/css/template.css"/>
+<link rel="stylesheet" type="text/css" href="resources/css/params.css"/>
+<link rel="stylesheet" type="text/css" href="resources/css/message-list.css"/>

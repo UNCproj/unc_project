@@ -78,3 +78,30 @@ table {
 .button-update:focus, .button-update:hover {    
     color: #23527c
 }
+
+.users-td {
+    width:10%;
+    float:left;
+}
+
+.moder-td{
+  color:blue;
+}
+.admin-td{
+  color:red;
+}
+
+.blocked-td{
+  color:red;
+}
+.notblocked-td{
+  color:grey;
+}
+
+.btn-small {
+    width: 150px !important;
+    padding: 3px 5px;
+    font-size: 10px;
+    line-height: normal;
+    border-radius: 2px;
+    }

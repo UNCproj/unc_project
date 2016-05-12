@@ -7,6 +7,7 @@ package servlets;
 
 import beans.BeansHelper;
 import beans.UserAccountBean;
+import com.google.gson.Gson;
 import db.DataSource;
 import db.SQLQueriesHelper;
 import java.beans.PropertyVetoException;
@@ -17,6 +18,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -29,7 +32,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author artem
  */
-@WebServlet(name = "ModerServlet", urlPatterns = {"/ModerServlet/delAdvert", "/ModerServlet/deleted", "/ModerServlet/setModerRights"})
+@WebServlet(name = "ModerServlet", urlPatterns = {"/ModerServlet/delAdvert", "/ModerServlet/deleted", "/ModerServlet/setModerRights",
+    "/ModerServlet/GetUsersList"})
 public class ModerServlet extends HttpServlet {
 
     /**
@@ -80,15 +84,16 @@ public class ModerServlet extends HttpServlet {
         log.info("MSG=" + request.getParameter("msg") + "_" + request.getParameter("uid"));
         Connection connection = null;
         Statement st = null;
-        
+
         if (request.getServletPath().equals("/ModerServlet/delAdvert")) {
             String delMsg = request.getParameter("msg");
-        String delId = request.getParameter("uid");
-        UserAccountBean user = (UserAccountBean) request.getSession().getAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY);
-        
-        if ((user == null) || (!user.isIsModer()) || (!user.isIsAdmin())) {
-            return;
-        }
+            String delId = request.getParameter("uid");
+            String delValue = request.getParameter("value");
+            UserAccountBean user = (UserAccountBean) request.getSession().getAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY);
+
+            if ((user == null) || (!user.isIsModer()) || (!user.isIsAdmin())) {
+                return;
+            }
             try {
                 connection = DataSource.getInstance().getConnection();
             } catch (PropertyVetoException ex) {
@@ -116,7 +121,7 @@ public class ModerServlet extends HttpServlet {
                 res = st.executeQuery(comm);
                 res.next();
                 String type = res.getString(1);
-                if (!type.equals(SQLQueriesHelper.ADVERT_TYPE_ID)&&!type.equals(SQLQueriesHelper.USER_TYPE_ID)) {
+                if (!type.equals(SQLQueriesHelper.ADVERT_TYPE_ID) && !type.equals(SQLQueriesHelper.USER_TYPE_ID)) {
                     log.info("Некорректный тип объекта!");
                     log.info(type);
                     return;
@@ -128,12 +133,12 @@ public class ModerServlet extends HttpServlet {
                 res = st.executeQuery(comm);
                 if (!res.next()) {
                     comm = "insert into unc_params (object_id, attr_id, value)"
-                            + "values(" + id + "," + SQLQueriesHelper.INVALID_ATTR_ID + "," + "'true'" + ")";
+                            + "values(" + id + "," + SQLQueriesHelper.INVALID_ATTR_ID + "," + "'"+delValue+"'" + ")";
                     log.info("insert= " + comm);
                     int r = st.executeUpdate(comm);
                     log.info("res= " + r);
                 } else {
-                    comm = SQLQueriesHelper.updateParam(new BigDecimal(id), attr_id, "true", null);
+                    comm = SQLQueriesHelper.updateParam(new BigDecimal(id), attr_id, delValue, null);
                     log.info("update= " + comm);
                     int r = st.executeUpdate(comm);
                     log.info("res= " + r);
@@ -217,9 +222,9 @@ public class ModerServlet extends HttpServlet {
                 out.println("<title>Объявление удалено</title>");
                 out.println("</head>");
                 out.println("<body>");
-                out.println("<h1>Объявление удалено модератором " + "<a href=../unc_object.jsp?id="+del_id+">" + fname + " " + sname +"</a> \n" + "</h1> \n");
+                out.println("<h1>Объявление удалено модератором " + "<a href=../unc_object.jsp?id=" + del_id + ">" + fname + " " + sname + "</a> \n" + "</h1> \n");
                 out.println("<h1>Причина удаления:</h1>");
-                out.println("<h2>"+del_msg+"</h2>");
+                out.println("<h2>" + del_msg + "</h2>");
                 out.println("</body>");
                 out.println("</html>");
             }
@@ -233,17 +238,64 @@ public class ModerServlet extends HttpServlet {
             } catch (PropertyVetoException ex) {
                 Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
             String id = request.getParameter("id");
             String attr_id = SQLQueriesHelper.MODER_ATTR_ID;
             String value = request.getParameter("value");
-            String comm = SQLQueriesHelper.mergeParamValue(id,attr_id, value);
-            log.info("moderR="+comm);
+            String comm = SQLQueriesHelper.mergeParamValue(id, attr_id, value);
+            log.info("moderR=" + comm);
             try {
                 st.executeUpdate(comm);
+                connection.close();
             } catch (SQLException ex) {
                 Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
+        } else if (request.getServletPath().equals("/ModerServlet/GetUsersList")) {
+            List<UserAccountBean> users = new ArrayList<>();
+            try {
+                connection = DataSource.getInstance().getConnection();
+            } catch (SQLException ex) {
+                Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (PropertyVetoException ex) {
+                Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            try {
+                st = connection.createStatement();
+            } catch (SQLException ex) {
+                Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            ResultSet uids = null;
+            try {
+                uids = st.executeQuery(SQLQueriesHelper.getUsersIds());
+            } catch (SQLException ex) {
+                Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            try {
+                while (uids.next()) {
+                    UserAccountBean uab = new UserAccountBean();
+                    uab.setId(uids.getString(1));
+                    uab.updateAllInfo();
+                    users.add(uab);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (PropertyVetoException ex) {
+                Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if (connection != null){
+                try {
+                    connection.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            
+            String usersJson = new Gson().toJson(users);
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write(usersJson);
         }
     }
 
