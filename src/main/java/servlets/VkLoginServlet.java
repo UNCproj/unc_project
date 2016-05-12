@@ -65,7 +65,7 @@ public class VkLoginServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, OAuthSystemException, OAuthProblemException, SQLException, PropertyVetoException {
         response.setContentType("text/html;charset=UTF-8");
-        redirect_path = "http://"+request.getServerName()+":"+request.getServerPort()+request.getRequestURI();
+        redirect_path = "http://" + request.getServerName()+":"+request.getServerPort()+request.getRequestURI();
         Logger log = Logger.getLogger("vk_logger");
         VkOauthLogin vk = new VkOauthLogin(redirect_path);
         log.info("red_path="+redirect_path);
