@@ -358,7 +358,7 @@
                                                                         <div class="robokassa-button" >
                                                                             <ul>
                                                                                 <li class="robo-li robokassa-li">
-                                                                                    Оплатить Vip-статус 
+                                                                                    Оплатить Vip-статус за 1,99 р
                                                                                 </li>
 
                                                                                 <%
@@ -367,7 +367,7 @@
                                                                                     //String sMrchPass2 = "n8DcTF8ogp410TZQqJgI";
                                                                                     String nInvId = "100";
                                                                                     String sDesc = "Test payment ROBOKASSA";
-                                                                                    String sOutSum = "1.00";
+                                                                                    String sOutSum = "1.99";
                                                                                     String sCulture = "ru";
                                                                                     String sEncoding = "utf-8";
                                                                                     String shp_id_a = currentObject.getId();
