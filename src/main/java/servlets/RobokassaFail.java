@@ -34,7 +34,12 @@ public class RobokassaFail extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
                 String id_advert = (String)request.getParameter("shp_id_a");
-                response.sendRedirect("/unc-project/unc_object.jsp?id=" + id_advert); 
+                if (id_advert == null)
+                    response.sendRedirect("/unc-project/jsp404.jsp");
+                else {
+                    request.getSession().setAttribute("RobokassaFail", true);
+                    response.sendRedirect("/unc-project/unc_object.jsp?id=" + id_advert); 
+                }
         }
     }
 

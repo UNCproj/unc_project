@@ -315,7 +315,7 @@
                                                                                 }
                                                                             %>
                                                                             <% if ((user != null) && user.isIsAdmin() && ("1".equals(currentObject.getParentType()))
-                                    && ((currentObject.getParam("is_moderator").getValue() == null) || ("false".equals(currentObject.getParam("is_moderator").getValue())))) { %>
+                                                                                        && ((currentObject.getParam("is_moderator").getValue() == null) || ("false".equals(currentObject.getParam("is_moderator").getValue())))) { %>
                                                                             <br>
                                                                             <div>
                                                                                 <div>
@@ -328,7 +328,7 @@
                                                                                 }
                                                                             %>
                                                                             <% if ((user != null) && user.isIsAdmin() && ("1".equals(currentObject.getParentType()))
-                                    && ((currentObject.getParam("is_moderator").getValue() != null) && ("true".equals(currentObject.getParam("is_moderator").getValue())))) { %>
+                                                                                        && ((currentObject.getParam("is_moderator").getValue() != null) && ("true".equals(currentObject.getParam("is_moderator").getValue())))) { %>
                                                                             <br>
                                                                             <div>
                                                                                 <div>
@@ -457,10 +457,18 @@
                                                                         </div>
                                                                         <div>
                                                                             <%UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
-                            if ("1".equals(currentObject.getType()) && userAccountBean != null && userAccountBean.getId().equals(request.getParameter("id"))) {%>
+                                                                                if ("1".equals(currentObject.getType()) && userAccountBean != null && userAccountBean.getId().equals(request.getParameter("id"))) {%>
                                                                             <a class="a-outline button-style" href="unc_update.jsp?id=<%=request.getParameter("id")%>" style="width: 200px">
                                                                                 Изменить данные
                                                                             </a>
+                                                                            <%
+                                                                                if ((boolean) request.getSession().getAttribute("RobokassaFail")) { %>
+                                                                            <script language=JavaScript>
+                                                                                alert("Покупка не была совершена!");
+                                                                            </script>
+                                                                            <% request.getSession().setAttribute("RobokassaFail", false); %>
+                                                                            <% }
+                                                                            %> 
                                                                             <%}%>
                                                                         </div>
                                                                         <br>
