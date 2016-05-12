@@ -68,6 +68,7 @@ public class SQLQueriesHelper {
     static public final String DEL_ID_ATTR_ID = "41";
     static public final String MODER_ATTR_ID = "35";
     static public final String ADMIN_ATTR_ID = "36";
+    static public final String READ_ATTR_ID = "44";
     //static public final String DEFAULT_USER_PIC_FILE = "/unc-project/resources/img/user-pics/default.png";
 
     static public String selectFullObjectInformationByName(String[] typesIds, String objectName) {
