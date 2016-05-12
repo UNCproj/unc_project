@@ -247,6 +247,12 @@
                                                                                         <button style="float:top;" ng-if="(row.isInvalid === true)" type="button" class="btn btn-danger btn-small" ng-click="set_del_id(row.id); clickToUnblock()">
                                                                                             Разблокировать
                                                                                         </button>
+                                                                                        <button style="float:top;" ng-if="(row.isModer === true)" type="button" class="btn btn-danger btn-small" ng-click="clickToModer(row.id, 'false')">
+                                                                                            Разжаловать
+                                                                                        </button>
+                                                                                        <button style="float:top;" ng-if="(row.isModer != true)" type="button" class="btn btn-danger btn-small" ng-click="clickToModer(row.id, 'true')">
+                                                                                            Сделать модератором
+                                                                                        </button>
                                                                                     </span>
                                                                                 </td>
                                                                             </tr>

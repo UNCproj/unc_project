@@ -175,15 +175,16 @@
             
         };
         
-        $scope.clickToModer = function (value) {
+        $scope.clickToModer = function (id, value) {
             $.ajax({
                 url: "/unc-project/ModerServlet/setModerRights",
                 async: false,
-                data: {"id": getUrlParameter("id"),
+                data: {"id": id,
                     "value": value
                 }
             }).done(function (data) {
                 console.log("moder success!");
+                $scope.loadAllUsers();
             });
         };
         
