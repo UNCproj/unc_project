@@ -59,7 +59,8 @@
                 async:false,
                 data: {"id": getUrlParameter("id"),
                         "uid":encodeURIComponent($scope.del_model.uid),
-                        "msg":encodeURIComponent($scope.del_model.txt)}
+                        "msg":encodeURIComponent($scope.del_model.txt),
+                        "value":true}
                 }).done(function(data) {
                     console.log("del success!");
                     console.log("uid="+$scope.del_model.uid);

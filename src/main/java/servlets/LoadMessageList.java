@@ -42,11 +42,16 @@ public class LoadMessageList extends HttpServlet {
                 Statement statement = connection.createStatement();
                 ResultSet resultSet = statement.executeQuery(SQLQueriesHelper.selectAllUsersDialog(id));
                 while(resultSet.next()){
-                    String recipientId = resultSet.getString("recipient");
-                    String recipientLogin = resultSet.getString("login");
-                    String text = resultSet.getString("mess_text");
-                    String date = resultSet.getString("mess_date");
-                    arrMess.add(new Message(recipientId, recipientLogin, text, date));
+                    String recipient_Id = resultSet.getString("recipient");
+                    String recipient_Login = resultSet.getString("login");
+                    String text_ = resultSet.getString("mess_text");
+                    String date_ = resultSet.getString("mess_date");
+                    String read_Status = resultSet.getString("read_status");
+                    String recipient_Name = resultSet.getString("name");
+                    String recipient_Surname = resultSet.getString("surname");
+                    String mess_Id = resultSet.getString("mess_id");
+                    String sender_Id = resultSet.getString("sender");
+                    arrMess.add(new Message(recipient_Id, recipient_Login, text_, date_,read_Status,recipient_Name,recipient_Surname,mess_Id,sender_Id));
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -73,10 +78,21 @@ class Message{
     private String recipientLogin;
     private String text;
     private String date;
-    Message(String i, String l, String t, String d){
-        recipientId = i;
-        recipientLogin = l;
-        text = t;
-        date = d;
+    private String readStatus;
+    private String recipientName;
+    private String recipientSurname;
+    private String messId;
+    private String senderId;
+    Message(String recipientId, String recipientLogin, String text, String date,String readStatus,String recipientName,
+            String recipientSurname,String messId,String senderId){
+        this.recipientId = recipientId;
+        this.recipientLogin = recipientLogin;
+        this.text = text;
+        this.date = date;
+        this.readStatus = readStatus;
+        this.recipientName = recipientName;
+        this.recipientSurname = recipientSurname;
+        this.messId = messId;
+        this.senderId = senderId;
     }
         }

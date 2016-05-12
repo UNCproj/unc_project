@@ -1,0 +1,64 @@
+<form class="form-horizontal" ng-controller="registrationController as regCtrl">
+    <h2>
+        <img src="resources/img/User-Add.png">
+        Регистрация</h2>
+
+    <!--Логин-->
+    <div class="form-group">
+        <label for="inputEmail3" class="col-sm-2 control-label">Логин</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="inputLogin3" ng-model="registrationObj.login" placeholder="Логин" required>
+        </div>
+    </div>
+    <div class="errors-wrapper col-sm-offset-2 col-sm-10">
+        <div class="alert alert-danger" ng-show="failedInfo.login.length > 0">{{failedInfo.login}}</div>
+    </div>
+
+    <!--Email-->
+    <div class="form-group">
+        <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="inputEmail3" placeholder="Email" ng-model="registrationObj.email">
+        </div>
+    </div>
+    <div class="errors-wrapper col-sm-offset-2 col-sm-10">
+        <div class="alert alert-danger" ng-show="failedInfo.email.length > 0">{{failedInfo.email}}</div>
+    </div>
+
+    <!--Пароль-->
+    <div class="form-group">
+        <label for="inputPassword3" class="col-sm-2 control-label">Пароль</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control" id="inputPassword3" placeholder="Пароль" ng-model="registrationObj.password">
+        </div>
+    </div>
+    <div class="errors-wrapper col-sm-offset-2 col-sm-10">
+        <div class="alert alert-danger" ng-show="failedInfo.password.length > 0">{{failedInfo.password}}</div>
+    </div>
+
+    <!--Повтор пароля-->
+    <div class="form-group">
+        <label for="inputPassword3" class="col-sm-2 control-label">Повторите пароль</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control" id="inputPassword3" placeholder="Пароль" ng-model="registrationObj.retypePass">
+        </div>
+    </div>
+    <div class="errors-wrapper col-sm-offset-2 col-sm-10">
+        <div class="alert alert-danger" ng-show="failedInfo.retypePass.length > 0">{{failedInfo.retypePass}}</div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-primary btn-block" ng-click="regCtrl.submit()">Регистрация</button>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <div >
+                <p class="ques">
+                    Уже с нами? <a ng-click="ralCtrl.setRegistred(true)">Войти</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</form>

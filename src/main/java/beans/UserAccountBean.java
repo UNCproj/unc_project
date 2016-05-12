@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 @Stateful
 @Local
 public class UserAccountBean implements UserAccount {
-    public final Logger log = Logger.getLogger("uab_log");
+    transient Logger log = Logger.getLogger("uab_log");
     private String id;
     private String login;
     private String password;
@@ -39,10 +39,10 @@ public class UserAccountBean implements UserAccount {
     private boolean isLoggedIn = false;
     private boolean isModer=false;
     private boolean isAdmin=false;
-
+    private boolean isInvalid=false;
     @Override
     public void initialize(String id, String login, String password, String email, String userPicFile, boolean isLoggedIn, Date currentLoginDate) {
-        this.id = id;
+        this.setId(id);
         this.login = login;
         this.password = password;
         this.email = email;
@@ -52,9 +52,6 @@ public class UserAccountBean implements UserAccount {
     }
 
     
-    public void loadPermissions(){
-        
-    }
     @Override
     public String getId() { return this.id; };
 
@@ -202,15 +199,17 @@ public class UserAccountBean implements UserAccount {
 
     public void updateAllInfo() throws PropertyVetoException, SQLException, IOException {
         Connection connection = DataSource.getInstance().getConnection();
-        loadPersonalInfo(connection);
         loadMainInfo(connection);
+        loadPersonalInfo(connection);
+        if (connection != null){
+            connection.close();
+        }
     }
 
     private void loadMainInfo(Connection connection) throws SQLException {
         Statement statement = connection.createStatement();
-        ResultSet results = statement.executeQuery(SQLQueriesHelper.selectFullObjectInformationById(
-                new String[]{ SQLQueriesHelper.USER_TYPE_ID },
-                new String[]{ id }));
+        ResultSet results = statement.executeQuery(SQLQueriesHelper.selectFullObjectInformationById(new String[]{ SQLQueriesHelper.USER_TYPE_ID },
+                new String[]{ getId()}));
         while (results.next()) {
             if (results.getString("attr_name").equals(SQLQueriesHelper.LOGIN_ATTR)) {
                 this.login = results.getString("value");
@@ -226,6 +225,9 @@ public class UserAccountBean implements UserAccount {
             } else if (results.getString("attr_name").equals(SQLQueriesHelper.ADMIN_ATTR)){
                 if (results.getString("value") != null)
                 this.isAdmin = results.getString("value").equals("true");
+            }  else if (results.getString("attr_name").equals("is_invalid")){
+                if (results.getString("value") != null)
+                this.isInvalid = results.getString("value").equals("true");
             }
         }
     }
@@ -239,7 +241,6 @@ public class UserAccountBean implements UserAccount {
         types[0] = SQLQueriesHelper.USER_TYPE_ID;
         ResultSet results = statement.executeQuery(
                 SQLQueriesHelper.selectFullObjectInformationByName(types, login));
-
         String attrName = null;
         while (results.next()) {
             attrName = results.getString("attr_name");
@@ -260,7 +261,7 @@ public class UserAccountBean implements UserAccount {
                 this.country = results.getString("value");
             } else if (results.getString("attr_name").equals(SQLQueriesHelper.ADDITIONAL_INFO_ATTR)) {
                 this.additionalInfo = results.getString("value");
-            }
+            } 
         }
     }
 
@@ -276,5 +277,26 @@ public class UserAccountBean implements UserAccount {
      */
     public boolean isIsAdmin() {
         return isAdmin;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
+     * @return the isInvalid
+     */
+    public boolean isIsInvalid() {
+        return isInvalid;
+    }
+
+    /**
+     * @param isInvalid the isInvalid to set
+     */
+    public void setIsInvalid(boolean isInvalid) {
+        this.isInvalid = isInvalid;
     }
 }

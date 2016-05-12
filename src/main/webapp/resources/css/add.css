@@ -66,3 +66,6 @@ a.list-group-item:focus{
 a.list-group-item{
     font-size: 17px;
 }
+.table input, textarea, select{
+    width: 300px;
+}

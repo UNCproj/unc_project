@@ -39,13 +39,14 @@ public class RobokassaSuccess extends HttpServlet {
             throws ServletException, IOException, SQLException, PropertyVetoException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-                //String id_advert = (String)request.getParameter("shp_id_a");
-                String id = "29215754962117639761";
-                UncObject advert = new UncObject();
-                //advert.vipAdvert(id_advert);
-                 advert.vipAdvert(id);
-                //response.sendRedirect("/unc-project/unc_object.jsp?id=" + id_advert); 
-                response.sendRedirect("/unc-project/unc_object.jsp?id=" + id); 
+                String id_advert = (String)request.getParameter("shp_id_a");
+                if (id_advert == null)
+                    response.sendRedirect("/unc-project/jsp404.jsp");
+                else {
+                    UncObject advert = new UncObject();
+                    advert.vipAdvert(id_advert);
+                    response.sendRedirect("/unc-project/unc_object.jsp?id=" + id_advert); 
+                }
         }
     }
 

@@ -30,7 +30,6 @@ public class chatPublishServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html");
 
-        System.out.println("!!!!!!!!!!!!!!" + request.getParameter("message"));
         String message = noQuotes(request.getParameter("message"));
         String recipientId = request.getParameter("recipientId");
         UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
@@ -49,7 +48,6 @@ public class chatPublishServlet extends HttpServlet {
                 messageId = resultSetId.getString("id");
 
                 Statement statementMessage = connection.createStatement();
-//                statementMessage.executeUpdate(SQLQueriesHelper.newMessage(messageId, message, senderId, recipientId));
                 statementMessage.executeUpdate(SQLQueriesHelper.newMessage(
                         SQLQueriesHelper.MESSAGE_TYPE_ID, messageId
                 ));
@@ -61,6 +59,8 @@ public class chatPublishServlet extends HttpServlet {
                         new BigDecimal(messageId),SQLQueriesHelper.ID_SENDER,senderId,null));
                 statementMessage.executeUpdate(SQLQueriesHelper.insertParam(
                         new BigDecimal(messageId),SQLQueriesHelper.ID_RECIPIENT,recipientId,null));
+                statementMessage.executeUpdate(SQLQueriesHelper.insertParam(
+                        new BigDecimal(messageId),SQLQueriesHelper.READ_ATTR_ID,"no",null));
             } catch (SQLException e) {
                 e.printStackTrace();
             } catch (PropertyVetoException e) {

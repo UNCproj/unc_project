@@ -9,9 +9,6 @@ chat.controller('chatController', ['$scope', '$http',
     $scope.recipientId;
 
     $scope.publish = function(){
-        //var mesText = $("#textMessage").val();
-
-        //console.log(mesText);
         $scope.object = {};
         $scope.object.message = $("#textMessage").val();
         if ($scope.object.message!=""){
@@ -28,7 +25,6 @@ chat.controller('chatController', ['$scope', '$http',
     };
 
     $scope.subscribe = function (id){
-        //$scope.lastmesid=id;
         $scope.object = {};
         $scope.object.lastMessageId = id;
         $scope.object.recipientId = $scope.recipientId;
@@ -40,13 +36,30 @@ chat.controller('chatController', ['$scope', '$http',
         }).success(function(data) {
                 for (var i = 0; i < data.length; i++) {
                     $scope.lastmesid = data[i].id;
-                    $("table#message tbody").append("<tr></tr>");
-                    $("table#message tbody tr:last").append('<td style="width: 50px">' + data[i].sender  +"</td>");
-                    $("table#message tbody tr:last").append('<td style="width: 300px">' + data[i].text  +"</td>");
-                    $("table#message tbody tr:last").append('<td style="width: 80px">' + data[i].date.substring(0,19) +"</td>");
+                    $('.message-div').append('<div class="message-box"></div>');
+                    console.log(data[i].recipientId+'='+$scope.recipientId);
+                    if(data[i].recipientId == $scope.recipientId){
+                        console.log('111');
+                        $('.message-div .message-box:last').append('<div class="message-right"><div class="mess-text-box">' +
+                            '<div class="mess-name">' + data[i].sender + '</div>' +
+                            '<div class="mess-text">'+ data[i].text + '</div>' +
+                            '<div class="mess-date">'+ data[i].date + '</div>' +
+                            '</div></div>');
+                        var width = $('.message-box:last').width()-$('.message-box:last .message-right:last .mess-text-box:last').width()-20;
+                        //width = '"'+width+'px"';
+                        console.log(width);
+                        $('div.message-right:last').css("margin-left", width );
+                        //$('div.message-right:last').css("margin-left", '"' + width + 'px"');
+                    }else{
+                        $('.message-div .message-box:last').append('<div class="message-left"><div class="mess-text-box">' +
+                            '<div class="mess-name">' + data[i].sender + '</div>' +
+                            '<div class="mess-text">'+ data[i].text + '</div>' +
+                            '<div class="mess-date">'+ data[i].date + '</div>' +
+                            '</div></div>');
+                    }
+                    $("div.message").animate({ scrollTop: 5000 }, 5);
                 }
                 $scope.subscribe($scope.lastmesid);
-            $("div.message").animate({ scrollTop: 999 }, 1100);
         });
     };
 

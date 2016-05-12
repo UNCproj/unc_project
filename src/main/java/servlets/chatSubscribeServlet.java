@@ -35,7 +35,6 @@ public class chatSubscribeServlet extends HttpServlet {
 
         String lastMessageId = request.getParameter("lastMessageId");
         String recipientId = request.getParameter("recipientId");
-        System.out.println("lastMessageId - " + lastMessageId + ", recipientId = " + recipientId);
 
         UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
         String senderId = userAccountBean.getId();
@@ -57,7 +56,7 @@ public class chatSubscribeServlet extends HttpServlet {
                             lastMessageId,senderId,recipientId));
                     if(resultSetOutputMessagees.next()) {
                         break;
-                    }else if(step==60){
+                    }else if(step==1){
                         break;
                     }else{
                         Thread myThread = Thread.currentThread();
@@ -71,7 +70,16 @@ public class chatSubscribeServlet extends HttpServlet {
                 String date_message = resultSetOutputMessagees.getString("date_message");
                 String text_message = resultSetOutputMessagees.getString("text_message");
                 String sender_message = resultSetOutputMessagees.getString("object_name");
-                Message message = new Message(id_message,date_message,text_message,sender_message);
+                String sender_id = resultSetOutputMessagees.getString("sender_message");
+                String recipient_id = resultSetOutputMessagees.getString("recipient_message");
+                String read_status = resultSetOutputMessagees.getString("read_status");
+                String name_ = resultSetOutputMessagees.getString("name");
+                String surname_ = resultSetOutputMessagees.getString("surname");
+                if (recipient_id.equals(senderId) && read_status.equals("no")){
+                    Statement statementRead = connection.createStatement();
+                    statementRead.executeUpdate(SQLQueriesHelper.updateReadStatus(id_message));
+                }
+                Message message = new Message(id_message,date_message,text_message,sender_message, sender_id, recipient_id, read_status, name_, surname_);
                 messagesArray.add(message);
             }while (resultSetOutputMessagees.next());
 
@@ -82,7 +90,7 @@ public class chatSubscribeServlet extends HttpServlet {
             out.println(gson.toJson(messagesArray));
 
         } catch (SQLException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         } catch (PropertyVetoException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -101,11 +109,21 @@ public class chatSubscribeServlet extends HttpServlet {
         String date;
         String text;
         String sender;
-        Message(String id, String date, String text, String sender){
+        String senderId;
+        String recipientId;
+        String readStatus;
+        String name;
+        String surname;
+        Message(String id, String date, String text, String sender, String senderId, String recipientId, String readStatus, String name, String surname){
             this.id = id;
             this.date = date;
             this.text = text;
             this.sender = sender;
+            this.senderId = senderId;
+            this.recipientId = recipientId;
+            this.readStatus = readStatus;
+            this.name = name;
+            this.surname = name;
         }
     }
 }

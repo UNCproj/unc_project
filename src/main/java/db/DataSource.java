@@ -31,7 +31,7 @@ public class DataSource {
         Locale.setDefault(Locale.ENGLISH);
         this.userName = "unc_user";
         this.password = "pass123";
-        this.host = "jdbc:oracle:thin:@localhost:1521:xe";
+        this.host = "jdbc:oracle:thin:@vinokurov2.no-ip.biz:1521:xe";
         cpds = new ComboPooledDataSource();
         cpds.setDriverClass("oracle.jdbc.OracleDriver"); //loads the jdbc driver
         cpds.setJdbcUrl(this.host);
@@ -39,10 +39,10 @@ public class DataSource {
         cpds.setPassword(this.password);
 
         // the settings below are optional -- c3p0 can work with defaults
-        //cpds.setMinPoolSize(5);
-        //cpds.setAcquireIncrement(5);
-        //cpds.setMaxPoolSize(20);
-        //cpds.setMaxStatements(180);
+        cpds.setMinPoolSize(100);
+        cpds.setAcquireIncrement(100);
+        cpds.setMaxPoolSize(10000);
+        cpds.setMaxStatements(10000);
 
     }
 
