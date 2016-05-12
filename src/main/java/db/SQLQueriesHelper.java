@@ -1420,4 +1420,13 @@ public class SQLQueriesHelper {
                 "where object_id = " + messId + " and attr_id = " + READ_ATTR_ID;
         return query;
     }
-}
+    public static String getUsersIds() {
+        return "select object_id\n"
+                + "from  UNC_OBJECTS\n"
+                + "where (OBJECT_TYPE_ID = \n"
+                + "      (select CONNECT_BY_ROOT(uot.OT_ID) from UNC_OBJECT_TYPES uot\n"
+                + "      connect by prior uot.OT_ID = uot.PARENT_ID\n"
+                + "      start with uot.OT_ID = " + USER_TYPE_ID + "))";
+     }
+
+    }
