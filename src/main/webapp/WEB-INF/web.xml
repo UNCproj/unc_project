@@ -52,4 +52,8 @@
         <servlet-name>RegistrationServlet</servlet-name>
         <url-pattern>/registration</url-pattern>
     </servlet-mapping>
+    
+    <error-page>
+        <location>/jsp404.jsp</location>
+    </error-page>
 </web-app>

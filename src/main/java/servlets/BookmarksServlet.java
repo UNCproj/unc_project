@@ -3,10 +3,11 @@ package servlets;
 import beans.AdvertBean;
 import beans.BeansHelper;
 import beans.UserAccountBean;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import db.DataSource;
 import db.SQLQueriesHelper;
-import jdk.nashorn.internal.ir.debug.JSONWriter;
-import org.json.JSONArray;
+import serializers.AdvertSerializer;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,12 +15,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
 /**
  * Created by Денис on 18.01.2016.
@@ -30,7 +31,7 @@ public class BookmarksServlet extends HttpServlet {
         UserAccountBean user = (UserAccountBean)request.getSession().getAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY);
         ArrayList<AdvertBean> adverts = new ArrayList<>();
         Connection connection = null;
-        ArrayList<Integer> bookmarksIDs = new ArrayList<>();
+        ArrayList<String> bookmarksIDs = new ArrayList<>();
 
         try {
             connection = DataSource.getInstance().getConnection();
@@ -42,26 +43,29 @@ public class BookmarksServlet extends HttpServlet {
 
             while (results.next()) {
                 if (results.getString("attr_name").equals(SQLQueriesHelper.BOOKMARK_ATTR)) {
-                    bookmarksIDs.add(results.getInt("value"));
+                    String bookmarkId = results.getString("value");
+                    bookmarksIDs.add(bookmarkId);
                 }
             }
 
             String[] bIDsStr = Arrays.copyOf(bookmarksIDs.toArray(), bookmarksIDs.size(), String[].class);
             Statement statement2 = connection.createStatement();
-            types[0] = SQLQueriesHelper.ADVERT_TYPE_ID;
             results = statement2.executeQuery(
                             SQLQueriesHelper.selectFullObjectInformationById(
-                                    types,
+                                    null,
                                     bIDsStr
                             )
                       );
 
             while (results.next()) {
-                String currentAdvertId = String.valueOf(results.getInt("object_id"));
+                String currentAdvertId = results.getString("object_id");
 
                 int currentAdvertIndex = -1;
                 for (int i = 0; i < adverts.size(); i++) {
-                    if (adverts.get(i).getId() == currentAdvertId) {
+                    AdvertBean currentAdvertBean = adverts.get(i);
+
+                    if (currentAdvertBean.getAttribute("id") != null &&
+                            currentAdvertBean.getAttribute("id").equals(currentAdvertId)) {
                         currentAdvertIndex = i;
                         break;
                     }
@@ -70,7 +74,8 @@ public class BookmarksServlet extends HttpServlet {
                 if (currentAdvertIndex == - 1) {
                     adverts.add(new AdvertBean());
                     currentAdvertIndex = adverts.size() - 1;
-                    adverts.get(currentAdvertIndex).setName(results.getString("name"));
+                    adverts.get(currentAdvertIndex).setId(results.getString("object_id"));
+                    adverts.get(currentAdvertIndex).setName(results.getString("object_name"));
                 }
 
                 switch (results.getString("attr_name")) {
@@ -92,9 +97,15 @@ public class BookmarksServlet extends HttpServlet {
             }
         }
 
-        JSONArray responseJSON = new JSONArray(adverts);
+        final Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .registerTypeAdapter(AdvertBean.class, new AdvertSerializer())
+                .create();
+
         try {
-            response.getWriter().print(responseJSON);
+            PrintWriter responseWriter = response.getWriter();
+            response.setCharacterEncoding("UTF-8");
+            responseWriter.print(gson.toJson(adverts));
         }
         catch (IOException e) {
             throw new ServletException(e);

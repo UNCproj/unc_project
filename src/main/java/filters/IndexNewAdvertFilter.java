@@ -2,6 +2,8 @@ package filters;
 
 import beans.AdvertsManager;
 import beans.ElasticSearchManager;
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
+import org.elasticsearch.action.index.IndexResponse;
 
 import javax.ejb.EJB;
 import javax.servlet.*;
@@ -49,14 +51,31 @@ public class IndexNewAdvertFilter implements Filter {
 //
 //            String advertJson = gson.toJson(advertBean);
 //
-//            IndexResponse response = elasticSearchManager
-//                    .getClient()
-//                    .prepareIndex("adverts", "advert")
-//                    .setSource(advertJson)
-//                    .get();
+//            IndexRequest indexRequest = new IndexRequest("adverts", "advert");
+//            indexRequest.source(advertJson);
 //
-//            String id = response.getId();
+            IndexResponse response = null;
+//            try {
+//                response = elasticSearchManager
+//                        .getClient()
+//                        .index(indexRequest)
+//                        .get();
+//            } catch (InterruptedException | ExecutionException  e) {
+//                throw new ServletException(e);
+//            }
+//
+            RefreshRequest refreshRequest = new RefreshRequest("adverts");
+
             elasticSearchManager.reindex();
+
+            elasticSearchManager
+                    .getClient()
+                    .admin()
+                    .indices()
+                    .refresh(refreshRequest)
+                    .actionGet();
+
+            String id = response.getId();
         }
     }
 

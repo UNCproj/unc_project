@@ -260,13 +260,19 @@ public class SQLQueriesHelper {
                         "        join unc_object_types ot\n" +
                         "          on ot.ot_id = o.object_type_id\n");
 
-        query.append("where (o.object_type_id = " + typesIds[0]);
+        query.append("where ");
 
-        for (int i = 1; i < typesIds.length; i++) {
-            query.append(" or o.object_type_id = " + typesIds[i]);
+        if (typesIds != null) {
+            query.append("(o.object_type_id = " + typesIds[0]);
+
+            for (int i = 1; i < typesIds.length; i++) {
+                query.append(" or o.object_type_id = " + typesIds[i]);
+            }
+
+            query.append(") and");
         }
 
-        query.append(") and (o.object_id = " + ids[0]);
+        query.append(" (o.object_id = " + ids[0]);
 
         for (int i = 1; i < ids.length; i++) {
             query.append(" or o.object_id = " + ids[i]);
