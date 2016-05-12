@@ -227,31 +227,50 @@
         };
 
     });
-    app.controller("MessagesController", function ($scope, $http) {
-        $.urlParam = function (name) {
-            var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-            return results[1] || 0;
-        };
-        $scope.object = {};
-        $scope.object.id = $.urlParam('id');
-        $("ul#tab_name li a[href$='#messages']").click(function () {
-            $("div.message-list").empty();
-            $scope.loadMess();
-        });
-        $scope.loadMess = function () {
-            $http({
-                url: '/unc-project/loadMesList',
-                method: 'POST',
-                params: $scope.object
-            })
-                    .success(function (data) {
-                        for (var i = 0; i < data.length; i++) {
-                            $("div.message-list").append('<div class="users-message" onclick=\"location.href=\'chat.jsp?id=' + data[i].recipientId + '\'\"></div>');
-                            $("div.message-list div.users-message:last").append('<div class="message-login">' + data[i].recipientLogin + '</div>');
-                            $("div.message-list div.users-message:last").append('<div class="message-date">' + data[i].date + '</div>');
-                            $("div.message-list div.users-message:last").append('<div class="message-text">' + data[i].text + '</div>');
-                        }
-                    });
-        };
-    });
+    app.controller("MessagesController", function ($scope, $http){
+                $.urlParam = function(name){
+                    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+                    return results[1] || 0;
+                };
+                $scope.object = {};
+                $scope.object.id = $.urlParam('id');
+                $("ul#tab_name li a[href$='#messages']").click(function(){
+                    $("div.message-list").empty();
+                    $scope.loadMess();
+                });
+                $scope.loadMess = function(){
+                    $http({
+                        url: '/unc-project/loadMesList',
+                        method: 'POST',
+                        params: $scope.object
+                    })
+                        .success(function (data) {
+                            console.log(data);
+                            for(var i=0; i<data.length;i++){
+                                //$("div.message-list").append('<div class="users-message" onclick=\"location.href=\'chat.jsp?id='+data[i].recipientId +'\'\"></div>');
+                                //$("div.message-list div.users-message:last").append('<div class="message-login">' + data[i].recipientLogin + '</div>');
+                                //$("div.message-list div.users-message:last").append('<div class="message-date">' + data[i].date + '</div>');
+                                //$("div.message-list div.users-message:last").append('<div class="message-text">' + data[i].text + '</div>');
+                                $("div.message-list").append('<div class="users-message" onclick=\"location.href=\'chat.jsp?id='+data[i].recipientId +'\'\"></div>');
+                                if (data[i].recipientName== null && data[i].recipientSurname==null) {
+                                    $("div.message-list div.users-message:last").append('<div class="message-login">' + data[i].recipientLogin + '</div>');
+                                } else if (data[i].recipientName!= null && data[i].recipientSurname!=null) {
+                                    $("div.message-list div.users-message:last").append('<div class="message-login">' + data[i].recipientName + ' ' +
+                                        data[i].recipientSurname + ' (' + data[i].recipientLogin + ')</div>');
+                                } else if (data[i].recipientName!= null && data[i].recipientSurname==null) {
+                                    $("div.message-list div.users-message:last").append('<div class="message-login">' + data[i].recipientName +
+                                        ' (' + data[i].recipientLogin + ')</div>');
+                                } else if (data[i].recipientName== null && data[i].recipientSurname!=null) {
+                                    $("div.message-list div.users-message:last").append('<div class="message-login">' +
+                                        data[i].recipientSurname + ' (' + data[i].recipientLogin + ')</div>');
+                                }
+                                $("div.message-list div.users-message:last").append('<div class="message-date">' + data[i].date + '</div>');
+                                $("div.message-list div.users-message:last").append('<div class="message-text">' + data[i].text + '</div>');
+                                 if(data[i].readStatus=='no'){
+                                     $("div.message-list div.users-message:last").append('<div class="message-status">' + 'Непрочитано' + '</div>');
+                                 }
+                            }
+                        });
+                };
+            });
 })();

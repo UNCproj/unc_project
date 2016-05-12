@@ -1,0 +1,37 @@
+<div ng-if="attrType == 'discrete_multi' || attrType == 'continous'">
+    <div ng-switch on="attrType">
+        <div ng-switch-when="discrete_multi">
+            {{attrRuName}}:
+                <div class="attr-input-wrapper inner-addon right-addon" ng-repeat="item in multiInputItems">
+                    <input type="text" class="form-control"
+                           ng-model="searchAttrs[attrNum].values[item.num]"
+                           uib-typeahead="res for res in typeAhead(attrName, $viewValue)"
+                           typeahead-min-length="2"
+                           typeahead-wait-ms="300"
+                           autocomplete="off" />
+                    <span class="glyphicon glyphicon-remove" ng-click="removeInputItem(item.num)"></span>
+                </div>
+            <div class="glyphicon glyphicon-plus add-input-item" ng-click="addInputItem()"></div>
+        </div>
+        <div ng-switch-when="continous">
+            {{attrRuName}}: от <input type="text" class="attr-input form-control" ng-model="searchAttrs[attrNum].values[0]" /> до
+                               <input type="text" class="attr-input form-control" ng-model="searchAttrs[attrNum].values[1]" />
+        </div>
+        <div ng-switch-when="date">
+            {{attrRuName}}: от
+            <div class="attr-input-wrapper inner-addon right-addon">
+                <input type="text" class="attr-input form-control" ng-model="searchAttrs[attrNum].values[0]"
+                       uib-datepicker-popup="{{DATE_FORMAT}}" is-open="fromDatePickerOpened"
+                       datepicker-options="dateOptions" close-text="Close"/>
+                <span class="glyphicon glyphicon-calendar" ng-click="openFrom()"></span>
+            </div>
+            до
+            <div class="attr-input-wrapper inner-addon right-addon">
+                <input type="text" class="attr-input form-control" ng-model="searchAttrs[attrNum].values[1]"
+                       uib-datepicker-popup="{{DATE_FORMAT}}" is-open="toDatePickerOpened"
+                       datepicker-options="dateOptions" close-text="Close"/>
+                <span class="glyphicon glyphicon-calendar" ng-click="openTo()"></span>
+            </div>
+        </div>
+    </div>
+</div>

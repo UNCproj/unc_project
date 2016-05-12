@@ -835,110 +835,98 @@ public class SQLQueriesHelper {
 
     static public String outputMessages(String lastId, String senderId, String recipientId) {
         if (lastId == null || lastId.equals("") || lastId.equals("undefined")) {
-            String query = "select m.TEXT_MESSAGE, "
-                    + "m.DATE_MESSAGE, "
-                    + "m.ID_MESSAGE, "
-                    + "m.OBJECT_NAME "
-                    + "from ( "
-                    + "select * "
-                    + "from ( "
-                    + "select object_id as id_message "
-                    + "from unc_objects "
-                    + "where object_type_id = 3 "
-                    + ") table_mess_id "
-                    + "left join ( "
-                    + "select value as text_message, "
-                    + "object_id "
-                    + "from unc_params "
-                    + "where attr_id = 31 "
-                    + ") table_mess_text "
-                    + "on table_mess_text.object_id=table_mess_id.id_message "
-                    + "left join ( "
-                    + "select date_value as date_message, "
-                    + "object_id "
-                    + "from unc_params "
-                    + "where attr_id = 32 "
-                    + ") table_mess_date "
-                    + "on table_mess_date.object_id=table_mess_id.id_message "
-                    + "left join ( "
-                    + "select value as id_sender, "
-                    + "object_id "
-                    + "from unc_params "
-                    + "where attr_id = 33 "
-                    + ") table_mess_sender_id "
-                    + "on table_mess_sender_id.object_id=table_mess_id.id_message "
-                    + "left join ( "
-                    + "select value as id_recipient, "
-                    + "object_id "
-                    + "from unc_params "
-                    + "where attr_id = 34 "
-                    + ") table_mess_recipient_id "
-                    + "on table_mess_recipient_id.object_id=table_mess_id.id_message "
-                    + "inner join ( "
-                    + "select object_id, object_name "
-                    + "from unc_objects "
-                    + ") table_sender_name "
-                    + "on table_sender_name.object_id = table_mess_sender_id.id_sender "
-                    + ") m "
-                    + "where "
-                    + "(m.id_sender = " + senderId + " and m.id_recipient=" + recipientId + ") or "
-                    + "(m.id_sender = " + recipientId + " and m.id_recipient=" + senderId + ") "
-                    + " order by m.date_message";
+            String query = "select  t1.* " +
+                    "        , p20.value as name, p21.value as surname " +
+                    "from  ( " +
+                    "select  o1.object_id as id_message, " +
+                    "p1.value as text_message, " +
+                    "p2.date_value as date_message, " +
+                    "p3.value as sender_message, " +
+                    "p4.value as recipient_message, " +
+                    "o2.object_name, " +
+                    "case " +
+                    "when p3.value = " + senderId + " then " +
+                    "  null " +
+                    "else " +
+                    "  p5.value " +
+                    "end as read_status " +
+                    "from  unc_objects o1 " +
+                    "left join unc_params p1 " +
+                    "on p1.OBJECT_ID = o1.OBJECT_ID " +
+                    "left join unc_params p2 " +
+                    "on p2.OBJECT_ID = o1.OBJECT_ID " +
+                    "left join unc_params p3 " +
+                    "on p3.OBJECT_ID = o1.OBJECT_ID " +
+                    "left join unc_params p4 " +
+                    "on p4.OBJECT_ID = o1.OBJECT_ID " +
+                    "left join unc_params p5 " +
+                    "on p5.OBJECT_ID = o1.OBJECT_ID " +
+                    "left join unc_objects o2 " +
+                    "on o2.object_id = p3.value " +
+                    "where  o1.OBJECT_TYPE_ID = 3 and " +
+                    "p1.attr_id = 31 and " +
+                    "p2.attr_id = 32 and " +
+                    "p3.attr_id = 33 and " +
+                    "p4.attr_id = 34 and " +
+                    "p5.attr_id = 44 and " +
+                    "((p3.value =  " + senderId +  " and p4.value =  " + recipientId +  ") or  " +
+                    "(p3.value =  " + recipientId +  " and p4.value =  " + senderId +  "))  " +
+                    "order by p2.date_value desc" +
+                    ") " +
+                    "t1 " +
+                    "        left join unc_params p20 " +
+                    "          on p20.object_id = t1.sender_message and p20.attr_id = 12 " +
+                    "          left join unc_params p21 " +
+                    "          on p21.object_id = t1.sender_message and p20.attr_id = 14 " +
+                    "where  ROWNUM < 21 " +
+                    "order by date_message";
+            System.out.println("!!!!!!!!!!!!!!!" + query);
             return query;
         } else {
-            String query = "select m.TEXT_MESSAGE, "
-                    + "m.DATE_MESSAGE, "
-                    + "m.ID_MESSAGE, "
-                    + "m.OBJECT_NAME  "
-                    + "from ( "
-                    + "select * "
-                    + "from ( "
-                    + "select object_id as id_message "
-                    + "from unc_objects "
-                    + "where object_type_id = 3 "
-                    + ") table_mess_id "
-                    + "left join ( "
-                    + "select value as text_message, "
-                    + "object_id "
-                    + "from unc_params "
-                    + "where attr_id = 31 "
-                    + ") table_mess_text "
-                    + "on table_mess_text.object_id=table_mess_id.id_message "
-                    + "left join ( "
-                    + "select date_value as date_message, "
-                    + "object_id "
-                    + "from unc_params "
-                    + "where attr_id = 32 "
-                    + ") table_mess_date "
-                    + "on table_mess_date.object_id=table_mess_id.id_message "
-                    + "left join ( "
-                    + "select value as id_sender, "
-                    + "object_id "
-                    + "from unc_params "
-                    + "where attr_id = 33 "
-                    + ") table_mess_sender_id "
-                    + "on table_mess_sender_id.object_id=table_mess_id.id_message "
-                    + "left join ( "
-                    + "select value as id_recipient, "
-                    + "object_id "
-                    + "from unc_params "
-                    + "where attr_id = 34 "
-                    + ") table_mess_recipient_id "
-                    + "on table_mess_recipient_id.object_id=table_mess_id.id_message "
-                    + "inner join ( "
-                    + "select object_id, object_name "
-                    + "from unc_objects "
-                    + ") table_sender_name "
-                    + "on table_sender_name.object_id = table_mess_sender_id.id_sender "
-                    + ") m "
-                    + "where m.date_message>( "
-                    + "select date_value "
-                    + "from unc_params "
-                    + "  where object_id=" + lastId + " and attr_id=32 "
-                    + " ) "
-                    + " and ((m.id_sender = " + senderId + " and m.id_recipient=" + recipientId + ") or"
-                    + "(m.id_sender = " + recipientId + " and m.id_recipient=" + senderId + "))"
-                    + " order by m.date_message";
+            String query = "select  t1.* " +
+                    "        , p20.value as name, p21.value as surname " +
+                    "from  ( " +
+                    "select  o1.object_id as id_message, " +
+                    "p1.value as text_message, " +
+                    "p2.date_value as date_message, " +
+                    "p3.value as sender_message, " +
+                    "p4.value as recipient_message, " +
+                    "o2.object_name, " +
+                    "case " +
+                    "when p3.value = " + senderId + " then " +
+                    "  null " +
+                    "else " +
+                    "  p5.value " +
+                    "end as read_status " +
+                    "from  unc_objects o1 " +
+                    "left join unc_params p1 " +
+                    "on p1.OBJECT_ID = o1.OBJECT_ID " +
+                    "left join unc_params p2 " +
+                    "on p2.OBJECT_ID = o1.OBJECT_ID " +
+                    "left join unc_params p3 " +
+                    "on p3.OBJECT_ID = o1.OBJECT_ID " +
+                    "left join unc_params p4 " +
+                    "on p4.OBJECT_ID = o1.OBJECT_ID " +
+                    "left join unc_params p5 " +
+                    "on p5.OBJECT_ID = o1.OBJECT_ID " +
+                    "left join unc_objects o2 " +
+                    "on o2.object_id = p3.value " +
+                    "where  o1.OBJECT_TYPE_ID = 3 and " +
+                    "p1.attr_id = 31 and " +
+                    "p2.attr_id = 32 and " +
+                    "p3.attr_id = 33 and " +
+                    "p4.attr_id = 34 and " +
+                    "p5.attr_id = 44 and " +
+                    "((p3.value =  " + senderId +  " and p4.value =  " + recipientId +  ") or  " +
+                    "(p3.value =  " + recipientId +  " and p4.value =  " + senderId +  "))  " +
+                    "and p2.date_value > (select date_value from unc_params where object_id = " + lastId + " and attr_id = 32)" +
+                    "order by p2.date_value " +
+                    ") " +
+                    "t1 " +
+                    "        left join unc_params p20 " +
+                    "          on p20.object_id = t1.sender_message and p20.attr_id = 12 " +
+                    "          left join unc_params p21 " +
+                    "          on p21.object_id = t1.sender_message and p20.attr_id = 14 ";
             return query;
         }
     }
@@ -1339,154 +1327,96 @@ public class SQLQueriesHelper {
         return comm;
     }
 
-    static public String selectAllUsersDialog(String id) {
-        String query = "select  o1.object_id as mess_id, "
-                + "p1.value as sender, "
-                + "p2.value as recipient, "
-                + "p3.value as mess_text, "
-                + "p4.date_value as mess_date, "
-                + "case "
-                + "when o2.object_name = o4.object_name then  "
-                + "o3.object_name "
-                + "else "
-                + "o2.object_name "
-                + "end as login "
-                + "from  unc_objects o1 "
-                + "left join unc_params p1 "
-                + "on p1.object_id = o1.object_id "
-                + "left join unc_params p2 "
-                + "on p2.object_id = o1.object_id "
-                + "left join unc_params p3 "
-                + "on p3.object_id = o1.object_id "
-                + "left join unc_params p4 "
-                + "on p4.object_id = o1.object_id "
-                + "left join unc_objects o2 "
-                + "on o2.object_id = p1.value "
-                + "left join unc_objects o3 "
-                + "on o3.object_id = p2.value "
-                + "left join unc_objects o4 "
-                + "on o4.object_id = " + id
-                + " where  o1.object_type_id = 3 and "
-                + "p1.attr_id = 33 and "
-                + "p2.attr_id = 34 and "
-                + "(p1.value = " + id + " or p2.value = " + id + ") and "
-                + "p3.attr_id = 31 and "
-                + "p4.attr_id = 32 and "
-                + "(p1.value in ( "
-                + "select  t1.recipient "
-                + "from  ( "
-                + "select  o1.object_id as mess_id, "
-                + "case  "
-                + "when p1.value = " + id + " then  "
-                + "p1.value  "
-                + "else "
-                + "p2.value "
-                + "end as sender, "
-                + "case  "
-                + "when p2.value = " + id + " then  "
-                + "p1.value  "
-                + "else "
-                + "p2.value "
-                + "end as recipient, "
-                + "p3.value as mess_text, "
-                + "p4.date_value as mess_date "
-                + "from  unc_objects o1 "
-                + "left join unc_params p1 "
-                + "on p1.object_id = o1.object_id "
-                + "left join unc_params p2 "
-                + "on p2.object_id = o1.object_id "
-                + "left join unc_params p3 "
-                + "on p3.object_id = o1.object_id "
-                + "left join unc_params p4 "
-                + "on p4.object_id = o1.object_id "
-                + "where  o1.object_type_id = 3 and "
-                + "p1.attr_id = 33 and "
-                + "p2.attr_id = 34 and "
-                + "(p1.value = " + id + " or p2.value = " + id + ") and "
-                + "p3.attr_id = 31 and "
-                + "p4.attr_id = 32 "
-                + ") t1 "
-                + "group  by t1.recipient "
-                + ") or p2.value in ( "
-                + "select  t1.recipient "
-                + "from  ( "
-                + "select  o1.object_id as mess_id, "
-                + "case  "
-                + "when p1.value = " + id + " then  "
-                + "p1.value  "
-                + "else "
-                + "p2.value "
-                + "end as sender, "
-                + "case  "
-                + "when p2.value = " + id + " then  "
-                + "p1.value  "
-                + "else "
-                + "p2.value "
-                + "end as recipient, "
-                + "p3.value as mess_text, "
-                + "p4.date_value as mess_date "
-                + "from  unc_objects o1 "
-                + "left join unc_params p1 "
-                + "on p1.object_id = o1.object_id "
-                + "left join unc_params p2 "
-                + "on p2.object_id = o1.object_id "
-                + "left join unc_params p3 "
-                + "on p3.object_id = o1.object_id "
-                + "left join unc_params p4 "
-                + "on p4.object_id = o1.object_id "
-                + "where  o1.object_type_id = 3 and "
-                + "p1.attr_id = 33 and "
-                + "p2.attr_id = 34 and "
-                + "(p1.value = " + id + " or p2.value = " + id + ") and "
-                + "p3.attr_id = 31 and "
-                + "p4.attr_id = 32 "
-                + ") t1 "
-                + "group  by t1.recipient "
-                + ")) and p4.date_value in ( "
-                + "select  max(t1.mess_date) "
-                + "from  ( "
-                + "select  o1.object_id as mess_id, "
-                + "case  "
-                + "when p1.value = " + id + " then  "
-                + "p1.value  "
-                + "else "
-                + "p2.value "
-                + "end as sender, "
-                + "case  "
-                + "when p2.value = " + id + " then  "
-                + "p1.value  "
-                + "else "
-                + "p2.value "
-                + "end as recipient, "
-                + "p3.value as mess_text, "
-                + "p4.date_value as mess_date "
-                + "from  unc_objects o1 "
-                + "left join unc_params p1 "
-                + "on p1.object_id = o1.object_id "
-                + "left join unc_params p2 "
-                + "on p2.object_id = o1.object_id "
-                + "left join unc_params p3 "
-                + "on p3.object_id = o1.object_id "
-                + "left join unc_params p4 "
-                + "on p4.object_id = o1.object_id "
-                + "where  o1.object_type_id = 3 and "
-                + "p1.attr_id = 33 and "
-                + "p2.attr_id = 34 and "
-                + "(p1.value = " + id + " or p2.value = " + id + ") and "
-                + "p3.attr_id = 31 and "
-                + "p4.attr_id = 32 "
-                + ") t1 "
-                + "group  by t1.recipient "
-                + ") order by p4.date_value ";
+    static public String selectAllUsersDialog (String id){
+        String query = "select  t3.mess_id, " +
+                "t2.sender, " +
+                "t2.recipient, " +
+                "t3.mess_text, " +
+                "t2.mess_date, " +
+                "o3.object_name as login, " +
+                "p9.value as name, " +
+                "p10.value as surname, " +
+                "t3.read_status " +
+                "from  ( " +
+                "select  t1.sender,  " +
+                "t1.recipient, " +
+                "max(t1.mess_date) as mess_date " +
+                "from  ( " +
+                "select  o1.object_id as mess_id, " +
+                "p2.date_value as mess_date, " +
+                "case  " +
+                "when p3.value != " + id + " then " +
+                "p4.value " +
+                "else " +
+                "p3.value " +
+                "end as sender, " +
+                "case " +
+                "when p4.value = " + id + " then " +
+                "p3.value " +
+                "else " +
+                "p4.value " +
+                "end as recipient " +
+                "from  unc_objects o1 " +
+                "left join unc_params p2 " +
+                "on p2.OBJECT_ID = o1.OBJECT_ID " +
+                "left join unc_params p3 " +
+                "on p3.OBJECT_ID = o1.OBJECT_ID " +
+                "left join unc_params p4 " +
+                "on p4.OBJECT_ID = o1.OBJECT_ID " +
+                "where  o1.object_type_id = 3 and " +
+                "p2.ATTR_ID = 32 and " +
+                "p3.ATTR_ID = 33 and " +
+                "p4.ATTR_ID = 34 and " +
+                "(p3.value = " + id + " or p4.value =  " + id +  ") " +
+                ") t1 " +
+                "group  by t1.sender, t1.recipient " +
+                ") t2 " +
+                "left join ( " +
+                "select  o2.object_id as mess_id, " +
+                "p5.value as mess_text, " +
+                "p6.date_value as mess_date, " +
+                "p7.value as sender, " +
+                "p8.value as recipient, " +
+                "case " +
+                "when  p7.value = " + id +  " then  " +
+                "'yes' " +
+                "else " +
+                "p11.value  " +
+                "end as read_status " +
+                "from  unc_objects o2 " +
+                "left join unc_params p5 " +
+                "on p5.OBJECT_ID = o2.OBJECT_ID " +
+                "left join unc_params p6 " +
+                "on p6.OBJECT_ID = o2.OBJECT_ID " +
+                "left join unc_params p7 " +
+                "on p7.OBJECT_ID = o2.OBJECT_ID " +
+                "left join unc_params p8 " +
+                "on p8.OBJECT_ID = o2.OBJECT_ID " +
+                "left join unc_params p11 " +
+                "on p11.OBJECT_ID = o2.OBJECT_ID " +
+                "where  o2.object_type_id = 3 and " +
+                "p5.ATTR_ID = 31 and " +
+                "p6.ATTR_ID = 32 and " +
+                "p7.ATTR_ID = 33 and " +
+                "p8.ATTR_ID = 34 and " +
+                "p11.attr_id = 44 and " +
+                "(p7.value =  " + id +  " or p8.value =  " + id +  ") " +
+                ") t3 " +
+                "on t3.mess_date = t2.mess_date and " +
+                "t2.sender in (t3.sender, t3.recipient) and " +
+                "t2.recipient in (t3.sender, t3.recipient)  " +
+                "left join unc_objects o3 " +
+                "on o3.object_id = t2.recipient " +
+                "left join unc_params p9 " +
+                "on t2.recipient = p9.object_id and p9.ATTR_ID = 12 " +
+                "left join unc_params p10 " +
+                "on t2.recipient = p10.object_id and p10.ATTR_ID = 14 ";
         return query;
     }
-
-    public static String getUsersIds() {
-        return "select object_id\n"
-                + "from  UNC_OBJECTS\n"
-                + "where (OBJECT_TYPE_ID = \n"
-                + "      (select CONNECT_BY_ROOT(uot.OT_ID) from UNC_OBJECT_TYPES uot\n"
-                + "      connect by prior uot.OT_ID = uot.PARENT_ID\n"
-                + "      start with uot.OT_ID = " + USER_TYPE_ID + "))";
+    public static String updateReadStatus (String messId){
+        String query = "update unc_params " +
+                "set value = 'yes' " +
+                "where object_id = " + messId + " and attr_id = " + READ_ATTR_ID;
+        return query;
     }
 }

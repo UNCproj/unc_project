@@ -25,11 +25,13 @@
         <%@ include file="/includes/object/headers/default.jsp" %>
     </c:catch>
     <div class="content">
-        <div style="height: 300px; overflow: scroll" class="message">
-            <table class="table table-params" id="message">
-                <tbody></tbody>
-            </table>
-        </div>
+        <%--<div style="height: 300px; overflow: scroll" class="message">--%>
+            <%--<table class="table table-params" id="message">--%>
+                <%--<tbody></tbody>--%>
+            <%--</table>--%>
+        <%--</div>--%>
+            <div class="message-div message" style="height: 300px; overflow: scroll"></div>
+
         <textarea id="textMessage" class="form-control" name="textMessage" cols="30" rows="10"></textarea>
 
         <div class="form-group">
