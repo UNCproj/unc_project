@@ -39,10 +39,10 @@ public class DataSource {
         cpds.setPassword(this.password);
 
         // the settings below are optional -- c3p0 can work with defaults
-        //cpds.setMinPoolSize(5);
-        //cpds.setAcquireIncrement(5);
-        //cpds.setMaxPoolSize(20);
-        //cpds.setMaxStatements(180);
+        cpds.setMinPoolSize(100);
+        cpds.setAcquireIncrement(100);
+        cpds.setMaxPoolSize(10000);
+        cpds.setMaxStatements(10000);
 
     }
 

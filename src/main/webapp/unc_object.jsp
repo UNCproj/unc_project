@@ -256,7 +256,7 @@
                                                                         </div>
                                                                         </div>
                                                                         <div id="migr" class="tab-pane fade in">
-                                                                            <div ng-controller="MigrationUser" class="references" ng-show="false">
+                                                                            <div ng-controller="MigrationUser" class="references">
                                                                                 <div
                                                                                     flow-init="{target: '/unc-project/MigrationUserServlet', testChunks:false}"
                                                                                     flow-file-added="fileAdded($file, $event, $flow)"
@@ -269,7 +269,7 @@
                                                                                 <h3>{{err}}</h3>
                                                                                 <ul class="references-ul">
                                                                                     <li class="references-ul-li" ng-repeat="x in listerr">
-                                                                                        {{ x}}
+                                                                                        {{x}}
                                                                                     </li>
                                                                                 </ul>
                                                                             </div>
@@ -286,7 +286,7 @@
                                                                                 <h3>{{err}}</h3>
                                                                                 <ul class="references-ul">
                                                                                     <li class="references-ul-li" ng-repeat="x in listerr">
-                                                                                        {{ x}}
+                                                                                        {{x}}
                                                                                     </li>
                                                                                 </ul>
                                                                             </div>

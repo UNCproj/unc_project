@@ -106,7 +106,7 @@
         $scope.success = function ($message) {
             var params = JSON.parse($message);
             $scope.CountRowUser = 'Успешно ' + params.countRowUser;
-            $scope.err = "С ошибкой";
+            $scope.err = 'С ошибкой ' + params.listErrUser.length;
             $scope.listerr = params.listErrUser;
         };
 
@@ -128,7 +128,7 @@
         $scope.success = function ($message) {
             var params = JSON.parse($message);
             $scope.CountRowAdvert = 'Успешно ' + params.countRowAdvert;
-            $scope.err = "С ошибкой";
+            $scope.err = 'С ошибкой ' + params.listErrAdvert.length;
             $scope.listerr = params.listErrAdvert;
         };
 
