@@ -133,7 +133,7 @@ public class ModerServlet extends HttpServlet {
                 res = st.executeQuery(comm);
                 if (!res.next()) {
                     comm = "insert into unc_params (object_id, attr_id, value)"
-                            + "values(" + id + "," + SQLQueriesHelper.INVALID_ATTR_ID + "," + "'"+delValue+"'" + ")";
+                            + "values(" + id + "," + SQLQueriesHelper.INVALID_ATTR_ID + "," + "'" + delValue + "'" + ")";
                     log.info("insert= " + comm);
                     int r = st.executeUpdate(comm);
                     log.info("res= " + r);
@@ -229,7 +229,6 @@ public class ModerServlet extends HttpServlet {
                 out.println("</html>");
             }
         } else if (request.getServletPath().equals("/ModerServlet/setModerRights")) {
-            String del_id = request.getParameter("id");
             try {
                 connection = DataSource.getInstance().getConnection();
                 st = connection.createStatement();
@@ -239,19 +238,34 @@ public class ModerServlet extends HttpServlet {
                 Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
 
+            String attr_id = "";
+
+            switch (request.getParameter("attr")) {
+                case "admin": {
+                    attr_id = SQLQueriesHelper.ADMIN_ATTR_ID;
+                    break;
+                }
+                case "moderator": {
+                    attr_id = SQLQueriesHelper.MODER_ATTR_ID;
+                    break;
+                }
+                default: {
+                    attr_id = SQLQueriesHelper.MODER_ATTR_ID;
+                }
+            }
+
             String id = request.getParameter("id");
-            String attr_id = SQLQueriesHelper.MODER_ATTR_ID;
             String value = request.getParameter("value");
             String comm = SQLQueriesHelper.mergeParamValue(id, attr_id, value);
-            log.info("moderR=" + comm);
             try {
                 st.executeUpdate(comm);
                 connection.close();
             } catch (SQLException ex) {
                 Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
-        } else if (request.getServletPath().equals("/ModerServlet/GetUsersList")) {
+
+        } else if (request.getServletPath()
+                .equals("/ModerServlet/GetUsersList")) {
             List<UserAccountBean> users = new ArrayList<>();
             try {
                 connection = DataSource.getInstance().getConnection();
@@ -284,18 +298,18 @@ public class ModerServlet extends HttpServlet {
             } catch (PropertyVetoException ex) {
                 Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-            if (connection != null){
+            if (connection != null) {
                 try {
                     connection.close();
                 } catch (SQLException ex) {
                     Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            
+
             String usersJson = new Gson().toJson(users);
-                response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
-                response.getWriter().write(usersJson);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(usersJson);
         }
     }
 

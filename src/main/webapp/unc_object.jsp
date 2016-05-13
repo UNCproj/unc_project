@@ -223,7 +223,7 @@
                                                                 <td class="users-td" ><b>Логин<b></td>
                                                                 <td class="users-td"><b>Имя</b></td>
                                                                 <td class="users-td"><b>Фамилия</b></td>
-                                                                <td class="users-td"><b>Ава<b></td>
+                                                                <td class="users-td"><b>Фото<b></td>
                                                                             <td class="users-td"><b>Права</b></td>
                                                                             <td class="users-td"><b>Статус</b></td>
                                                                             <td class="users-td"><b>Действия</b></td>
@@ -243,18 +243,24 @@
                                                                                         {{row.isInvalid === true ? "Заблокирован" : "Обычный"}}
                                                                                     </td>
                                                                                     <td class="users-td admin-control">
-                                                                                        <span ng-if="(row.isAdmin != true)">
+                                                                                        <span ng-if="(true)">
                                                                                             <button style="float:top;" ng-if="(row.isInvalid != true)" type="button" class="btn btn-danger btn-small" ng-click="set_del_id(row.id); clickToDel()">
                                                                                                 Заблокировать
                                                                                             </button>
                                                                                             <button style="float:top;" ng-if="(row.isInvalid === true)" type="button" class="btn btn-danger btn-small" ng-click="set_del_id(row.id); clickToUnblock()">
                                                                                                 Разблокировать
                                                                                             </button>
-                                                                                            <button style="float:top;" ng-if="(row.isModer === true)" type="button" class="btn btn-danger btn-small" ng-click="clickToModer(row.id, 'false')">
-                                                                                                Разжаловать
+                                                                                            <button style="float:top;" ng-if="(row.isModer === true)" type="button" class="btn btn-danger btn-small" ng-click="clickToModer(row.id, 'false', 'moderator')">
+                                                                                                Снять права модератора
                                                                                             </button>
-                                                                                            <button style="float:top;" ng-if="(row.isModer != true)" type="button" class="btn btn-danger btn-small" ng-click="clickToModer(row.id, 'true')">
+                                                                                            <button style="float:top;" ng-if="(row.isModer != true)" type="button" class="btn btn-danger btn-small" ng-click="clickToModer(row.id, 'true', 'moderator')">
                                                                                                 Сделать модератором
+                                                                                            </button>
+                                                                                            <button style="float:top;" ng-if="(row.isAdmin != true)" type="button" class="btn btn-danger btn-small" ng-click="clickToModer(row.id, 'true', 'admin')">
+                                                                                                Сделать администратором
+                                                                                            </button>
+                                                                                            <button style="float:top;" ng-if="(row.isAdmin === true)" type="button" class="btn btn-danger btn-small" ng-click="clickToModer(row.id, 'false', 'admin')">
+                                                                                                Снять права администратора
                                                                                             </button>
                                                                                         </span>
                                                                                     </td>

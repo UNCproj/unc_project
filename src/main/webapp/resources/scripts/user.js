@@ -175,12 +175,13 @@
             
         };
         
-        $scope.clickToModer = function (id, value) {
+        $scope.clickToModer = function (id, value, attr) {
             $.ajax({
                 url: "/unc-project/ModerServlet/setModerRights",
                 async: false,
                 data: {"id": id,
-                    "value": value
+                    "value": value,
+                    "attr":attr
                 }
             }).done(function (data) {
                 console.log("moder success!");
