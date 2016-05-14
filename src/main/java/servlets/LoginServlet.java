@@ -22,6 +22,7 @@ import java.sql.Statement;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import unc.helpers.Crypt2;
 
 /**
  * Created by Денис on 15.12.2015.
@@ -147,7 +148,7 @@ public class LoginServlet extends HttpServlet {
                 
                 if (attrName.equals(SQLQueriesHelper.PASSWORD_ATTR)) {
                     String attr_value = result.getString("value");                   
-                    if (attr_value.equals(String.valueOf(password.hashCode()))) {
+                    if (attr_value.equals(Crypt2.sha256(password))) {
                         islog = true;
                     }
                     else {

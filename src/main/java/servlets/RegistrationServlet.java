@@ -17,6 +17,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import unc.helpers.Crypt2;
 
 @WebServlet(name = "RegistrationServlet", urlPatterns = "/registration")
 public class RegistrationServlet extends HttpServlet {
@@ -73,7 +74,7 @@ public class RegistrationServlet extends HttpServlet {
                 statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.LOGIN_ATTR_ID, login, null));
 
                 statement3 = connection.createStatement();
-                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.PASSWORD_ATTR_ID, String.valueOf(pass.hashCode()), null));
+                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.PASSWORD_ATTR_ID, String.valueOf(Crypt2.sha256(pass)), null));
 
                 statement3 = connection.createStatement();
                 statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.REG_DATE_ATTR_ID, null, new java.util.Date()));

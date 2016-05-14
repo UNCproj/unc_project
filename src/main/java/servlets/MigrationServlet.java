@@ -28,7 +28,7 @@ import javax.servlet.http.Part;
  *
  * @author Andrey
  */
-@WebServlet(name = "MigrationUserServlet", urlPatterns = {"/MigrationUserServlet"})
+@WebServlet(name = "MigrationUserServlet", urlPatterns = {"/MigrationUserServlet", "/MigrationAdvertServlet"})
 @MultipartConfig
 public class MigrationServlet extends HttpServlet {
 
@@ -52,7 +52,10 @@ public class MigrationServlet extends HttpServlet {
 
             try(InputStream input = filePart.getInputStream()) {
                 Parser p = new Parser();
-                p.migrationUser(input);
+                if (request.getServletPath().equals("/MigrationUserServlet"))
+                    p.migrationUser(input);
+                else 
+                    p.migrationAdvertAuto(input);
                 Gson g = new Gson();
                 out.print(g.toJson(p.getParams()));
             }
