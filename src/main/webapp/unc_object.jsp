@@ -209,6 +209,7 @@
                             <ul class="custom-tabs nav nav-tabs tabs" id="tn">
                                 <li class="active"><a href="#user_list" data-toggle="tab">Список пользователей</a></li>
                                 <li><a href="#migr" data-toggle="tab">Миграция</a></li>
+                                <li><a href="#reg_stat" data-toggle="tab">Статистика регистраций</a></li>
                             </ul>
 
                             <div class="settings tab-content" id="usrs_tab_content">
@@ -221,242 +222,248 @@
                                                 <tr>
                                                     <td class="users-td" ><b>Ссылка<b></td>
                                                                 <td class="users-td" ><b>Логин<b></td>
-                                                                <td class="users-td"><b>Имя</b></td>
-                                                                <td class="users-td"><b>Фамилия</b></td>
-                                                                <td class="users-td"><b>Фото<b></td>
-                                                                            <td class="users-td"><b>Права</b></td>
-                                                                            <td class="users-td"><b>Статус</b></td>
-                                                                            <td class="users-td"><b>Действия</b></td>
-                                                                            </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                                <tr ng-repeat="row in users.slice(((currentPage - 1) * itemsPerPage), ((currentPage) * itemsPerPage))">
-                                                                                    <td class="users-td"><a ng-href="{{'/unc-project/unc_object.jsp?id='+row.id}}">Перейти</a></td>
-                                                                                    <td class="users-td">{{row.login}}</td>
-                                                                                    <td class="users-td">{{row.firstName}}</td>
-                                                                                    <td class="users-td">{{row.surname}}</td>
-                                                                                    <td class="users-td"><img width="100px" height="100px" ng-src="{{row.userPicFile != null ? row.userPicFile : '/unc-project/resources/img/default.png'}}"/></td>
-                                                                                    <td class="users-td" ng-class="{'moder-td': row.isModer == true, 'admin-td': row.isAdmin == true}">
-                                                                                        {{row.isAdmin === true ? 'Администратор' : (row.isModer == true ? 'Модератор' : 'Пользователь')}}
-                                                                                    </td>
-                                                                                    <td class="users-td" ng-class="{'notblocked-td': row.isInvalid != true, 'blocked-td': row.isInvalid == true}">
-                                                                                        {{row.isInvalid === true ? "Заблокирован" : "Обычный"}}
-                                                                                    </td>
-                                                                                    <td class="users-td admin-control">
-                                                                                        <span ng-if="(true)">
-                                                                                            <button style="float:top;" ng-if="(row.isInvalid != true)" type="button" class="btn btn-danger btn-small" ng-click="set_del_id(row.id); clickToDel()">
-                                                                                                Заблокировать
-                                                                                            </button>
-                                                                                            <button style="float:top;" ng-if="(row.isInvalid === true)" type="button" class="btn btn-danger btn-small" ng-click="set_del_id(row.id); clickToUnblock()">
-                                                                                                Разблокировать
-                                                                                            </button>
-                                                                                            <button style="float:top;" ng-if="(row.isModer === true)" type="button" class="btn btn-danger btn-small" ng-click="clickToModer(row.id, 'false', 'moderator')">
-                                                                                                Снять права модератора
-                                                                                            </button>
-                                                                                            <button style="float:top;" ng-if="(row.isModer != true)" type="button" class="btn btn-danger btn-small" ng-click="clickToModer(row.id, 'true', 'moderator')">
-                                                                                                Сделать модератором
-                                                                                            </button>
-                                                                                            <button style="float:top;" ng-if="(row.isAdmin != true)" type="button" class="btn btn-danger btn-small" ng-click="clickToModer(row.id, 'true', 'admin')">
-                                                                                                Сделать администратором
-                                                                                            </button>
-                                                                                            <button style="float:top;" ng-if="(row.isAdmin === true)" type="button" class="btn btn-danger btn-small" ng-click="clickToModer(row.id, 'false', 'admin')">
-                                                                                                Снять права администратора
-                                                                                            </button>
-                                                                                        </span>
-                                                                                    </td>
-                                                                                </tr>
-                                                                            </tbody>
-                                                                            </table>
+                                                                            <td class="users-td"><b>Имя</b></td>
+                                                                            <td class="users-td"><b>Фамилия</b></td>
+                                                                            <td class="users-td"><b>Фото<b></td>
+                                                                                        <td class="users-td"><b>Права</b></td>
+                                                                                        <td class="users-td"><b>Статус</b></td>
+                                                                                        <td class="users-td"><b>Действия</b></td>
+                                                                                        </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                            <tr ng-repeat="row in users.slice(((currentPage - 1) * itemsPerPage), ((currentPage) * itemsPerPage))">
+                                                                                                <td class="users-td"><a ng-href="{{'/unc-project/unc_object.jsp?id=' + row.id}}">Перейти</a></td>
+                                                                                                <td class="users-td">{{row.login}}</td>
+                                                                                                <td class="users-td">{{row.firstName}}</td>
+                                                                                                <td class="users-td">{{row.surname}}</td>
+                                                                                                <td class="users-td"><img width="100px" height="100px" ng-src="{{row.userPicFile != null ? row.userPicFile : '/unc-project/resources/img/default.png'}}"/></td>
+                                                                                                <td class="users-td" ng-class="{'moder-td': row.isModer == true, 'admin-td': row.isAdmin == true}">
+                                                                                                    {{row.isAdmin === true ? 'Администратор' : (row.isModer == true ? 'Модератор' : 'Пользователь')}}
+                                                                                                </td>
+                                                                                                <td class="users-td" ng-class="{'notblocked-td': row.isInvalid != true, 'blocked-td': row.isInvalid == true}">
+                                                                                                    {{row.isInvalid === true ? "Заблокирован" : "Обычный"}}
+                                                                                                </td>
+                                                                                                <td class="users-td admin-control">
+                                                                                                    <span ng-if="(true)">
+                                                                                                        <button style="float:top;" ng-if="(row.isInvalid != true)" type="button" class="btn btn-danger btn-small" ng-click="set_del_id(row.id); clickToDel()">
+                                                                                                            Заблокировать
+                                                                                                        </button>
+                                                                                                        <button style="float:top;" ng-if="(row.isInvalid === true)" type="button" class="btn btn-danger btn-small" ng-click="set_del_id(row.id); clickToUnblock()">
+                                                                                                            Разблокировать
+                                                                                                        </button>
+                                                                                                        <button style="float:top;" ng-if="(row.isModer === true)" type="button" class="btn btn-danger btn-small" ng-click="clickToModer(row.id, 'false', 'moderator')">
+                                                                                                            Снять права модератора
+                                                                                                        </button>
+                                                                                                        <button style="float:top;" ng-if="(row.isModer != true)" type="button" class="btn btn-danger btn-small" ng-click="clickToModer(row.id, 'true', 'moderator')">
+                                                                                                            Сделать модератором
+                                                                                                        </button>
+                                                                                                        <button style="float:top;" ng-if="(row.isAdmin != true)" type="button" class="btn btn-danger btn-small" ng-click="clickToModer(row.id, 'true', 'admin')">
+                                                                                                            Сделать администратором
+                                                                                                        </button>
+                                                                                                        <button style="float:top;" ng-if="(row.isAdmin === true)" type="button" class="btn btn-danger btn-small" ng-click="clickToModer(row.id, 'false', 'admin')">
+                                                                                                            Снять права администратора
+                                                                                                        </button>
+                                                                                                    </span>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        </tbody>
+                                                                                        </table>
 
-                                                                            </div>
-                                                                            </div>
-                                                                            <div id="migr" class="tab-pane fade in">
-                                                                                <div ng-controller="MigrationUser" class="references">
-                                                                                    <div
-                                                                                        flow-init="{target: '/unc-project/MigrationUserServlet', testChunks:false}"
-                                                                                        flow-file-added="fileAdded($file, $event, $flow)"
-                                                                                        flow-name="uploader.flow"
-                                                                                        flow-file-success="success($message)">
-                                                                                        <h3>Миграция пользователей</h3>
-                                                                                        <button type="button" flow-btn>Выбрать excel</button>
-                                                                                    </div>
-                                                                                    <h3>{{CountRowUser}}</h3>
-                                                                                    <h3>{{err}}</h3>
-                                                                                    <ul class="references-ul">
-                                                                                        <li class="references-ul-li" ng-repeat="x in listerr">
-                                                                                            {{x}}
-                                                                                        </li>
-                                                                                    </ul>
-                                                                                </div>
-                                                                                <div ng-controller="MigrationAdvert" class="references">
-                                                                                    <div
-                                                                                        flow-init="{target: '/unc-project/MigrationAdvertServlet', testChunks:false}"
-                                                                                        flow-file-added="fileAdded($file, $event, $flow)"
-                                                                                        flow-name="uploader.flow"
-                                                                                        flow-file-success="success($message)">
-                                                                                        <h3>Миграция обьявлений</h3>
-                                                                                        <button type="button" flow-btn>Выбрать excel</button>
-                                                                                    </div>
-                                                                                    <h3>{{CountRowAdvert}}</h3>
-                                                                                    <h3>{{err}}</h3>
-                                                                                    <ul class="references-ul">
-                                                                                        <li class="references-ul-li" ng-repeat="x in listerr">
-                                                                                            {{x}}
-                                                                                        </li>
-                                                                                    </ul>
-                                                                                </div>
-                                                                            </div>
-                                                                            </div>
+                                                                                        </div>
+                                                                                        </div>
+                                                                                        <div id="migr" class="tab-pane fade in">
+                                                                                            <div ng-controller="MigrationUser" class="references">
+                                                                                                <div
+                                                                                                    flow-init="{target: '/unc-project/MigrationUserServlet', testChunks:false}"
+                                                                                                    flow-file-added="fileAdded($file, $event, $flow)"
+                                                                                                    flow-name="uploader.flow"
+                                                                                                    flow-file-success="success($message)">
+                                                                                                    <h3>Миграция пользователей</h3>
+                                                                                                    <button type="button" flow-btn>Выбрать excel</button>
+                                                                                                </div>
+                                                                                                <h3>{{CountRowUser}}</h3>
+                                                                                                <h3>{{err}}</h3>
+                                                                                                <ul class="references-ul">
+                                                                                                    <li class="references-ul-li" ng-repeat="x in listerr">
+                                                                                                        {{x}}
+                                                                                                    </li>
+                                                                                                </ul>
+                                                                                            </div>
+                                                                                            <div ng-controller="MigrationAdvert" class="references">
+                                                                                                <div
+                                                                                                    flow-init="{target: '/unc-project/MigrationAdvertServlet', testChunks:false}"
+                                                                                                    flow-file-added="fileAdded($file, $event, $flow)"
+                                                                                                    flow-name="uploader.flow"
+                                                                                                    flow-file-success="success($message)">
+                                                                                                    <h3>Миграция обьявлений</h3>
+                                                                                                    <button type="button" flow-btn>Выбрать excel</button>
+                                                                                                </div>
+                                                                                                <h3>{{CountRowAdvert}}</h3>
+                                                                                                <h3>{{err}}</h3>
+                                                                                                <ul class="references-ul">
+                                                                                                    <li class="references-ul-li" ng-repeat="x in listerr">
+                                                                                                        {{x}}
+                                                                                                    </li>
+                                                                                                </ul>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div id="reg_stat">
+                                                                                            <canvas id="regs_graph" class="chart chart-line" chart-data="reg_data.count" 
+                                                                                                    chart-labels="reg_data.date" chart-legend="true" chart-series="reg_data.series"
+                                                                                                    chart-options="reg_data.opts" width="800" height="200" >
+                                                                                            </canvas>
+                                                                                        </div>
+                                                                                        </div>
 
-                                                                            </div>
-                                                                            <%}%>
-                                                                            </div>
-                                                                            <div id="adm" class="tab-pane fade in">
+                                                                                        </div>
+                                                                                        <%}%>
+                                                                                        </div>
+                                                                                        <div id="adm" class="tab-pane fade in">
 
-                                                                                <% if ((user != null) && user.isIsModer() && user.isIsAdmin() && ("4".equals(currentObject.getParentType()))) { %>
-                                                                                <br>
-                                                                                <div>
-                                                                                    <div ng-controller="ModerCtrl">
-                                                                                        <button class="btn btn-primary" ng-click="clickToDel();">
-                                                                                            <nobr>Удалить объявление</nobr>
-                                                                                        </button>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <%
-                                                                                    }
-                                                                                %>
+                                                                                            <% if ((user != null) && user.isIsModer() && user.isIsAdmin() && ("4".equals(currentObject.getParentType()))) { %>
+                                                                                            <br>
+                                                                                            <div>
+                                                                                                <div ng-controller="ModerCtrl">
+                                                                                                    <button class="btn btn-primary" ng-click="clickToDel();">
+                                                                                                        <nobr>Удалить объявление</nobr>
+                                                                                                    </button>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <%
+                                                                                                }
+                                                                                            %>
 
-                                                                            </div>
-                                                                            <%if ("1".equals(currentObject.getType()) && user != null && user.getId().equals(request.getParameter("id"))) {%>
-                                                                            <div id="messages" class="tab-pane fade in">
-                                                                                <div ng-controller="MessagesController">
-                                                                                    <div class="message-list"></div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <% } %>
-                                                                            <%if ("4".equals(currentObject.getParentType()) && user != null && user.isLoggedIn() && !currentObject.isVip()) {%>
-                                                                            <div class="robokassa-button" >
-                                                                                <ul>
-                                                                                    <li class="robo-li robokassa-li">
-                                                                                        Оплатить Vip-статус за 1,99 р
-                                                                                    </li>
+                                                                                        </div>
+                                                                                        <%if ("1".equals(currentObject.getType()) && user != null && user.getId().equals(request.getParameter("id"))) {%>
+                                                                                        <div id="messages" class="tab-pane fade in">
+                                                                                            <div ng-controller="MessagesController">
+                                                                                                <div class="message-list"></div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <% } %>
+                                                                                        <%if ("4".equals(currentObject.getParentType()) && user != null && user.isLoggedIn() && !currentObject.isVip()) {%>
+                                                                                        <div class="robokassa-button" >
+                                                                                            <ul>
+                                                                                                <li class="robo-li robokassa-li">
+                                                                                                    Оплатить Vip-статус за 1,99 р
+                                                                                                </li>
 
-                                                                                    <%
-                                                                                        String sMrchLogin = "UNC-project";
-                                                                                        String sMrchPass1 = "GVic7cAaCBs52j71lCuk";
-                                                                                        //String sMrchPass2 = "n8DcTF8ogp410TZQqJgI";
-                                                                                        String nInvId = "100";
-                                                                                        String sDesc = "Test payment ROBOKASSA";
-                                                                                        String sOutSum = "1.99";
-                                                                                        String sCulture = "ru";
-                                                                                        String sEncoding = "utf-8";
-                                                                                        String shp_id_a = currentObject.getId();
-                                                                                        String crc = currentObject.MD5(new String[]{sMrchLogin, sOutSum, nInvId, sMrchPass1, "shp_id_a=" + shp_id_a});
-                                                                                    %>
-                                                                                    <li class="robo-li">
-                                                                                        <script language=JavaScript src='https://auth.robokassa.ru/Merchant/PaymentForm/FormSS.js?MerchantLogin=<%= sMrchLogin%>&OutSum=<%= sOutSum%>&InvoiceID=<%= nInvId%>&Description=<%= sDesc%>&shp_id_a=<%= shp_id_a%>&isTest=1&SignatureValue=<%= crc%>'></script>
-                                                                                    </li>
-                                                                                </ul>
-                                                                            </div>
-                                                                            <%}%>
-                                                                            <div class="references">
-                                                                                <% ArrayList<String[]> listReferences = currentObject.lisrReferences(); %>
-                                                                                <% if ("1".equals(currentObject.getType())) { %>
-                                                                                <h4>Список обьявлений</h4>
-                                                                                <ul class="references-ul">
-                                                                                    <% for (int i = 0; i < listReferences.size(); i++) { %>
-                                                                                    <% if (!listReferences.get(i)[2].equals("true")) {%>
-                                                                                    <li class="references-ul-li">
-                                                                                        <a a href="unc_object.jsp?id=<%= listReferences.get(i)[0]%>"><%= listReferences.get(i)[1]%></a>
-                                                                                    </li>
-                                                                                    <%}%>
-                                                                                    <% } %>
-                                                                                </ul>
-                                                                                <%} else if ("4".equals(currentObject.getParentType())) {%>
-                                                                                <h4 class="robokassa-li">Продавец : <a a href="unc_object.jsp?id=<%= listReferences.get(0)[0]%>"><%= listReferences.get(0)[1]%></a></h4>
-                                                                                    <%}%>
-                                                                            </div>
-                                                                            <div class="related">
-                                                                                <%
-                                                                                    RecommenderBean recommenderBean = new RecommenderBean();
-                                                                                %>
-                                                                                <%--<div class="related-item">--%>
-                                                                                <%--<div class="img">--%>
-                                                                                <%--<img ng-src="{{adv.image != undefined ? adv.image : '${initParam.get("default.advert.image")}'}}">--%>
-                                                                                <%--</div>--%>
-                                                                                <%--<div class="main-content">--%>
-                                                                                <%--<div class="name">--%>
-                                                                                <%--<h3>{{adv.name}}</h3>--%>
-                                                                                <%--</div>--%>
-                                                                                <%--<div class="description">--%>
-                                                                                <%--{{adv.description}}--%>
-                                                                                <%--</div>--%>
-                                                                                <%--<div class="price">--%>
-                                                                                <%--{{adv.price}} руб.--%>
-                                                                                <%--</div>--%>
-                                                                                <%--</div>--%>
-                                                                                <%--</div>--%>
-                                                                                <%--<div class="related-item">--%>
-                                                                                <%--<div class="img">--%>
-                                                                                <%--<img ng-src="{{adv.image != undefined ? adv.image : '${initParam.get("default.advert.image")}'}}">--%>
-                                                                                <%--</div>--%>
-                                                                                <%--<div class="main-content">--%>
-                                                                                <%--<div class="name">--%>
-                                                                                <%--<h3>{{adv.name}}</h3>--%>
-                                                                                <%--</div>--%>
-                                                                                <%--<div class="description">--%>
-                                                                                <%--{{adv.description}}--%>
-                                                                                <%--</div>--%>
-                                                                                <%--<div class="price">--%>
-                                                                                <%--{{adv.price}} руб.--%>
-                                                                                <%--</div>--%>
-                                                                                <%--</div>--%>
-                                                                                <%--</div>--%>
-                                                                                <%--<div class="related-item">--%>
-                                                                                <%--<div class="img">--%>
-                                                                                <%--<img ng-src="{{adv.image != undefined ? adv.image : '${initParam.get("default.advert.image")}'}}">--%>
-                                                                                <%--</div>--%>
-                                                                                <%--<div class="main-content">--%>
-                                                                                <%--<div class="name">--%>
-                                                                                <%--<h3>{{adv.name}}</h3>--%>
-                                                                                <%--</div>--%>
-                                                                                <%--<div class="description">--%>
-                                                                                <%--{{adv.description}}--%>
-                                                                                <%--</div>--%>
-                                                                                <%--<div class="price">--%>
-                                                                                <%--{{adv.price}} руб.--%>
-                                                                                <%--</div>--%>
-                                                                                <%--</div>--%>
-                                                                                <%--</div>--%>
-                                                                            </div>
-                                                                            <div>
-                                                                                <%UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
-                                                                                    if ("1".equals(currentObject.getType()) && userAccountBean != null && userAccountBean.getId().equals(request.getParameter("id"))) {%>
-                                                                                <a class="a-outline button-style" href="unc_update.jsp?id=<%=request.getParameter("id")%>" style="width: 200px">
-                                                                                    Изменить данные
-                                                                                </a>
-                                                                                <%
-                                                                                    if ((boolean) request.getSession().getAttribute("RobokassaFail")) { %>
-                                                                                <script language=JavaScript>
-                                                                                    alert("Покупка не была совершена!");
-                                                                                </script>
-                                                                                <% request.getSession().setAttribute("RobokassaFail", false); %>
-                                                                                <% }
-                                                                                %> 
-                                                                                <%}%>
-                                                                            </div>
-                                                                            <br>
-                                                                            </div>
-                                                                            <%if ("1".equals(currentObject.getType()) && !userAccountBean.getId().equals(request.getParameter("id"))) {%>
-                                                                            <div>
-                                                                                <a class="a-outline button-style" href="chat.jsp?id=<%=request.getParameter("id")%>" style="width: 230px">
-                                                                                    Отправить сообщение
-                                                                                </a>
-                                                                            </div>
-                                                                            <%}%>
-                                                                            <c:catch var="e">
-                                                                                <c:import url="/includes/object/footers/default.jspf" />
-                                                                            </c:catch>
-                                                                            </div>
-                                                                            </body>
-                                                                            </html>
+                                                                                                <%
+                                                                                                    String sMrchLogin = "UNC-project";
+                                                                                                    String sMrchPass1 = "GVic7cAaCBs52j71lCuk";
+                                                                                                    //String sMrchPass2 = "n8DcTF8ogp410TZQqJgI";
+                                                                                                    String nInvId = "100";
+                                                                                                    String sDesc = "Test payment ROBOKASSA";
+                                                                                                    String sOutSum = "1.99";
+                                                                                                    String sCulture = "ru";
+                                                                                                    String sEncoding = "utf-8";
+                                                                                                    String shp_id_a = currentObject.getId();
+                                                                                                    String crc = currentObject.MD5(new String[]{sMrchLogin, sOutSum, nInvId, sMrchPass1, "shp_id_a=" + shp_id_a});
+                                                                                                %>
+                                                                                                <li class="robo-li">
+                                                                                                    <script language=JavaScript src='https://auth.robokassa.ru/Merchant/PaymentForm/FormSS.js?MerchantLogin=<%= sMrchLogin%>&OutSum=<%= sOutSum%>&InvoiceID=<%= nInvId%>&Description=<%= sDesc%>&shp_id_a=<%= shp_id_a%>&isTest=1&SignatureValue=<%= crc%>'></script>
+                                                                                                </li>
+                                                                                            </ul>
+                                                                                        </div>
+                                                                                        <%}%>
+                                                                                        <div class="references">
+                                                                                            <% ArrayList<String[]> listReferences = currentObject.lisrReferences(); %>
+                                                                                            <% if ("1".equals(currentObject.getType())) { %>
+                                                                                            <h4>Список обьявлений</h4>
+                                                                                            <ul class="references-ul">
+                                                                                                <% for (int i = 0; i < listReferences.size(); i++) { %>
+                                                                                                <% if (!listReferences.get(i)[2].equals("true")) {%>
+                                                                                                <li class="references-ul-li">
+                                                                                                    <a a href="unc_object.jsp?id=<%= listReferences.get(i)[0]%>"><%= listReferences.get(i)[1]%></a>
+                                                                                                </li>
+                                                                                                <%}%>
+                                                                                                <% } %>
+                                                                                            </ul>
+                                                                                            <%} else if ("4".equals(currentObject.getParentType())) {%>
+                                                                                            <h4 class="robokassa-li">Продавец : <a a href="unc_object.jsp?id=<%= listReferences.get(0)[0]%>"><%= listReferences.get(0)[1]%></a></h4>
+                                                                                                <%}%>
+                                                                                        </div>
+                                                                                        <div class="related">
+                                                                                            <%
+                                                                                                RecommenderBean recommenderBean = new RecommenderBean();
+                                                                                            %>
+                                                                                            <%--<div class="related-item">--%>
+                                                                                            <%--<div class="img">--%>
+                                                                                            <%--<img ng-src="{{adv.image != undefined ? adv.image : '${initParam.get("default.advert.image")}'}}">--%>
+                                                                                            <%--</div>--%>
+                                                                                            <%--<div class="main-content">--%>
+                                                                                            <%--<div class="name">--%>
+                                                                                            <%--<h3>{{adv.name}}</h3>--%>
+                                                                                            <%--</div>--%>
+                                                                                            <%--<div class="description">--%>
+                                                                                            <%--{{adv.description}}--%>
+                                                                                            <%--</div>--%>
+                                                                                            <%--<div class="price">--%>
+                                                                                            <%--{{adv.price}} руб.--%>
+                                                                                            <%--</div>--%>
+                                                                                            <%--</div>--%>
+                                                                                            <%--</div>--%>
+                                                                                            <%--<div class="related-item">--%>
+                                                                                            <%--<div class="img">--%>
+                                                                                            <%--<img ng-src="{{adv.image != undefined ? adv.image : '${initParam.get("default.advert.image")}'}}">--%>
+                                                                                            <%--</div>--%>
+                                                                                            <%--<div class="main-content">--%>
+                                                                                            <%--<div class="name">--%>
+                                                                                            <%--<h3>{{adv.name}}</h3>--%>
+                                                                                            <%--</div>--%>
+                                                                                            <%--<div class="description">--%>
+                                                                                            <%--{{adv.description}}--%>
+                                                                                            <%--</div>--%>
+                                                                                            <%--<div class="price">--%>
+                                                                                            <%--{{adv.price}} руб.--%>
+                                                                                            <%--</div>--%>
+                                                                                            <%--</div>--%>
+                                                                                            <%--</div>--%>
+                                                                                            <%--<div class="related-item">--%>
+                                                                                            <%--<div class="img">--%>
+                                                                                            <%--<img ng-src="{{adv.image != undefined ? adv.image : '${initParam.get("default.advert.image")}'}}">--%>
+                                                                                            <%--</div>--%>
+                                                                                            <%--<div class="main-content">--%>
+                                                                                            <%--<div class="name">--%>
+                                                                                            <%--<h3>{{adv.name}}</h3>--%>
+                                                                                            <%--</div>--%>
+                                                                                            <%--<div class="description">--%>
+                                                                                            <%--{{adv.description}}--%>
+                                                                                            <%--</div>--%>
+                                                                                            <%--<div class="price">--%>
+                                                                                            <%--{{adv.price}} руб.--%>
+                                                                                            <%--</div>--%>
+                                                                                            <%--</div>--%>
+                                                                                            <%--</div>--%>
+                                                                                        </div>
+                                                                                        <div>
+                                                                                            <%UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
+                                                                                                if ("1".equals(currentObject.getType()) && userAccountBean != null && userAccountBean.getId().equals(request.getParameter("id"))) {%>
+                                                                                            <a class="a-outline button-style" href="unc_update.jsp?id=<%=request.getParameter("id")%>" style="width: 200px">
+                                                                                                Изменить данные
+                                                                                            </a>
+                                                                                            <%
+                                                                                                if ((boolean) request.getSession().getAttribute("RobokassaFail")) { %>
+                                                                                            <script language=JavaScript>
+                                                                                                alert("Покупка не была совершена!");
+                                                                                            </script>
+                                                                                            <% request.getSession().setAttribute("RobokassaFail", false); %>
+                                                                                            <% }
+                                                                                            %> 
+                                                                                            <%}%>
+                                                                                        </div>
+                                                                                        <br>
+                                                                                        </div>
+                                                                                        <%if ("1".equals(currentObject.getType()) && !userAccountBean.getId().equals(request.getParameter("id"))) {%>
+                                                                                        <div>
+                                                                                            <a class="a-outline button-style" href="chat.jsp?id=<%=request.getParameter("id")%>" style="width: 230px">
+                                                                                                Отправить сообщение
+                                                                                            </a>
+                                                                                        </div>
+                                                                                        <%}%>
+                                                                                        <c:catch var="e">
+                                                                                            <c:import url="/includes/object/footers/default.jspf" />
+                                                                                        </c:catch>
+                                                                                        </div>
+                                                                                        </body>
+                                                                                        </html>

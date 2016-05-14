@@ -226,7 +226,34 @@
             $scope.itemsPerPage = num;
             $scope.currentPage = 1; //reset to first paghe
         };
-
+        
+        //stat
+        $scope.reg_data = {};
+        $scope.reg_data.opts = {
+                    responsive: false,
+                    maintainAspectRatio: false
+                };
+        $scope.reg_data.series = ['Статистика регистраций'];
+        function loadRegData() {
+            console.log("check!");
+            $.ajax({
+                url: "/unc-project/StatServlet/getRegistrations",
+                async: false,
+                data: {}
+            }).done(function (ads) {
+                $scope.reg_data.count = []; $scope.reg_data.date = [];
+                $.each(ads, function (index, vis) {
+                    
+                    $scope.reg_data.date.push(vis.date);
+                    $scope.reg_data.count.push(vis.count);
+                });
+                $scope.reg_data.count = [$scope.reg_data.count];
+            });
+        };
+        loadRegData();
+         
+        
+        
     });
     app.controller("MessagesController", function ($scope, $http){
                 $.urlParam = function(name){
