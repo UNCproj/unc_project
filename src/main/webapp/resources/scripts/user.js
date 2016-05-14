@@ -250,8 +250,10 @@
                 $scope.reg_data.count = [$scope.reg_data.count];
             });
         };
-        loadRegData();
-         
+        
+        if ($('#rights').val()==='admin'){
+            loadRegData();
+        };
         
         
     });

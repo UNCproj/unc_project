@@ -79,6 +79,7 @@
         </c:if>
     </head>
     <body>
+        <input id="rights" type="hidden" value="<%= user.isIsAdmin() ? "admin" : (user.isIsModer() ? "moderator" : "user") %>">
         <script type="application/javascript">
             var uncObjectType = ${currentObjectType};
         </script>
@@ -307,7 +308,7 @@
                                                                                                 </ul>
                                                                                             </div>
                                                                                         </div>
-                                                                                        <div id="reg_stat">
+                                                                                        <div id="reg_stat" class="tab-pane fade in">
                                                                                             <canvas id="regs_graph" class="chart chart-line" chart-data="reg_data.count" 
                                                                                                     chart-labels="reg_data.date" chart-legend="true" chart-series="reg_data.series"
                                                                                                     chart-options="reg_data.opts" width="800" height="200" >
