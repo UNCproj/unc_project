@@ -276,3 +276,17 @@
 /* add padding  */
 .left-addon input  { padding-left:  30px; }
 .right-addon input { padding-right: 30px; }
+
+.new-mess{
+    background-color: red;
+    position: absolute;
+    right: 10px;
+    top: 70px;
+    color: white;
+    width: 170px;
+    border-radius: 10px;
+    text-align: center;
+}
+.new-mess:hover{
+    cursor: help;
+}

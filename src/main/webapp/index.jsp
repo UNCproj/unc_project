@@ -15,6 +15,7 @@
     <script src="resources/scripts/angular-animate.min.js"></script>
     <script src="resources/scripts/ui-bootstrap-tpls-1.2.5.min.js"></script>
     <script src="resources/scripts/index.js"></script>
+    <script src="resources/scripts/check-new-message.js"></script>
 </head>
 <body>
     <div class="main">
@@ -31,7 +32,7 @@
             %>
                 <div class="enter-login clearfix">
                     <ul class="enter-login-ul">
-                        <li class="private-office">
+                        <li class="private-office" id="lk">
                             <a class="private-office button-style a-outline" href="unc_object.jsp?id=${userAccount.getId()}">Личный кабинет</a>
                         </li>
                         <li>
