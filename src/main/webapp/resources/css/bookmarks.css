@@ -1,0 +1,36 @@
+.advertsWrapper a {
+    color: black;
+}
+
+.advertsWrapper a .name {
+    color: #2b669a;
+}
+
+.advertsWrapper a .description {
+    height: 50px;
+}
+
+.advertsWrapper .list-group-item:hover {
+    cursor: pointer;
+    background-color: #f9f9f9;
+    border: 1px solid #5cb85c;
+    z-index: 2;
+}
+
+.advertsWrapper .list-group-item {
+    height: 210px;
+}
+
+.advertsWrapper .list-group-item .img {
+    width: 200px;
+    height: 150px;
+    float: left;
+    margin: 5px;
+    margin-right: 10px;
+    border: 3px solid #f9f9f9;
+}
+
+.advertsWrapper .list-group-item .img img {
+    width: 200px;
+    height: 150px;
+}

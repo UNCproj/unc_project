@@ -506,6 +506,35 @@ public class SQLQueriesHelper {
         return query;
     }
 
+    static public String deleteParam(String objectId, String attrId, String value) {
+        StringBuilder query = new StringBuilder(
+                "delete unc_params where object_id = " + objectId +
+                                   " and attr_id = "   + attrId
+        );
+
+        if (value != null) {
+            query.append(" and value = '");
+            query.append(value);
+            query.append("'");
+        }
+
+        return query.toString();
+    }
+
+    static public String deleteReference(String objectId, String attrId, String value) {
+        StringBuilder query = new StringBuilder(
+                "delete unc_references where object_id = " + objectId +
+                        " and attr_id = "   + attrId
+        );
+
+        if (value != null) {
+            query.append(" and object_reference_id = ");
+            query.append(value);
+        }
+
+        return query.toString();
+    }
+
     static public String getAllAttributes(String type) {
         String query = "select * "
                 + "  from unc_attr_object_types uao "

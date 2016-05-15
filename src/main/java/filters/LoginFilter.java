@@ -11,7 +11,7 @@ import java.io.IOException;
 /**
  * Created by alex on 01.04.2016.
  */
-@WebFilter(urlPatterns = {"/unc_add.jsp","/chat.jsp","/esmanagement"})
+@WebFilter(urlPatterns = {"/unc_add.jsp","/chat.jsp","/bookmarks.jsp","/esmanagement"})
 public class LoginFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -25,7 +25,15 @@ public class LoginFilter implements Filter {
         UserAccountBean userAccountBean = (UserAccountBean) httpRequest.getSession().getAttribute("userAccount");
 
         if(userAccountBean==null){
-            httpResponse.sendRedirect("/unc-project/reg-and-login.jsp");
+            StringBuilder requestedURI = new StringBuilder("/unc-project/reg-and-login.jsp?from=");
+            requestedURI.append(httpRequest.getRequestURI());
+
+            if (httpRequest.getQueryString() != null) {
+                requestedURI.append("?");
+                requestedURI.append(httpRequest.getQueryString());
+            }
+
+            httpResponse.sendRedirect(requestedURI.toString());
         }else{
             chain.doFilter(request, response);
         }

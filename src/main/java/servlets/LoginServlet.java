@@ -5,6 +5,7 @@ import beans.UserAccountBean;
 import com.google.gson.JsonObject;
 import db.DataSource;
 import db.SQLQueriesHelper;
+import unc.helpers.Crypt2;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,7 +23,6 @@ import java.sql.Statement;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import unc.helpers.Crypt2;
 
 /**
  * Created by Денис on 15.12.2015.
@@ -124,6 +124,14 @@ public class LoginServlet extends HttpServlet {
     }
 
     private boolean logIn(String login, String password) throws ServletException {
+        if (login == null || password == null) {
+            return false;
+        }
+
+        if (login.length() == 0 || password.length() == 0) {
+            return false;
+        }
+
         Logger log = Logger.getLogger("loginlog");
         boolean islog = false;
         try {

@@ -43,6 +43,11 @@
         </multipart-config>
     </servlet>
 
+    <servlet>
+        <servlet-name>IndexServlet</servlet-name>
+        <jsp-file>/index.jsp</jsp-file>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>UploadServlet</servlet-name>
         <url-pattern>/upload</url-pattern>
@@ -51,6 +56,11 @@
     <servlet-mapping>
         <servlet-name>RegistrationServlet</servlet-name>
         <url-pattern>/registration</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>IndexServlet</servlet-name>
+        <url-pattern>/index</url-pattern>
     </servlet-mapping>
     
     <error-page>

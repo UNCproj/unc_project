@@ -1,6 +1,16 @@
 (function() {
     var app = angular.module('login', []);
 
+    $.urlParam = function(name){
+        var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+
+        if (!results) {
+            return 0;
+        }
+
+        return results[1] || 0;
+    };
+
     app.controller('loginController', ['$http', '$timeout', function($http, $timeout) {
         this.login;
         this.pass;
@@ -11,7 +21,14 @@
         this.submit = function() {
             login($http, this, function (data) {
                 if (data["logged"]) {
-                    window.location = "/unc-project/index";
+                    var from = $.urlParam('from');
+
+                    if (from) {
+                        window.location = from;
+                    }
+                    else {
+                        window.location = "/unc-project/index";
+                    }
                 }
                 else {
                     context.isLogInFailed = true;
@@ -22,7 +39,14 @@
         this.vk = function() {
            vk_log($http, this, function (data) {
                 if (data["logged"] == "true") {
-                    window.location = "/unc-project/index";
+                    var from = $.urlParam('from');
+
+                    if (from) {
+                        window.location = "/" + from;
+                    }
+                    else {
+                        window.location = "/unc-project/index";
+                    }
                 }
                 else {
                     context.isLogInFailed = true;

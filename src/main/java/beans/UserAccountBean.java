@@ -1,8 +1,10 @@
 package beans;
 
+import db.DataSource;
+import db.SQLQueriesHelper;
+
 import javax.ejb.Local;
 import javax.ejb.Stateful;
-import javax.servlet.ServletException;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.sql.Connection;
@@ -10,9 +12,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
-import db.DataSource;
-import db.SQLQueriesHelper;
 import java.util.logging.Logger;
 
 /**
@@ -298,5 +299,79 @@ public class UserAccountBean implements UserAccount {
      */
     public void setIsInvalid(boolean isInvalid) {
         this.isInvalid = isInvalid;
+    }
+
+    public ArrayList<AdvertBean> getBookmarks() throws PropertyVetoException, SQLException, IOException {
+        ArrayList<AdvertBean> adverts = new ArrayList<>();
+        ArrayList<String> bookmarksIDs = new ArrayList<>();
+
+        try (Connection connection = DataSource.getInstance().getConnection()) {
+            Statement statement = connection.createStatement();
+            String[] types = new String[1];
+            types[0] = SQLQueriesHelper.USER_TYPE_ID;
+            ResultSet results = statement.executeQuery(
+                    SQLQueriesHelper.selectFullObjectInformationByName(types, login));
+
+            while (results.next()) {
+                if (results.getString("attr_name").equals(SQLQueriesHelper.BOOKMARK_ATTR)) {
+                    String bookmarkId = results.getString("value");
+                    bookmarksIDs.add(bookmarkId);
+                }
+            }
+
+            String[] bIDsStr = Arrays.copyOf(bookmarksIDs.toArray(), bookmarksIDs.size(), String[].class);
+            Statement statement2 = connection.createStatement();
+            results = statement2.executeQuery(
+                    SQLQueriesHelper.selectFullObjectInformationById(
+                            null,
+                            bIDsStr
+                    )
+            );
+
+            while (results.next()) {
+                String currentAdvertId = results.getString("object_id");
+
+                int currentAdvertIndex = -1;
+                for (int i = 0; i < adverts.size(); i++) {
+                    AdvertBean currentAdvertBean = adverts.get(i);
+
+                    if (currentAdvertBean.getAttribute("id") != null &&
+                            currentAdvertBean.getAttribute("id").equals(currentAdvertId)) {
+                        currentAdvertIndex = i;
+                        break;
+                    }
+                }
+
+                if (currentAdvertIndex == -1) {
+                    adverts.add(new AdvertBean());
+                    currentAdvertIndex = adverts.size() - 1;
+                    adverts.get(currentAdvertIndex).setId(results.getString("object_id"));
+                    adverts.get(currentAdvertIndex).setName(results.getString("object_name"));
+                }
+
+                adverts.get(currentAdvertIndex).setAttribute(results.getString("attr_name"), results.getString("value"));
+
+            }
+        }
+
+        return adverts;
+    }
+
+    public void addBookmark(String bookmarkId) throws SQLException, IOException, PropertyVetoException {
+        try (Connection connection = DataSource.getInstance().getConnection()) {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(
+                    SQLQueriesHelper.newReference(getId(), bookmarkId, SQLQueriesHelper.BOOKMARK_ATTR_ID)
+            );
+        }
+    }
+
+    public void deleteBookmark(String bookmarkId) throws PropertyVetoException, SQLException, IOException {
+        try (Connection connection = DataSource.getInstance().getConnection()) {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(
+                    SQLQueriesHelper.deleteReference(getId(), SQLQueriesHelper.BOOKMARK_ATTR_ID, bookmarkId)
+            );
+        }
     }
 }
