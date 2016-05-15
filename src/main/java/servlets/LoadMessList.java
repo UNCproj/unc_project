@@ -24,11 +24,11 @@ import java.util.ArrayList;
 /**
  * Created by alex on 05.05.2016.
  */
-@WebServlet(name = "LoadMessageList", urlPatterns = "/loadMesList")
-public class LoadMessageList extends HttpServlet {
+@WebServlet(name = "LoadMessList", urlPatterns = "/loadMessList")
+public class LoadMessList extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("LoadMessageList");
+        System.out.println("LoadMessList");
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html");
@@ -42,6 +42,12 @@ public class LoadMessageList extends HttpServlet {
                 connection = DataSource.getInstance().getConnection();
                 Statement statement = connection.createStatement();
                 ResultSet resultSet = statement.executeQuery(SQLQueriesHelper.selectAllUsersDialog(id));
+                Thread myThread = Thread.currentThread();
+                try {
+                    myThread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 while(resultSet.next()){
                     String recipient_Id = resultSet.getString("recipient");
                     String recipient_Login = resultSet.getString("login");
@@ -65,6 +71,8 @@ public class LoadMessageList extends HttpServlet {
                     e.printStackTrace();
                 }
             }
+
+
             PrintWriter out = response.getWriter();
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
@@ -74,26 +82,26 @@ public class LoadMessageList extends HttpServlet {
     }
 }
 
-class Message{
-    private String recipientId;
-    private String recipientLogin;
-    private String text;
-    private String date;
-    private String readStatus;
-    private String recipientName;
-    private String recipientSurname;
-    private String messId;
-    private String senderId;
-    Message(String recipientId, String recipientLogin, String text, String date,String readStatus,String recipientName,
-            String recipientSurname,String messId,String senderId){
-        this.recipientId = recipientId;
-        this.recipientLogin = recipientLogin;
-        this.text = text;
-        this.date = date;
-        this.readStatus = readStatus;
-        this.recipientName = recipientName;
-        this.recipientSurname = recipientSurname;
-        this.messId = messId;
-        this.senderId = senderId;
-    }
-        }
+//class Message{
+//    private String recipientId;
+//    private String recipientLogin;
+//    private String text;
+//    private String date;
+//    private String readStatus;
+//    private String recipientName;
+//    private String recipientSurname;
+//    private String messId;
+//    private String senderId;
+//    Message(String recipientId, String recipientLogin, String text, String date,String readStatus,String recipientName,
+//            String recipientSurname,String messId,String senderId){
+//        this.recipientId = recipientId;
+//        this.recipientLogin = recipientLogin;
+//        this.text = text;
+//        this.date = date;
+//        this.readStatus = readStatus;
+//        this.recipientName = recipientName;
+//        this.recipientSurname = recipientSurname;
+//        this.messId = messId;
+//        this.senderId = senderId;
+//    }
+//}

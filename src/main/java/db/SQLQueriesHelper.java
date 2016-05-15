@@ -880,12 +880,13 @@ public class SQLQueriesHelper {
                     "p3.value as sender_message, " +
                     "p4.value as recipient_message, " +
                     "o2.object_name, " +
-                    "case " +
-                    "when p3.value = " + senderId + " then " +
-                    "  null " +
-                    "else " +
-                    "  p5.value " +
-                    "end as read_status " +
+//                    "case " +
+//                    "when p3.value = " + senderId + " then " +
+//                    "  null " +
+//                    "else " +
+//                    "  p5.value " +
+//                    "end as read_status " +
+                    " p5.value as read_status " +
                     "from  unc_objects o1 " +
                     "left join unc_params p1 " +
                     "on p1.OBJECT_ID = o1.OBJECT_ID " +
@@ -914,7 +915,7 @@ public class SQLQueriesHelper {
                     "          on p20.object_id = t1.sender_message and p20.attr_id = 12 " +
                     "          left join unc_params p21 " +
                     "          on p21.object_id = t1.sender_message and p20.attr_id = 14 " +
-                    "where  ROWNUM < 21 " +
+//                    "where  ROWNUM < 21 " +
                     "order by date_message";
             System.out.println("!!!!!!!!!!!!!!!" + query);
             return query;
@@ -928,12 +929,13 @@ public class SQLQueriesHelper {
                     "p3.value as sender_message, " +
                     "p4.value as recipient_message, " +
                     "o2.object_name, " +
-                    "case " +
-                    "when p3.value = " + senderId + " then " +
-                    "  null " +
-                    "else " +
-                    "  p5.value " +
-                    "end as read_status " +
+//                    "case " +
+//                    "when p3.value = " + senderId + " then " +
+//                    "  null " +
+//                    "else " +
+//                    "  p5.value " +
+//                    "end as read_status " +
+                    " p5.value as read_status " +
                     "from  unc_objects o1 " +
                     "left join unc_params p1 " +
                     "on p1.OBJECT_ID = o1.OBJECT_ID " +
@@ -1462,6 +1464,14 @@ public class SQLQueriesHelper {
                 + "      (select CONNECT_BY_ROOT(uot.OT_ID) from UNC_OBJECT_TYPES uot\n"
                 + "      connect by prior uot.OT_ID = uot.PARENT_ID\n"
                 + "      start with uot.OT_ID = " + USER_TYPE_ID + "))";
-     }
-
     }
+    public static String selectCountNewMessage (String userId){
+        String query = "select  count(*) as new_message " +
+                " from  unc_params p1 " +
+                " left join unc_params p2 " +
+                " on p2.object_id = p1.object_id  " +
+                " where  p1.attr_id = 34 and p1.value = " + userId + " " +
+                " and p2.attr_id = 44 and p2.value = 'no'";
+        return query;
+    }
+}
