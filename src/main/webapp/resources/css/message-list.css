@@ -1,16 +1,25 @@
 div.users-message{
-    padding: 15px;
+    padding: 10px;
     margin: 15px 4%;
-    background-color: #dbdbdb;
+    background-color: #f1f1f1;
     border-radius: 3px;
     width: 1000px;
+    /*border: 1px groove #cccccc;*/
+    color: #464646;
     /*color: #fbfbfd;*/
 }
 div.users-message:hover{
-    background-color: #bfbfbf;
+    background-color: #cdcdcd;
     cursor: pointer;
+    /*border: 1px ridge #333434;*/
+    color: #0c0c0c;
     /*color: #23527c;*/
     /*border: 2px ridge black;*/
+}
+div.users-message hr {
+    height: 1px;
+    margin: 10px;
+    background-color: #464646;
 }
 div.message-login{
     width: 800px;
@@ -26,4 +35,10 @@ div.message-text{
     font-size: 18px;
     margin-left: 30px;
 
+}
+div.no-read{
+    padding-left: 20px;
+    background-color: #acacac;
+    border-radius: 5px;
+    width: 920px;
 }
