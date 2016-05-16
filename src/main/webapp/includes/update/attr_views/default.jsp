@@ -10,7 +10,9 @@
                             param.attr_type.equals(\"5\") ||
                             param.attr_type.equals(\"6\")}">
                 <c:choose>
-                    <c:when test="${param.attr_name.equals(\"login\")}">
+                    <c:when test="${param.attr_name.equals(\"login\") ||
+                                    param.attr_name.equals(\"registration_date\") ||
+                                    param.attr_name.equals(\"last_visit_date\")}">
                         <div>${param.attr_value}</div>
                     </c:when>
                     <c:otherwise>
@@ -19,31 +21,42 @@
                 </c:choose>
             </c:when>
             <c:when test="${param.attr_type.equals(\"2\")}">
-                <input id="${param.attr_name}" type="password" ng-init="object.${param.attr_name}='${param.attr_value}'" ng-model="object.${param.attr_name}" />
+                <input id="${param.attr_name}" type="password" ng-model="object.${param.attr_name}" />
             </c:when>
             <c:when test="${param.attr_type.equals(\"3\")}">
+            <script>
+                if (initialUserId == undefined) {
+                    var initialUserId = '${userAccount.getId()}';
+                }
+
+                if (paramAttrName == undefined) {
+                    var paramAttrName = '${param.attr_name}';
+                }
+
+                if (paramAttrValue == undefined) {
+                    var paramAttrValue = '${param.attr_value}';
+                }
+            </script>
             <div id="main"
                  flow-init="{target: '/unc-project/upload', testChunks:false}"
+                 flow-name="uploader.flow"
                  flow-file-added="fileAdded($file, $event, $flow)"
-                 flow-complete="complete()"
-                 flow-name="uploader.flow">
+                 flow-complete="complete()">
 
                 <img id="${param.attr_name}"
                      src="${(param.attr_value != null && param.attr_value.length() > 0) ?
                                                         param.attr_value :
-                                                        initParam["default.image"]}"
-                     style="width: 300px; height: 225px"
-                />
+                                                        initParam["default.image"]}"/>
                 <br/>
-                <label for="load-avatar">Загрузить аватар:</label>
+                <label for="load-avatar">Загрузить:</label>
                 <div id="load-avatar" class="alert bg-primary" flow-drop>
                     Перетащите изображение сюда
                 </div>
                 или
-                <button type="button" flow-btn>Загрузить аватар</button>
+                <button type="button" path="${param.attr_value}" flow-btn>Загрузить</button>
                 <br/>
                 <div class="alert alert-success" role="alert" ng-show="isAvatarChanged">
-                    Аватар успешно обновлен!
+                    Изображение успешно обновлено!
                 </div>
             </div>
             </c:when>

@@ -374,4 +374,10 @@ public class UserAccountBean implements UserAccount {
             );
         }
     }
+
+    public boolean isInBookmarks(String advertId) throws PropertyVetoException, IOException, SQLException {
+        ArrayList<AdvertBean> bookmarks = getBookmarks();
+
+        return bookmarks.stream().anyMatch(advertBean -> advertBean.getId().equals(advertId));
+    }
 }

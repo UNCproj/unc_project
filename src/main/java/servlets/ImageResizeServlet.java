@@ -19,11 +19,10 @@ public class ImageResizeServlet extends HttpServlet {
         String imageName = request.getParameter("imageName");
 
         if (imageName != null) {
-            File uploadDir = new File(getServletContext().getInitParameter("upload.location"));
-            File uploadFile = new File(uploadDir, imageName);
+            File uploadFile = new File(imageName);
 
             ImageResizer ir = new ImageResizer();
-            ir.resize(uploadFile.getAbsolutePath(), uploadFile.getAbsolutePath(), 150, 150);
+            //ir.resize(uploadFile.getAbsolutePath(), uploadFile.getAbsolutePath(), 200, 300);
         }
     }
 

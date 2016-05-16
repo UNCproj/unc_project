@@ -76,6 +76,52 @@
                 };
              
             });
+
+        app.controller("BookmarksController", function ($scope, $http){
+            $scope.isInBookmarks = isInBookmarksGlobal;
+            $scope.bookmarksButtonText = $scope.isInBookmarks ?
+                                            "Удалить закладку" :
+                                            "Добавить закладку";
+
+            $scope.deleteBookmarks = function(advId) {
+                $http({
+                    url: '/unc-project/bookmarks',
+                    method: 'GET',
+                    params: {
+                        'action': 'deleteBookmarks',
+                        'bookmarkId': advId
+                    }
+                })
+                    .success(function(data){
+                        $scope.isInBookmarks = false;
+                        $scope.bookmarksButtonText = "Добавить закладку";
+                    });
+            };
+
+            $scope.addBookmark = function(advertId) {
+                $http({
+                    url: '/unc-project/bookmarks',
+                    method: 'GET',
+                    params: {
+                        'action': 'addBookmark',
+                        'bookmarkId': advertId
+                    }
+                })
+                    .success(function(data){
+                        $scope.isInBookmarks = true;
+                        $scope.bookmarksButtonText = "Удалить закладку";
+                    });
+            }
+
+            $scope.addOrDeleteBookmark = function(advertId) {
+                if ($scope.isInBookmarks) {
+                    $scope.deleteBookmarks(advertId);
+                }
+                else {
+                    $scope.addBookmark(advertId);
+                }
+            }
+        });
 })();
 
 

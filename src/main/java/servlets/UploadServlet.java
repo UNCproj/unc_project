@@ -23,8 +23,7 @@ public class UploadServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Part filePart = request.getPart("file");
         String fileName = request.getParameter("flowFilename");
-        File uploadDir = new File(getServletContext().getInitParameter("upload.location"));
-        File uploadFile = new File(uploadDir, fileName);
+        File uploadFile = new File(fileName);
 
         try(InputStream input = filePart.getInputStream()) {
             Files.copy(input, uploadFile.toPath(), StandardCopyOption.REPLACE_EXISTING);

@@ -367,6 +367,19 @@
                         </div>
                     </div>
                     <% } %>
+                    <%if ("4".equals(currentObject.getParentType()) && user != null) {%>
+                        <script>
+                            var isInBookmarksGlobal = <%=user.isInBookmarks(request.getParameter("id"))%>;
+                        </script>
+
+                        <a class="a-outline button-style"
+                           ng-controller="BookmarksController"
+                           ng-click="addOrDeleteBookmark('<%= request.getParameter("id")%>')"
+                           style="width: 200px; cursor: pointer">
+                            {{bookmarksButtonText}}
+                        </a>
+
+                    <% } %>
                     <%if ("4".equals(currentObject.getParentType()) && user != null && user.isLoggedIn() && !currentObject.isVip()) {%>
                     <div class="robokassa-button" >
                         <ul>
