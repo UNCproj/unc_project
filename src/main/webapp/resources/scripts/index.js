@@ -328,7 +328,6 @@
                 if ($scope.foundedAdsCount == 0) {
                     $scope.foundedAds[0] = {};
                     $scope.foundedAds[0].name = "По Вашему запросу ничего не найдено";
-                    $scope.resultsLoaded = true;
                     $scope.pagesCount = 0;
                 }
                 else if ($scope.foundedAdsCount > 0) {

@@ -40,13 +40,7 @@ public class ElasticSearchManager {
 
     @PostConstruct
     private void createClientInstance() {
-        try {
-            client = TransportClient.builder().build().addTransportAddress(
-                    new InetSocketTransportAddress(InetAddress.getByName("vinokurov2.no-ip.biz"), 9300)
-            );
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
+        getClient();
 
         if (isNeedReindexWhileStarting) {
             reindex();
@@ -62,7 +56,7 @@ public class ElasticSearchManager {
         if (client == null) {
             try {
                 client = TransportClient.builder().build().addTransportAddress(
-                        new InetSocketTransportAddress(InetAddress.getByName("vinokurov2.no-ip.biz"), 9300)
+                        new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300)
                 );
             } catch (UnknownHostException e) {
                 e.printStackTrace();
@@ -73,8 +67,8 @@ public class ElasticSearchManager {
     }
 
     public void reindex() {
-        //deleteIndex();
-        //createIndex();
+        deleteIndex();
+        createIndex();
     }
 
     public void createIndex() {
