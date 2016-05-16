@@ -33,15 +33,15 @@ public class AdvertsSearchBean {
             adCategoryId = advertsManager.getAdCategoryId(adCategoryName);
         }
 
-        ArrayList<String> advertsTypes = advertsManager.getSubCategories(adCategoryId);
+        final ArrayList<String> advertsTypes = advertsManager.getSubCategories(adCategoryId);
 
         if (advertsTypes != null) {
             advertsTypes.add(adCategoryId);
         }
 
-        Client client = elasticSearchManager.getClient();
+        final Client client = elasticSearchManager.getClient();
 
-        SearchRequestBuilder searchRequestBuilder = client.prepareSearch("adverts")
+        final SearchRequestBuilder searchRequestBuilder = client.prepareSearch("adverts")
                 .setSearchType(SearchType.DEFAULT);
 
         if (advertsTypes != null && advertsTypes.size() > 0) {
