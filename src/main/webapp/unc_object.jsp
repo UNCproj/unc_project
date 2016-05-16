@@ -79,7 +79,9 @@
         </c:if>
     </head>
     <body>
-        <input id="rights" type="hidden" value="<%= user.isIsAdmin() ? "admin" : (user.isIsModer() ? "moderator" : "user")%>">
+        <% if (user != null) {%>
+            <input id="rights" type="hidden" value="<%= user.isIsAdmin() ? "admin" : (user.isIsModer() ? "moderator" : "user")%>">
+        <% } %>
         <script type="application/javascript">
             var uncObjectType = ${currentObjectType};
         </script>
