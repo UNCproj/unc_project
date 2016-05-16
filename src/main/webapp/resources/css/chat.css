@@ -33,4 +33,13 @@
 }
 .message-right .mess-text-box{
 }
+.load-previous-messages{
+    text-align: center;
+    font-size: 15px;
+}
+.load-previous-messages:hover{
+    color: #0077c7;
+    text-decoration: underline;
+    cursor: pointer;
+}
 

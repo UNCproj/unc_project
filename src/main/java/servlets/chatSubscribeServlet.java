@@ -65,6 +65,7 @@ public class chatSubscribeServlet extends HttpServlet {
                     }
                 }
             }
+            int n = 0;
             do {
                 String id_message = resultSetOutputMessagees.getString("id_message");
                 String date_message = resultSetOutputMessagees.getString("date_message");
@@ -81,7 +82,8 @@ public class chatSubscribeServlet extends HttpServlet {
                 }
                 Message message = new Message(id_message,date_message,text_message,sender_message, sender_id, recipient_id, read_status, name_, surname_);
                 messagesArray.add(message);
-            }while (resultSetOutputMessagees.next());
+                n++;
+            }while (resultSetOutputMessagees.next() && n<10);
 
             GsonBuilder builder = new GsonBuilder();
             Gson gson = builder.create();
@@ -123,7 +125,7 @@ public class chatSubscribeServlet extends HttpServlet {
             this.recipientId = recipientId;
             this.readStatus = readStatus;
             this.name = name;
-            this.surname = name;
+            this.surname = surname;
         }
     }
 }

@@ -39,7 +39,7 @@ chat.controller('chatController', ['$scope', '$http',
             }).success(function (data) {
                 console.log(data);
 
-                for (var i = data.length - 1; i >= 0; i--) {
+                for (var i = 0; i < data.length - 1; i++) {
                     var name;
                     if( data[i].recipientName!=undefined && data[i].recipientSurname==undefined){
                         name = data[i].recipientName + '(' + data[i].recipientLogin + ')';
