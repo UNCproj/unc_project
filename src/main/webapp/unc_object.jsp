@@ -79,7 +79,9 @@
         </c:if>
     </head>
     <body>
-        <input id="rights" type="hidden" value="<%= user.isIsAdmin() ? "admin" : (user.isIsModer() ? "moderator" : "user")%>">
+        <% if (user != null) {%>
+            <input id="rights" type="hidden" value="<%= user.isIsAdmin() ? "admin" : (user.isIsModer() ? "moderator" : "user")%>">
+        <% } %>
         <script type="application/javascript">
             var uncObjectType = ${currentObjectType};
         </script>
@@ -119,10 +121,10 @@
                     <li><a href="#adstatid" data-toggle="tab">Статистика просмотров</a></li>
                         <% } %>
                         <%if ((user != null) && (user.isIsAdmin()) && (currentObject.getId().equals(user.getId()))) {%>
-                    <li><a href="#adminka" data-toggle="tab">Админка</a></li>
+                    <li><a href="#adminka" data-toggle="tab">Администрирование</a></li>
                         <% } %>
                         <%if ((user != null) && (user.isIsAdmin()) && (!currentObject.getId().equals(user.getId()))) {%>
-                    <li><a href="#adm" data-toggle="tab">Админка</a></li>
+                    <li><a href="#adm" data-toggle="tab">Администрирование</a></li>
                         <% } %>
                         <%if ("1".equals(currentObject.getType()) && user != null && user.getId().equals(request.getParameter("id"))) {%>
                     <li><a href="#messages" data-toggle="tab">Мои сообщения</a></li>
@@ -161,6 +163,7 @@
                             </table>
                         </div>
                         <div>
+                            <% ArrayList<String[]> listReferences = currentObject.lisrReferences(); %>
                             <% if ("1".equals(currentObject.getType()) && user != null && user.getId().equals(request.getParameter("id"))) {%>
                             <a class="a-outline button-style" href="unc_update.jsp?id=<%=request.getParameter("id")%>" style="width: 200px">
                                 Изменить данные
@@ -170,12 +173,17 @@
                                 alert("Покупка не была совершена!");
                             </script>
                             <% request.getSession().setAttribute("RobokassaFail", false); %>
-                            <% }
-                            %> 
+                            <% }  %> 
+                            <%}%>
+                        </div>
+                        <div>
+                            <% if ("4".equals(currentObject.getParentType()) && user != null && listReferences.get(0)[0].equals(user.getId()) ) {%>
+                            <a class="a-outline button-style" href="unc_update.jsp?id=<%=request.getParameter("id")%>" style="width: 200px">
+                                Изменить данные
+                            </a>
                             <%}%>
                         </div>
                         <div class="references">
-                            <% ArrayList<String[]> listReferences = currentObject.lisrReferences(); %>
                             <% if ("1".equals(currentObject.getType())) { %>
                             <h4>Список обьявлений</h4>
                             <ul class="references-ul">
@@ -381,7 +389,7 @@
 
                     <% } %>
                     <%if ("4".equals(currentObject.getParentType()) && user != null && user.isLoggedIn() && !currentObject.isVip()) {%>
-                    <div class="robokassa-button" >
+                    <div class="clearfix robokassa-button" >
                         <ul>
                             <li class="robo-li robokassa-li">
                                 Оплатить Vip-статус за 1,99 р

@@ -505,8 +505,8 @@ public class SQLQueriesHelper {
 
         return query;
     }
-
-    static public String deleteParam(String objectId, String attrId, String value) {
+	
+	static public String deleteParam(String objectId, String attrId, String value) {
         StringBuilder query = new StringBuilder(
                 "delete unc_params where object_id = " + objectId +
                                    " and attr_id = "   + attrId
@@ -914,9 +914,9 @@ public class SQLQueriesHelper {
                     "        left join unc_params p20 " +
                     "          on p20.object_id = t1.sender_message and p20.attr_id = 12 " +
                     "          left join unc_params p21 " +
-                    "          on p21.object_id = t1.sender_message and p20.attr_id = 14 " +
+                    "          on p21.object_id = t1.sender_message and p21.attr_id = 14 " +
 //                    "where  ROWNUM < 21 " +
-                    "order by date_message";
+                    "order by date_message desc";
             System.out.println("!!!!!!!!!!!!!!!" + query);
             return query;
         } else {
@@ -964,7 +964,8 @@ public class SQLQueriesHelper {
                     "        left join unc_params p20 " +
                     "          on p20.object_id = t1.sender_message and p20.attr_id = 12 " +
                     "          left join unc_params p21 " +
-                    "          on p21.object_id = t1.sender_message and p20.attr_id = 14 ";
+                    "          on p21.object_id = t1.sender_message and p21.attr_id = 14 ";
+            System.out.println("@@@@@@@@@@@@@@@@@@@@" + query);
             return query;
         }
     }
@@ -1472,6 +1473,40 @@ public class SQLQueriesHelper {
                 " on p2.object_id = p1.object_id  " +
                 " where  p1.attr_id = 34 and p1.value = " + userId + " " +
                 " and p2.attr_id = 44 and p2.value = 'no'";
+        return query;
+    }
+    public static String selectPreviousMessages (String messId, String sendId, String recId){
+        String query = "select  p1.object_id as mess_id, " +
+                "p1.value as mess_text, " +
+                "p2.date_value as mess_date, " +
+                "p3.value as sender, " +
+                "p4.value as recipient, " +
+                "p5.value as read_status, " +
+                "o1.object_name as login, " +
+                "p6.value as name, " +
+                "p7.value as surname " +
+                "from  unc_params p1 " +
+                "left join unc_params p2 " +
+                "on p2.object_id = p1.object_id " +
+                "left join unc_params p3 " +
+                "on p3.object_id = p1.object_id " +
+                "left join unc_params p4 " +
+                "on p4.object_id = p1.object_id " +
+                "left join unc_params p5 " +
+                "on p5.object_id = p1.object_id " +
+                "left join unc_objects o1 " +
+                "on o1.object_id = p3.value " +
+                "left join unc_params p6 " +
+                "on p6.object_id = p3.value and p6.attr_id = 12 " +
+                "left join unc_params p7 " +
+                "on p7.object_id = p3.value and p7.attr_id = 14 " +
+                "where  p1.attr_id = 31 and p2.attr_id = 32 and p5.attr_id = 44 and " +
+                "p3.attr_id = 33 and p4.attr_id = 34 and  " +
+                "((p3.value = " + sendId +" and p4.value = " +recId+") or " +
+                "(p3.value = "+recId+" and p4.value = "+sendId+" )) and " +
+                "p2.date_value<(select date_value from unc_params where attr_id = 32 and object_id = "+messId+")  " +
+                "order by p2.date_value desc";
+        System.out.println(query);
         return query;
     }
 }
