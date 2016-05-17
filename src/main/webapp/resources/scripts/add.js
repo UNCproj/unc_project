@@ -12,7 +12,7 @@ $(function () {
         var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
         return results[1] || 0;
     };
-    
+
     app.controller('addController', ['$scope', '$http', '$timeout', '$document',
         function ($scope, $http, $timeout) {
             $scope.object = {};
@@ -371,25 +371,14 @@ $(function () {
                     $("div.attributes table.table-params tbody").append(
                         '<tr>' +
                         '<td>' +
-                        a_ru_name +
+                            a_ru_name +
                         '</td>' +
                         '<td>' +
-                        '<input type="number" ng-model="object.' + a_name + '" id="' + a_name + '"/>' +
+                            '<input type="number" ng-model="object.' + a_name + '" id="' + a_name + '"/>' +
                         '</td>' +
                         '</tr>'
                     );
-                } else if (a_type == 6) {
-                    $("div.attributes table.table-params tbody").append(
-                        '<tr>' +
-                            '<td>' +
-                                a_ru_name+
-                            '</td>'+
-                            '<td>' +
-                                '<input type="number" ng-model="object.'+a_name+'" id="'+a_name+'"/>' +
-                            '</td>'+
-                        '</tr>'
-                    );
-                }else if(a_type==6){
+                } else if(a_type==6){
                     var cityInput =
                         $('<tr>' +
                             '<td>' +
@@ -418,43 +407,7 @@ $(function () {
                                 '<div id="map" style="width: 500px; height:300px"></div>' +
                                 '<input id="clear-markers" type="button" value="Удалить маркер" width="100px">' +
                             '</td>'+
-                        '<td>' +
-                        a_ru_name +
-                        '</td>' +
-                        '<td>' +
-                        '<select id="' + a_name + '" ng-model="object.' + a_name + '" required ng-options="n for n in ' + a_name + '">' +
-                        '</select>' +
-                        '</td>' +
-                        '</tr>'
-                    );
-                    if (a_name == 'city') {
-                        $("div.attributes select#city").append(
-                            '<option disabled value="">Выберите ' + a_ru_name.toLowerCase() + '</option>');
-                        for (var i = 0; i < $scope.city.length; i++) {
-                            $("div.attributes select#city").append('<option value="' + $scope.city[i] + '">' + $scope.city[i] + '</option>');
-                        }
-                    }
-                    ;
-                    if (a_name == 'vip_status') {
-                        $("div.attributes select#vip_status").append('<option value="">Выбрать VIP-статус</option>' +
-                            '<option value="Gold">Золотой</option>' +
-                            '<option value="Platinum">Платиновый</option>');
-                        $("div.attributes tbody tr:last td:last").append("<p>Если хотите реализовать свое объявление " +
-                            "быстрее, воспользуйтесь услугой VIP-статус.</p>");
-
-                    }
-                    ;
-                } else if (a_type == 8) {
-                    $("div.attributes table.table-params tbody").append(
-                        '<tr>' +
-                        '<td>' +
-                        a_ru_name +
-                        '</td>' +
-                        '<td>' +
-                        '<input id="addr-input" class="controls" type="text" placeholder="Введите адрес">' +
-                        '<div id="map" style="width: 500px; height:300px"></div>' +
-                        '</td>' +
-                        '</tr>'
+                        '<td>'
                     );
                     initMap();
                 }
@@ -636,7 +589,6 @@ $(function () {
                         map.setCenter(centerCoords);
 
                         google.maps.event.addListener(map, 'click', function (event) {
-                            placeMarker(event.latLng, map);
                             setCityToParam(event.latLng);
                         });
                     });
@@ -680,7 +632,6 @@ $(function () {
 
                     marker.setPosition(location);
                     $scope.map_coordinates = {lat: location.lat(), lon: location.lng()};
-                    $('#city').prop('disabled', true);
                 }
 
                 function setCityToParam(location) {
@@ -688,7 +639,10 @@ $(function () {
                         if (status === google.maps.GeocoderStatus.OK) {
                             $.each(results[0].address_components, function(i, component) {
                                 if (component.types[0] == "locality") {
-                                    $('#city').attr('value', component.long_name);
+                                    placeMarker(location, map);
+                                    $('#city').prop('value', component.long_name);
+                                    $('#city').prop('disabled', true);
+                                    return false;
                                 }
                             });
                         }
