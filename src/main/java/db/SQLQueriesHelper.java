@@ -502,7 +502,7 @@ public class SQLQueriesHelper {
                 + "                               s.value, \n"
                 + "                               s.date_value\n"
                 + "                              )";
-
+        System.out.println(query);
         return query;
     }
 	

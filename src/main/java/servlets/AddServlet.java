@@ -80,7 +80,14 @@ public class AddServlet extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         PrintWriter out = response.getWriter();
-        out.println("1");
+        System.out.println(type);
+        if (type.equals("advert")){
+            System.out.println(obj.getAdvertId());
+            out.println(obj.getAdvertId());
+        } else {
+            out.println("1");
+        }
     }
 }

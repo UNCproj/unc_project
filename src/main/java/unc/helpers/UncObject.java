@@ -27,6 +27,7 @@ public class UncObject {
     private ArrayList<Param> params;
     private ArrayList<String> attributeGroups;
     private String userId;
+    private String advertId;
 
     public UncObject() {
         params = new ArrayList<>();
@@ -131,6 +132,7 @@ public class UncObject {
             ResultSet results = (statement.executeQuery(SQLQueriesHelper.newId()));
             results.next();
             id = results.getString("id");
+            advertId = id;
             statement.executeUpdate(SQLQueriesHelper.insertObject(id, type, name));
 
             if (userId != null) {
@@ -433,5 +435,8 @@ public class UncObject {
             }
         }
         return null;
+    }
+    public String getAdvertId (){
+        return advertId;
     }
 }
