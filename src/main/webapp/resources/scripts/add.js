@@ -200,8 +200,8 @@ $(function () {
 
             $scope.postAdd = function (p) {
                 console.log("Начали грузить");
-                p.map_coordinates = $scope.map_coordinates;
-                var citySplitted = p.city.split(',');
+                p.map_coordinates = $scope.map_coordinates;		
+				var citySplitted = p.city.split(',');
 
                 if (citySplitted.length > 0) {
                     p.city = citySplitted[0];
@@ -371,10 +371,10 @@ $(function () {
                     $("div.attributes table.table-params tbody").append(
                         '<tr>' +
                         '<td>' +
-                            a_ru_name +
+                        a_ru_name +
                         '</td>' +
                         '<td>' +
-                            '<input type="number" ng-model="object.' + a_name + '" id="' + a_name + '"/>' +
+                        '<input type="number" ng-model="object.' + a_name + '" id="' + a_name + '"/>' +
                         '</td>' +
                         '</tr>'
                     );
