@@ -13,8 +13,8 @@ $(function(){
         return results[1] || 0;
     };
 
-    app.controller('addController', ['$scope', '$http', '$timeout', '$document',
-        function($scope, $http, $timeout) {
+    app.controller('addController', ['$scope', '$http', '$timeout', '$document', '$compile',
+        function($scope, $http, $timeout, $compile) {
             $scope.object = {};
             $scope.object.type = $.urlParam('type');
             $scope.arrAttr = [];
@@ -188,6 +188,11 @@ $(function(){
 
             $scope.postAdd = function(p){
                 p.map_coordinates = $scope.map_coordinates;
+                var citySplitted = p.city.split(',');
+
+                if (citySplitted.length > 0) {
+                    p.city = citySplitted[0];
+                }
 
                 if ($scope.validationBefore() == true) {
                     $http({
@@ -317,32 +322,23 @@ $scope.validationBefore = function () {
                         '</tr>'
                     );
                 }else if(a_type==6){
-                    $("div.attributes table.table-params tbody").append(
-                        '<tr>' +
+                    var cityInput =
+                        $('<tr>' +
                             '<td>' +
-                                a_ru_name +
+                                a_ru_name+
                             '</td>'+
                             '<td>' +
-                                '<select id="'+a_name+'" ng-model="object.'+a_name+'" required ng-options="n for n in '+a_name+'">' +
-                                '</select>' +
+                                '<input type="text" id="' + a_name + '">' +
                             '</td>'+
-                        '</tr>'
-                    );
-                    if(a_name=='city') {
-                        $("div.attributes select#city").append(
-                            '<option disabled value="">Выберите ' + a_ru_name.toLowerCase() +'</option>');
-                        for (var i = 0; i < $scope.city.length; i++) {
-                            $("div.attributes select#city").append('<option value="' + $scope.city[i] + '">'+$scope.city[i]+'</option>');
-                        }
-                    };
-                    if(a_name=='vip_status'){
-                        $("div.attributes select#vip_status").append('<option value="">Выбрать VIP-статус</option>'+
-                            '<option value="Gold">Золотой</option>' +
-                            '<option value="Platinum">Платиновый</option>');
-                        $("div.attributes tbody tr:last td:last").append("<p>Если хотите реализовать свое объявление " +
-                            "быстрее, воспользуйтесь услугой VIP-статус.</p>");
+                          '</tr>');
 
+                    $("div.attributes table.table-params tbody").append(cityInput);
+
+                    var options = {
+                        types: ['(cities)']
                     };
+
+                    var autocomplete = new google.maps.places.Autocomplete($('#' + a_name)[0], options);
                 }else if (a_type==8) {
                     $("div.attributes table.table-params tbody").append(
                         '<tr>' +
@@ -352,6 +348,7 @@ $scope.validationBefore = function () {
                             '<td>' +
                                 '<input id="addr-input" class="controls" type="text" placeholder="Введите адрес">' +
                                 '<div id="map" style="width: 500px; height:300px"></div>' +
+                                '<input id="clear-markers" type="button" value="Удалить маркер" width="100px">' +
                             '</td>'+
                         '</tr>'
 
@@ -507,9 +504,20 @@ $scope.validationBefore = function () {
 
             function initMap() {
                 var mapElem = $('#map');
+                var clearButton = $('#clear-markers');
                 var marker = null;
                 var centerCoords;
                 var scope = $scope;
+                var geocoder = new google.maps.Geocoder;
+
+                clearButton.on('click', function() {
+                    if (marker != null) {
+                        marker.setMap(null);
+                        marker = null;
+                    }
+
+                    $('#city').prop('disabled', false);
+                });
 
                 var map = new google.maps.Map(mapElem.get(0), {
                     zoom: 16
@@ -526,6 +534,7 @@ $scope.validationBefore = function () {
 
                         google.maps.event.addListener(map, 'click', function(event) {
                             placeMarker(event.latLng, map);
+                            setCityToParam(event.latLng);
                         });
                     });
                 }
@@ -568,6 +577,19 @@ $scope.validationBefore = function () {
 
                     marker.setPosition(location);
                     $scope.map_coordinates = {lat: location.lat(), lon: location.lng()};
+                    $('#city').prop('disabled', true);
+                }
+
+                function setCityToParam(location) {
+                    geocoder.geocode({'location': location}, function(results, status) {
+                        if (status === google.maps.GeocoderStatus.OK) {
+                            $.each(results[0].address_components, function(i, component) {
+                                if (component.types[0] == "locality") {
+                                    $('#city').attr('value', component.long_name);
+                                }
+                            });
+                        }
+                    });
                 }
             }
         }

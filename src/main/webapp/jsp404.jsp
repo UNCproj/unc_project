@@ -17,6 +17,7 @@
     <script src="resources/scripts/angular.min.js"></script>
     <script src="resources/scripts/bootstrap.min.js"></script>
     <script src="resources/scripts/chat.js"></script>
+    <script src="resources/scripts/jsp404.js"></script>
     <link rel="stylesheet" href="resources/css/chat.css">
     <link rel="stylesheet" type="text/css" href="resources/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="resources/css/angular-chart.css">
@@ -24,7 +25,7 @@
     <link rel="stylesheet" type="text/css" href="resources/css/params.css">
     <link rel="stylesheet" href="resources/css/jsp404.css">
 </head>
-<body>
+<body ng-app="jsp404">
 <div class="main">
     <div id="header">
         <ul class="menu">
@@ -33,6 +34,9 @@
     </div>
     <div class="content">
         <img src="resources/img/desk.png" alt="" class="desk">
+        <div class="other" ng-controller="loadAdvertsController">
+
+        </div>
         <c:if test="${param.message != null}">
             <div class="sticker">
                 <div class="message">${param.message}</div>
