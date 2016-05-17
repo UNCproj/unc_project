@@ -5,3 +5,4 @@
 <script src="/unc-project/resources/scripts/add.js"></script>
 <script src="/unc-project/resources/scripts/index.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDhpSFPZwg079hJYU1k7QmZ9Vsfy8VWLWo&libraries=places&sensor=false"></script>
+<script type="text/javascript" src="resources/scripts/ng-flow-standalone.min.js"></script>

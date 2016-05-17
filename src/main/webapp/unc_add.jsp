@@ -143,10 +143,33 @@
                         <input type="button" class="button-style a-outline button-update" value="Добавить" ng-click="postAdd(object)" />
                         <%
                         }%>
+                        <div class="file-photo"
+                             flow-init="{target: '/unc-project/upload', testChunks:false}"
+                             flow-name="uploader.flow"
+                             flow-file-added="fileCopy($file, $event, $flow)"
+                             flow-complete="complete()">
+
+                            <label for="load-avatar">Загрузить фото:</label>
+                            <div id="load-avatar" class="alert bg-primary" flow-drop>
+                                Перетащите изображение сюда
+                            </div>
+                            или
+                            <button type="button" flow-btn>Загрузить фото</button>
+                            <br/>
+                            <div class="alert alert-success" role="alert" ng-show="isAvatarChanged">
+                                Изображение успешно обновлено!
+                            </div>
+                            <tr ng-repeat="file in $flow.files">
+                                <td>{{$index+1}}</td>
+                                <td>{{file.name}}</td>
+                            </tr>
+                            <img flow-img="$flow.files[0]" />
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
+
     </div>
     <c:catch>
         <c:import url="/includes/object/footers/default.jspf"/>
