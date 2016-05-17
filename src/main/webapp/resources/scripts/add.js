@@ -12,15 +12,9 @@ $(function () {
         var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
         return results[1] || 0;
     };
-
-<<<<<<< HEAD
-    app.controller('addController', ['$scope', '$http', '$timeout', '$document', '$compile',
-        function($scope, $http, $timeout, $compile) {
-=======
+    
     app.controller('addController', ['$scope', '$http', '$timeout', '$document',
         function ($scope, $http, $timeout) {
-
->>>>>>> 4986bab66a832338d26f95df32b0fa355242d935
             $scope.object = {};
             $scope.object.type = $.urlParam('type');
             $scope.arrAttr = [];
@@ -387,7 +381,6 @@ $(function () {
                 } else if (a_type == 6) {
                     $("div.attributes table.table-params tbody").append(
                         '<tr>' +
-<<<<<<< HEAD
                             '<td>' +
                                 a_ru_name+
                             '</td>'+
@@ -425,7 +418,6 @@ $(function () {
                                 '<div id="map" style="width: 500px; height:300px"></div>' +
                                 '<input id="clear-markers" type="button" value="Удалить маркер" width="100px">' +
                             '</td>'+
-=======
                         '<td>' +
                         a_ru_name +
                         '</td>' +
@@ -462,7 +454,6 @@ $(function () {
                         '<input id="addr-input" class="controls" type="text" placeholder="Введите адрес">' +
                         '<div id="map" style="width: 500px; height:300px"></div>' +
                         '</td>' +
->>>>>>> 4986bab66a832338d26f95df32b0fa355242d935
                         '</tr>'
                     );
                     initMap();
