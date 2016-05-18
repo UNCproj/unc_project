@@ -23,7 +23,9 @@ $(function () {
             $scope.uploader = {};
             $scope.path;
             $scope.file;
-
+            $("#printFiles").on("click",function(){
+                console.log($scope.uploader.flow);
+            });
             $("div.file-photo").hide();
 
             if ($.urlParam('type') == 'forum_topic') {
@@ -250,12 +252,17 @@ $(function () {
                                     }
                                 }
                                 $scope.fileAdded = function () {
-                                    $scope.uploader.flow.files[0] = $scope.file;
-                                    for (var i = 0; i < $scope.uploader.flow.files.length; i++) {
+                                    //$scope.uploader.flow.files[0] = $scope.file;
+                                    var files = $scope.uploader.flow.files;
+                                    for (var i = 0; i < files.length; i++) {
+                                        delete $scope.uploader.flow.files[i];
+                                    }
+                                    for (var i = 0; i < files.length; i++) {
+                                        $scope.uploader.flow.files[0] = files[i];
                                         var path = $scope.path;
 
                                         //if (path == undefined || path == null || path.length <= 0) {
-                                            path = '/var/' + $scope.advertId + '-' + i + '.png';
+                                        path = '/var/' + $scope.advertId + '-' + i + '.png';
                                         //}
 
                                         console.log(path);

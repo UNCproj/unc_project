@@ -3,6 +3,9 @@ body{
     margin: 0px;
     padding: 0px;
 }
+img{
+    width: 100px;
+}
 .list-group{
     font-size: 18px;
     margin: 0px;
