@@ -45,7 +45,7 @@ public class LoadVipAdverts extends HttpServlet {
 
             while (resultSet.next()){
                 vipAdvertsArray.add(new VipAdvert(resultSet.getString("object_id"),
-                        resultSet.getString("object_name"),resultSet.getString("value") ));
+                        resultSet.getString("object_name"),resultSet.getString("value")  ,resultSet.getString("files")));
             }
 
 
@@ -67,14 +67,17 @@ public class LoadVipAdverts extends HttpServlet {
 
         out.println(gson.toJson(vipAdvertsArray));
     }
+
     class VipAdvert {
         private String id;
         private String name;
         private String price;
-        VipAdvert(String id, String name, String price){
+        private String foto;
+        VipAdvert(String id, String name, String price, String foto){
             this.id = id;
             this.name = name;
-            this. price = price;
+            this.price = price;
+            this.foto = foto;
         }
 
         public String getId() {
@@ -99,6 +102,14 @@ public class LoadVipAdverts extends HttpServlet {
 
         public void setPrice(String price) {
             this.price = price;
+        }
+
+        public String getFoto() {
+            return foto;
+        }
+
+        public void setFoto(String foto) {
+            this.foto = foto;
         }
     }
 }
