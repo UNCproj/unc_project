@@ -548,14 +548,14 @@ public class SQLQueriesHelper {
         return query;
     }
 
-    static public String getAllHierarchyAttributes(String typeId) {
+    static public String getAllHierarchyAttributes() {
         String query = "select a.attr_name, uao.attr_group_id, uao.attr_name_ru "
                 + "  from unc_attr_object_types uao "
                 + "  left join unc_attributes a "
                 + "    on uao.attr_id = a.attr_id "
                 + " where uao.ot_id in (select ot_id "
                 + "                       from unc_object_types "
-                + "                      start with ot_id = " + typeId
+                + "                      start with ot_id = ?"
                 + "                    connect by ot_id = prior parent_id)"
                 + " order by uao.attr_order nulls last";
         return query;
@@ -571,24 +571,24 @@ public class SQLQueriesHelper {
         return query;
     }
 
-    static public String getTypeIdByObjectId(String objectId) {
+    static public String getTypeIdByObjectId() {
         String query = "select o.object_type_id as type_id\n"
                 + "from unc_objects o\n"
-                + "where o.object_id = " + objectId;
+                + "where o.object_id = ?";
         return query;
     }
 
-    static public String getParentTypeIdByObjectTypeId(String objectType) {
+    static public String getParentTypeIdByObjectTypeId() {
         String query = "SELECT  CONNECT_BY_ROOT uot.OT_ID as praperent\n"
                 + "FROM unc_object_types uot\n"
-                + "where uot.ot_id = " + objectType + "\n"
+                + "where uot.ot_id = ?\n"
                 + "START WITH uot.PARENT_ID is null\n"
                 + "CONNECT BY PRIOR ot_id = parent_id";
         return query;
     }
 
-    static public String insertAdStat(String adId) {
-        String query = "insert into unc_stat(ID,OBJ_ID, VISIT_DATE) values(getid, " + adId + ","
+    static public String insertAdStat() {
+        String query = "insert into unc_stat(ID,OBJ_ID, VISIT_DATE) values(getid, ?,"
                 + "to_date('" + new SimpleDateFormat("dd.MM.yy").format(new Date()) + "', 'DD.MM.YY')"
                 + ")";
         return query;

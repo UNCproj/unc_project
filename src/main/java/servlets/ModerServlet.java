@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -111,14 +112,19 @@ public class ModerServlet extends HttpServlet {
             }
             try {
                 //String comm = SQLQueriesHelper.updateParam(new BigDecimal(id), attr_id, "true", null);
-                String comm = SQLQueriesHelper.getTypeIdByObjectId(id);
-                log.info("checktype1 " + comm);
-                ResultSet res = st.executeQuery(comm);
+                PreparedStatement statement = connection.prepareStatement(SQLQueriesHelper.getTypeIdByObjectId());
+                statement.setBigDecimal(1, new BigDecimal(id));
+                String comm = SQLQueriesHelper.getTypeIdByObjectId();
+                log.info("checktype1 " + statement);
+                ResultSet res = statement.executeQuery();
                 res.next();
                 String typeId = res.getString(1);
-                comm = SQLQueriesHelper.getParentTypeIdByObjectTypeId(typeId);
+                statement.close();
+                statement = connection.prepareStatement(SQLQueriesHelper.getParentTypeIdByObjectTypeId());
+                statement.setInt(1, new Integer(typeId));
+                comm = SQLQueriesHelper.getParentTypeIdByObjectTypeId();
                 log.info("checktype2 " + comm);
-                res = st.executeQuery(comm);
+                res = statement.executeQuery();
                 res.next();
                 String type = res.getString(1);
                 if (!type.equals(SQLQueriesHelper.ADVERT_TYPE_ID) && !type.equals(SQLQueriesHelper.USER_TYPE_ID)) {
@@ -126,6 +132,7 @@ public class ModerServlet extends HttpServlet {
                     log.info(type);
                     return;
                 }
+                statement.close();
                 comm = "select value from unc_params where "
                         + "object_id=" + id + " "
                         + "and attr_id=" + SQLQueriesHelper.INVALID_ATTR_ID;

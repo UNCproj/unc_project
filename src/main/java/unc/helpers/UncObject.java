@@ -13,6 +13,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.PreparedStatement;
 import java.util.logging.Logger;
 
 /**
@@ -317,26 +318,37 @@ public class UncObject {
     }
 
     public void loadAttributesListFromDB() throws PropertyVetoException, SQLException, IOException {
-        try(Connection connection = DataSource.getInstance().getConnection();
-            Statement statement = connection.createStatement())
+        try(Connection connection = DataSource.getInstance().getConnection())
         {
+            PreparedStatement statement = connection.prepareStatement(SQLQueriesHelper.getTypeIdByObjectId());
+            statement.setBigDecimal(1, new BigDecimal(id));
             if (type == null || type.length() == 0) {
-                ResultSet results = statement.executeQuery(SQLQueriesHelper.getTypeIdByObjectId(id));
+                ResultSet results = statement.executeQuery();
                 results.next();
                 type = results.getString("type_id");
-                ResultSet results1 = statement.executeQuery(SQLQueriesHelper.getParentTypeIdByObjectTypeId(type));
+                statement.close();
+                statement = connection.prepareStatement(SQLQueriesHelper.getParentTypeIdByObjectTypeId());
+                statement.setInt(1, new Integer(type));
+                
+                
+                ResultSet results1 = statement.executeQuery();
                 results1.next();
                 parentType = ""+results1.getInt("praperent");
+                statement.close();
                 
             }
             
             if (parentType!=null && parentType.equals(SQLQueriesHelper.ADVERT_TYPE_ID) && 
                     id!=null && ((getParam("is_invalid")!= null && !getParam("is_invalid").getValue().equals("true")) || getParam("is_invalid")==null)){
-                statement.execute(SQLQueriesHelper.insertAdStat(id));
+                statement = connection.prepareStatement(SQLQueriesHelper.insertAdStat());
+                statement.setBigDecimal(1, new BigDecimal(id));
+                statement.execute();
+                statement.close();
                 connection.commit();
             }
-            
-            ResultSet results = statement.executeQuery(SQLQueriesHelper.getAllHierarchyAttributes(type));
+            statement = connection.prepareStatement(SQLQueriesHelper.getAllHierarchyAttributes());
+            statement.setInt(1, new Integer(type));
+            ResultSet results = statement.executeQuery();
 
             while (results.next()) {
                 String group = results.getString("attr_group_id");
