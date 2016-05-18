@@ -5,16 +5,29 @@
         function($scope, $http) {
             $scope.loadedAdverts = [];
 
+            var shuffle = function(array) {
+                var currentIndex = array.length, temporaryValue, randomIndex;
+
+                while (0 !== currentIndex) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex -= 1;
+                    temporaryValue = array[currentIndex];
+                    array[currentIndex] = array[randomIndex];
+                    array[randomIndex] = temporaryValue;
+                }
+
+                return array;
+            };
+
             $http({
-                url: 'advertsList',
+                url: 'load-vip-adverts',
                 method: 'POST',
                 params: {
-                    "action": "get_adverts",
-                    "adCategoryId": "4"
+                    "type": 'advert'
                 }
             })
-                .success(function (data) {
-                    $scope.loadedAdverts = data;
+                .success(function(data) {
+                    $scope.loadedAdverts = shuffle(data).slice(0, 2);
                 });
         }
     ]);

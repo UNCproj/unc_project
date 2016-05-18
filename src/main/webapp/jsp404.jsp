@@ -35,12 +35,16 @@
     <div class="content">
         <img src="resources/img/desk.png" alt="" class="desk">
         <div class="other" ng-controller="loadAdvertsController">
-
+            <div class="left">
+                {{loadedAdverts[0].name}}
+            </div>
+            <div class="right">
+                {{loadedAdverts[1].name}}
+            </div>
         </div>
         <c:if test="${param.message != null}">
             <div class="sticker">
                 <div class="message">${param.message}</div>
-                <img src="resources/img/sticker.png" alt="">
             </div>
         </c:if>
     </div>

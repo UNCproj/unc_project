@@ -227,6 +227,18 @@
     z-index: 2;
 }
 
+.vip-adverts .list-group-item .name h3 {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.vip-adverts .list-group-item .description {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 .content:after {
     content: " ";
     display: block;

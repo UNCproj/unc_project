@@ -34,3 +34,25 @@
     width: 200px;
     height: 150px;
 }
+
+.advertsWrapper .list-group-item .name h3 {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.advertsWrapper .list-group-item .description {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.advertsWrapper .list-group-item .remove-button {
+    color: #00a9e0;
+    position: absolute;
+    left: 15px;
+}
+
+.advertsWrapper .list-group-item .remove-button:hover {
+    color: #2b669a;
+}

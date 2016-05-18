@@ -27,3 +27,9 @@
     margin-left: 20%;
     font-size: 20px;
 }
+
+.other {
+    position: absolute;
+    z-index: 10;
+    top: -50%;
+}

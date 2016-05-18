@@ -22,7 +22,7 @@ public class ImageResizeServlet extends HttpServlet {
             File uploadFile = new File(imageName);
 
             ImageResizer ir = new ImageResizer();
-            ir.resize(uploadFile.getAbsolutePath(), uploadFile.getAbsolutePath(), 300, 150);
+            //ir.resize(uploadFile.getAbsolutePath(), uploadFile.getAbsolutePath(), 300, 150);
         }
     }
 
