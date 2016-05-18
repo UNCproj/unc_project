@@ -21,7 +21,7 @@
         </div>
     </div>
     <div  class="errors-wrapper col-sm-offset-2 col-sm-10">
-        <div class="alert alert-danger" ng-show="loginCtrl.isLogInFailed">Неверный логин или пароль</div>
+        <div class="alert alert-danger" ng-show="loginCtrl.isLogInFailed">{{loginCtrl.cause}}</div>
     </div>
     <img src="resources/img/ajax-loader.gif" class="loading-bar" ng-show="loginCtrl.isLogging" />
 

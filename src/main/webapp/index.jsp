@@ -170,8 +170,18 @@
                     <%--Результаты поиска--%>
                     <div class="pagination-wrapper" ng-if="pagesCount > 0">
                         <ul class="pagination">
+                            <li ng-class="{active: $index == activePageNum}">
+                                <a href="" ng-click="makePageActive(1)">
+                                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                                </a>
+                            </li>
                             <li ng-repeat="advPage in getPages() track by $index" ng-class="{active: $index == activePageNum}">
                                 <a href="" ng-click="makePageActive($index)">{{$index + 1}}</a>
+                            </li>
+                            <li ng-class="{active: $index == activePageNum}">
+                                <a href="" ng-click="makePageActive(getPages().length)">
+                                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                                </a>
                             </li>
                         </ul>
                     </div>

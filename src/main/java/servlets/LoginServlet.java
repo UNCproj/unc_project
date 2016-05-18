@@ -32,9 +32,11 @@ import java.util.logging.Logger;
 public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        boolean isLoggedIn = logIn(request.getParameter("login"), request.getParameter("pass"));
+        JsonObject responseJSON = logIn(request.getParameter("login"), request.getParameter("pass"));
+        boolean isLoggedIn = responseJSON
+                .get("logged")
+                .getAsBoolean();
         PrintWriter out;
-        JsonObject responseJSON = new JsonObject();
 
         try {
             out = response.getWriter();
@@ -116,20 +118,25 @@ public class LoginServlet extends HttpServlet {
             request.getSession().setAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY, userAccountBean);
         }
 
-        responseJSON.addProperty("logged", isLoggedIn);
         if (userId != null) {
             responseJSON.addProperty("userId", userId.toString());
         }
         out.print(responseJSON);
     }
 
-    private boolean logIn(String login, String password) throws ServletException {
+    private JsonObject logIn(String login, String password) throws ServletException {
+        JsonObject constrViolationsJSON = new JsonObject();
+
         if (login == null || password == null) {
-            return false;
+            constrViolationsJSON.addProperty("logged", false);
+            constrViolationsJSON.addProperty("cause", "Нужно ввести логин и пароль");
+            return constrViolationsJSON;
         }
 
         if (login.length() == 0 || password.length() == 0) {
-            return false;
+            constrViolationsJSON.addProperty("logged", false);
+            constrViolationsJSON.addProperty("cause", "Нужно ввести логин и пароль");
+            return constrViolationsJSON;
         }
 
         Logger log = Logger.getLogger("loginlog");
@@ -142,7 +149,9 @@ public class LoginServlet extends HttpServlet {
             types[1] = "2";
             ResultSet result = statement.executeQuery(SQLQueriesHelper.selectFullObjectInformationByName(types, login));
             if (result == null) {
-                return false;
+                constrViolationsJSON.addProperty("logged", false);
+                constrViolationsJSON.addProperty("cause", "Пользователь не зарегистрирован");
+                return constrViolationsJSON;
             }
             while (result.next()) {
                 String attrName = result.getString("attr_name");
@@ -150,7 +159,9 @@ public class LoginServlet extends HttpServlet {
                     String attr_value = result.getString("value");
                     if ((attr_value!=null)&&(attr_value.equals("true"))){
                         islog = false;
-                        return islog;
+                        constrViolationsJSON.addProperty("logged", false);
+                        constrViolationsJSON.addProperty("cause", "Пользователь заблокирован");
+                        return constrViolationsJSON;
                     }
                 }
                 
@@ -161,7 +172,9 @@ public class LoginServlet extends HttpServlet {
                     }
                     else {
                         islog = false;
-                        return islog;
+                        constrViolationsJSON.addProperty("logged", false);
+                        constrViolationsJSON.addProperty("cause", "Неверный пароль");
+                        return constrViolationsJSON;
                     }
                 }
             }
@@ -169,6 +182,7 @@ public class LoginServlet extends HttpServlet {
             throw new ServletException(e);
         }
 
-        return islog;
+        constrViolationsJSON.addProperty("logged", true);
+        return constrViolationsJSON;
     }
 }
