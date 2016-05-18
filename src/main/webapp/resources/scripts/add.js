@@ -252,24 +252,12 @@ $(function () {
                                     }
                                 }
                                 $scope.fileAdded = function () {
-                                    //$scope.uploader.flow.files[0] = $scope.file;
-                                    var files = $scope.uploader.flow.files;
-                                    for (var i = 0; i < files.length; i++) {
-                                        delete $scope.uploader.flow.files[i];
-                                    }
-                                    for (var i = 0; i < files.length; i++) {
-                                        $scope.uploader.flow.files[0] = files[i];
+                                    for (var i = 0; i < $scope.uploader.flow.files.length; i++) {
                                         var path = $scope.path;
 
-                                        //if (path == undefined || path == null || path.length <= 0) {
                                         path = '/var/' + $scope.advertId + '-' + i + '.png';
-                                        //}
 
-                                        console.log(path);
-                                        $scope.uploader.flow.files[0].name = path;
-                                        console.log($scope.uploader.flow.files[0].name);
-                                        console.log($scope.uploader.flow.files[0]);
-                                        console.log($scope.uploader.flow);
+                                        $scope.uploader.flow.files[i].name = path;
                                         $scope.uploader.flow.upload();
                                         $http({
                                             url: '/unc-project/saveAttrPicServlet',
@@ -660,8 +648,6 @@ $(function () {
                 console.log("$scope.file" + $scope.file);
                 console.log("$scope.path" + $scope.path);
 
-                //$scope.uploader.flow.files[0].name = path; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                //$scope.uploader.flow.upload();
             };
         }
     ]);
