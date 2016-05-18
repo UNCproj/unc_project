@@ -58,7 +58,13 @@
     if (user != null) {
         request.setAttribute("uname", user.getId());
     }
-%>
+    
+    if (request.getSession().getAttribute("RobokassaFail") != null && (boolean) request.getSession().getAttribute("RobokassaFail")) { %>
+    <script language=JavaScript>
+        alert("Покупка не была совершена!");
+    </script>
+    <% request.getSession().setAttribute("RobokassaFail", false); 
+} %> 
 
 <!DOCTYPE html>
 <html ng-app="objectSettings">
@@ -168,12 +174,6 @@
                             <a class="a-outline button-style" href="unc_update.jsp?id=<%=request.getParameter("id")%>" style="width: 200px">
                                 Изменить данные
                             </a>
-                            <% if (request.getSession().getAttribute("RobokassaFail") != null && (boolean) request.getSession().getAttribute("RobokassaFail")) { %>
-                            <script language=JavaScript>
-                                alert("Покупка не была совершена!");
-                            </script>
-                            <% request.getSession().setAttribute("RobokassaFail", false); %>
-                            <% }  %> 
                             <%}%>
                         </div>
                         <div>
