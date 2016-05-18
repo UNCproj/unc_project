@@ -267,18 +267,19 @@ $(function () {
                                         console.log("path = " + path);
                                         console.log($scope.uploader.flow.files);
                                         $scope.uploader.flow.files[i].name = path;
+                                        $http({
+                                            url: '/unc-project/saveAttrPicServlet',
+                                            method: 'POST',
+                                            params: {
+                                                "id": $scope.advertId,
+                                                "user_pic_file": path
+                                            }
+                                        })
+                                            .success(function (data) {
+                                            });
                                     }
                                     $scope.uploader.flow.upload();
-                                    $http({
-                                        url: '/unc-project/saveAttrPicServlet',
-                                        method: 'POST',
-                                        params: {
-                                            "id": $scope.advertId,
-                                            "user_pic_file": path
-                                        }
-                                    })
-                                        .success(function (data) {
-                                        });
+
 
                                 };
                                 $scope.fileAdded();
