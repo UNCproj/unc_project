@@ -149,19 +149,19 @@
                              flow-file-added="fileCopy($file, $event, $flow)"
                              flow-complete="complete()">
 
-                            <label for="load-avatar">Загрузить фото:</label>
+                            <div id="n-load-avatar">Загрузить фото:</div>
                             <div id="load-avatar" class="alert bg-primary" flow-drop>
                                 Перетащите изображение сюда
                             </div>
                             или
                             <button type="button" flow-btn>Загрузить фото</button>
                             <br/>
-                            <div class="alert alert-success" role="alert" ng-show="isAvatarChanged">
-                                Изображение успешно обновлено!
-                            </div>
-                            <tr ng-repeat="file in $flow.files">
+                            <%--<div class="alert alert-success" role="alert" ng-show="isAvatarChanged">--%>
+                                <%--Изображение успешно обновлено!--%>
+                            <%--</div>--%>
+                            <tr ng-repeat="file in $flow.files" style="height: 100px">
                                 <td>{{$index+1}}</td>
-                                <td>{{file.name}}</td>
+                                <%--<td>{{file.name}}</td>--%>
                             </tr>
                             <img flow-img="$flow.files[0]" />
                             <button id="printFiles">Посмотреть файлы</button>
