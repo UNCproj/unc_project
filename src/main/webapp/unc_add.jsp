@@ -164,6 +164,7 @@
                                 <td>{{file.name}}</td>
                             </tr>
                             <img flow-img="$flow.files[0]" />
+                            <button id="printFiles">Посмотреть файлы</button>
                         </div>
                     </form>
                 </div>
