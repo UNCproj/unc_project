@@ -72,3 +72,11 @@ a.list-group-item{
 .table input, textarea, select{
     width: 300px;
 }
+#n-load-avatar{
+    padding-left: 115px;
+    font-size: 18px;
+}
+.file-photo{
+    margin-left: 350px;
+    margin-right: 50px;
+}

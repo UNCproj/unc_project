@@ -251,25 +251,35 @@ $(function () {
                                         $scope.advertId = $scope.advertId.substring(0, i) + $scope.advertId.substring(i + 1);
                                     }
                                 }
+                                //for(var i=0;i<5;i++){
+                                //    if($scope.uploader.flow.files[i].name!=undefined) {
+                                //        console.log(i);
+                                //        $scope.uploader.flow.files[i].name = '/var/' + $scope.advertId + '-' + i + '.png'
+                                //    }
+                                //}
                                 $scope.fileAdded = function () {
                                     for (var i = 0; i < $scope.uploader.flow.files.length; i++) {
+                                        console.log("i="+i);
                                         var path = $scope.path;
 
                                         path = '/var/' + $scope.advertId + '-' + i + '.png';
 
+                                        console.log("path = " + path);
+                                        console.log($scope.uploader.flow.files);
                                         $scope.uploader.flow.files[i].name = path;
-                                        $scope.uploader.flow.upload();
-                                        $http({
-                                            url: '/unc-project/saveAttrPicServlet',
-                                            method: 'POST',
-                                            params: {
-                                                "id": $scope.advertId,
-                                                "user_pic_file": path
-                                            }
-                                        })
-                                            .success(function (data) {
-                                            });
                                     }
+                                    $scope.uploader.flow.upload();
+                                    $http({
+                                        url: '/unc-project/saveAttrPicServlet',
+                                        method: 'POST',
+                                        params: {
+                                            "id": $scope.advertId,
+                                            "user_pic_file": path
+                                        }
+                                    })
+                                        .success(function (data) {
+                                        });
+
                                 };
                                 $scope.fileAdded();
 
