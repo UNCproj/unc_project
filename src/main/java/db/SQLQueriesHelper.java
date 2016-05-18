@@ -186,7 +186,7 @@ public class SQLQueriesHelper {
         return queryString;
     }
 
-    static public String selectFullObjectInformationByName(String objectName) {
+    static public String selectFullObjectInformationByName() {
         StringBuffer query = new StringBuffer(
                 "select  o.object_id,\n"
                 + "        o.object_name,\n"
@@ -219,7 +219,7 @@ public class SQLQueriesHelper {
                 + "        join unc_object_types ot\n"
                 + "          on ot.ot_id = o.object_type_id\n");
 
-        query.append("where (o.object_name = '" + objectName + "'");
+        query.append("where (o.object_name = ?");
         query.append(" order by o.object_id,\n"
                 + "         a.attr_id");
 
@@ -321,10 +321,10 @@ public class SQLQueriesHelper {
                 + "        join unc_object_types ot\n"
                 + "          on ot.ot_id = o.object_type_id\n");
 
-        query.append("where (o.object_id = " + ids[0]);
+        query.append("where (o.object_id = ?");
 
         for (int i = 1; i < ids.length; i++) {
-            query.append(" or o.object_id = " + ids[i]);
+            query.append(" or o.object_id = ?");
         }
 
         query.append(") order by aot.ATTR_ORDER,o.object_id,\n"

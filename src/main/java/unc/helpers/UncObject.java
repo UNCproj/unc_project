@@ -254,17 +254,24 @@ public class UncObject {
     }
 
     public void selectFromDB() throws PropertyVetoException, SQLException, IOException {
-        try(Connection connection = DataSource.getInstance().getConnection();
-            Statement statement = connection.createStatement())
+        try(Connection connection = DataSource.getInstance().getConnection())
         {
             params = new ArrayList<>();
-
-            ResultSet results = statement.executeQuery(
-                    (id == null || id.length() == 0) ?
-                            SQLQueriesHelper.selectFullObjectInformationByName(name) :
-                            SQLQueriesHelper.selectFullObjectInformationById(new String[]{id})
-
-            );
+            PreparedStatement statement;
+            if (id == null || id.length() == 0) { 
+                statement = connection.prepareStatement(SQLQueriesHelper.selectFullObjectInformationByName());
+                statement.setString(1, name);
+            }
+            else {
+                String[] mass = new String[]{id};
+                statement = connection.prepareStatement(SQLQueriesHelper.selectFullObjectInformationById(mass));
+                for (String i : mass) {
+                    statement.setString(1, i);
+                }
+            }
+                                     
+            ResultSet results = statement.executeQuery();
+            statement.close();
 
             while (results.next()) {
                 if (id == null || id.length() == 0) {
@@ -320,9 +327,10 @@ public class UncObject {
     public void loadAttributesListFromDB() throws PropertyVetoException, SQLException, IOException {
         try(Connection connection = DataSource.getInstance().getConnection())
         {
-            PreparedStatement statement = connection.prepareStatement(SQLQueriesHelper.getTypeIdByObjectId());
-            statement.setBigDecimal(1, new BigDecimal(id));
+            PreparedStatement statement;
             if (type == null || type.length() == 0) {
+                statement = connection.prepareStatement(SQLQueriesHelper.getTypeIdByObjectId());
+                statement.setBigDecimal(1, new BigDecimal(id));
                 ResultSet results = statement.executeQuery();
                 results.next();
                 type = results.getString("type_id");
