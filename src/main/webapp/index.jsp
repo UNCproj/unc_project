@@ -171,16 +171,27 @@
                     <div class="pagination-wrapper" ng-if="pagesCount > 0">
                         <ul class="pagination">
                             <li ng-class="{active: $index == activePageNum}">
-                                <a href="" ng-click="makePageActive(1)">
-                                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                                <a href="" ng-click="makePageActive(0)">
+                                    <b><<</b>
                                 </a>
                             </li>
-                            <li ng-repeat="advPage in getPages() track by $index" ng-class="{active: $index == activePageNum}">
+                            <li ng-class="{active: $index == activePageNum}">
+                                <a href="" ng-click="makePageActive(activePageNum - 1)">
+                                    <b><</b>
+                                </a>
+                            </li>
+                            <li ng-repeat="advPage in getPages() track by $index"
+                                ng-class="{active: $index == activePageNum}">
                                 <a href="" ng-click="makePageActive($index)">{{$index + 1}}</a>
                             </li>
                             <li ng-class="{active: $index == activePageNum}">
-                                <a href="" ng-click="makePageActive(getPages().length)">
-                                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                                <a href="" ng-click="makePageActive(activePageNum + 1)">
+                                    <b>></b>
+                                </a>
+                            </li>
+                            <li ng-class="{active: $index == activePageNum}">
+                                <a href="" ng-click="makePageActive(getPages().length - 1)">
+                                    <b>>></b>
                                 </a>
                             </li>
                         </ul>
@@ -230,9 +241,15 @@
                                     </div>
                                     <div class="main-content">
                                         <div class="name">
+                                            <div class="tooltip">
+                                                <span class="tooltiptext"><h3>{{adv.name}}</h3></span>
+                                            </div>
                                             <h3>{{adv.name}}</h3>
                                         </div>
                                         <div class="description">
+                                            <div class="tooltip">
+                                                <span class="tooltiptext">{{adv.description}}</span>
+                                            </div>
                                             {{adv.description}}
                                         </div>
                                         <div class="price">

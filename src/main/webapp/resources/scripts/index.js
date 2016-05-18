@@ -337,6 +337,10 @@
             });
 
             $scope.makePageActive = function(pageNum) {
+                if (pageNum < 0 || pageNum >= $scope.pagesCount) {
+                    return;
+                }
+
                 $scope.resultsLoaded = false;
                 $scope.activePageNum = pageNum;
 
