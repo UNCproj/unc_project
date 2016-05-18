@@ -1518,4 +1518,9 @@ public class SQLQueriesHelper {
         System.out.println(query);
         return query;
     }
+
+    public static String deleteVipAdverts() {
+        String query = "delete unc_params up where sysdate - 1 > up.date_value";
+        return query;
+    }
 }
