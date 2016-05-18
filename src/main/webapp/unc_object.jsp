@@ -218,6 +218,23 @@
                                 </c:if>       
                                 <% } %>
                                 <%} %>
+                                <% if ("4".equals(currentObject.getParentType()) && user != null) { %>
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td>
+                                        <script>
+                                            var isInBookmarksGlobal = <%=user.isInBookmarks(request.getParameter("id"))%>;
+                                        </script>
+                                        <a class="a-outline button-style"
+                                           ng-controller="BookmarksController"
+                                           ng-click="addOrDeleteBookmark('<%= request.getParameter("id")%>')"
+                                           style="width: 200px; cursor: pointer">
+                                            {{bookmarksButtonText}}
+                                        </a>
+                                    </td>
+                                </tr>
+                                <% } %>
                             </table>
                         </div>
                         <div>
@@ -235,6 +252,31 @@
                             </a>
                             <%}%>
                         </div>
+                            <%if ("4".equals(currentObject.getParentType()) && user != null && user.isLoggedIn() && !currentObject.isVip()) {%>
+                                <div class="clearfix robokassa-button" >
+                                    <ul>
+                                        <li class="robo-li robokassa-li">
+                                            Оплатить Vip-статус за 1,99 р
+                                        </li>
+
+                                        <%
+                                            String sMrchLogin = "UNC-project";
+                                            String sMrchPass1 = "GVic7cAaCBs52j71lCuk";
+                                            //String sMrchPass2 = "n8DcTF8ogp410TZQqJgI";
+                                            String nInvId = "100";
+                                            String sDesc = "Test payment ROBOKASSA";
+                                            String sOutSum = "1.99";
+                                            String sCulture = "ru";
+                                            String sEncoding = "utf-8";
+                                            String shp_id_a = currentObject.getId();
+                                            String crc = currentObject.MD5(new String[]{sMrchLogin, sOutSum, nInvId, sMrchPass1, "shp_id_a=" + shp_id_a});
+                                        %>
+                                        <li class="robo-li">
+                                            <script language=JavaScript src='https://auth.robokassa.ru/Merchant/PaymentForm/FormSS.js?MerchantLogin=<%= sMrchLogin%>&OutSum=<%= sOutSum%>&InvoiceID=<%= nInvId%>&Description=<%= sDesc%>&shp_id_a=<%= shp_id_a%>&isTest=1&SignatureValue=<%= crc%>'></script>
+                                        </li>
+                                    </ul>
+                                </div>
+                            <%}%>
                         <div class="references">
                             <% if ("1".equals(currentObject.getType())) { %>
                             <h4>Список обьявлений</h4>
@@ -249,7 +291,7 @@
                                     <a a href="unc_object.jsp?id=<%= listReferences.get(k)[0]%>"><%= listReferences.get(k)[1]%></a> : Заблокированно
                                 </li>
                                 <%}%>
-                                <% } %>
+                            <% } %>
                             </ul>
                             <%} else if ("4".equals(currentObject.getParentType())) {%>
                             <h4 class="robokassa-li">Продавец : <a a href="unc_object.jsp?id=<%= listReferences.get(0)[0]%>"><%= listReferences.get(0)[1]%></a></h4>
@@ -431,97 +473,6 @@
                         </div>
                     </div>
                     <% } %>
-                    <%if ("4".equals(currentObject.getParentType()) && user != null) {%>
-                        <script>
-                            var isInBookmarksGlobal = <%=user.isInBookmarks(request.getParameter("id"))%>;
-                        </script>
-
-                        <a class="a-outline button-style"
-                           ng-controller="BookmarksController"
-                           ng-click="addOrDeleteBookmark('<%= request.getParameter("id")%>')"
-                           style="width: 200px; cursor: pointer">
-                            {{bookmarksButtonText}}
-                        </a>
-
-                    <% } %>
-                    <%if ("4".equals(currentObject.getParentType()) && user != null && user.isLoggedIn() && !currentObject.isVip()) {%>
-                    <div class="clearfix robokassa-button" >
-                        <ul>
-                            <li class="robo-li robokassa-li">
-                                Оплатить Vip-статус за 1,99 р
-                            </li>
-
-                            <%
-                                String sMrchLogin = "UNC-project";
-                                String sMrchPass1 = "GVic7cAaCBs52j71lCuk";
-                                //String sMrchPass2 = "n8DcTF8ogp410TZQqJgI";
-                                String nInvId = "100";
-                                String sDesc = "Test payment ROBOKASSA";
-                                String sOutSum = "1.99";
-                                String sCulture = "ru";
-                                String sEncoding = "utf-8";
-                                String shp_id_a = currentObject.getId();
-                                String crc = currentObject.MD5(new String[]{sMrchLogin, sOutSum, nInvId, sMrchPass1, "shp_id_a=" + shp_id_a});
-                            %>
-                            <li class="robo-li">
-                                <script language=JavaScript src='https://auth.robokassa.ru/Merchant/PaymentForm/FormSS.js?MerchantLogin=<%= sMrchLogin%>&OutSum=<%= sOutSum%>&InvoiceID=<%= nInvId%>&Description=<%= sDesc%>&shp_id_a=<%= shp_id_a%>&isTest=1&SignatureValue=<%= crc%>'></script>
-                            </li>
-                        </ul>
-                    </div>
-                    <%}%>
-                    <div class="related">
-                        <%
-                            RecommenderBean recommenderBean = new RecommenderBean();
-                        %>
-                        <%--<div class="related-item">--%>
-                        <%--<div class="img">--%>
-                        <%--<img ng-src="{{adv.image != undefined ? adv.image : '${initParam.get("default.advert.image")}'}}">--%>
-                        <%--</div>--%>
-                        <%--<div class="main-content">--%>
-                        <%--<div class="name">--%>
-                        <%--<h3>{{adv.name}}</h3>--%>
-                        <%--</div>--%>
-                        <%--<div class="description">--%>
-                        <%--{{adv.description}}--%>
-                        <%--</div>--%>
-                        <%--<div class="price">--%>
-                        <%--{{adv.price}} руб.--%>
-                        <%--</div>--%>
-                        <%--</div>--%>
-                        <%--</div>--%>
-                        <%--<div class="related-item">--%>
-                        <%--<div class="img">--%>
-                        <%--<img ng-src="{{adv.image != undefined ? adv.image : '${initParam.get("default.advert.image")}'}}">--%>
-                        <%--</div>--%>
-                        <%--<div class="main-content">--%>
-                        <%--<div class="name">--%>
-                        <%--<h3>{{adv.name}}</h3>--%>
-                        <%--</div>--%>
-                        <%--<div class="description">--%>
-                        <%--{{adv.description}}--%>
-                        <%--</div>--%>
-                        <%--<div class="price">--%>
-                        <%--{{adv.price}} руб.--%>
-                        <%--</div>--%>
-                        <%--</div>--%>
-                        <%--</div>--%>
-                        <%--<div class="related-item">--%>
-                        <%--<div class="img">--%>
-                        <%--<img ng-src="{{adv.image != undefined ? adv.image : '${initParam.get("default.advert.image")}'}}">--%>
-                        <%--</div>--%>
-                        <%--<div class="main-content">--%>
-                        <%--<div class="name">--%>
-                        <%--<h3>{{adv.name}}</h3>--%>
-                        <%--</div>--%>
-                        <%--<div class="description">--%>
-                        <%--{{adv.description}}--%>
-                        <%--</div>--%>
-                        <%--<div class="price">--%>
-                        <%--{{adv.price}} руб.--%>
-                        <%--</div>--%>
-                        <%--</div>--%>
-                        <%--</div>--%>
-                    </div>
                     <br>
                 </div>
                 <%if ("1".equals(currentObject.getType()) && !user.getId().equals(request.getParameter("id"))) {%>
