@@ -135,11 +135,11 @@
                         <%if ("1".equals(currentObject.getType()) && user != null && user.getId().equals(request.getParameter("id"))) {%>
                     <li><a href="#messages" data-toggle="tab">Мои сообщения</a></li>
                         <% } %>
-                        <% } %>
+                    <% } %>
                 </ul>
                 <div class="settings tab-content" id="tab_content">
                     <% String activeSwicth1 = "active", s; 
-                        boolean pics_select = true; %>
+                       boolean pics_select = true, photo_type = true; %>
                     <% for (int i = 0; i < currentObject.getAttributeGroups().size(); i++) {
                             String attrGroupName = currentObject.getAttributeGroups().get(i);
                             ArrayList<Param> currentGroupParams = currentObject.getParams(attrGroupName);%>
@@ -176,9 +176,12 @@
                                         }
                                     }
                                 %>
-                                <% if (i == 0 && j == 1 && (currentObject.getParam("is_admin") != null)
+                                <% if (photo_type && i == 0 && j == 1 && (currentObject.getParam("is_admin") != null)
                                             && (currentObject.getParam("is_admin").getValue() != null)
-                                            && (currentObject.getParam("is_admin").getValue().equals("true"))) { %>
+                                            && (currentObject.getParam("is_admin").getValue().equals("true"))) { 
+                                            j--;
+                                            photo_type = false;
+                                %>
                                 <tr>
                                     <td class="attr-center" >
                                         Тип пользователя
@@ -187,9 +190,12 @@
                                         <img class="img-rule" src="/unc-project/resources/img/admin_logo.png">
                                     </td>
                                 </tr>
-                                <%} else if (i == 0 && j == 1 && (currentObject.getParam("is_moderator") != null)
+                                <%} else if (photo_type && i == 0 && j == 1 && (currentObject.getParam("is_moderator") != null)
                                             && (currentObject.getParam("is_moderator").getValue() != null)
-                                            && (currentObject.getParam("is_moderator").getValue().equals("true"))){%>
+                                            && (currentObject.getParam("is_moderator").getValue().equals("true"))){
+                                            j--;
+                                            photo_type = false;
+                                %>
                                 <tr>
                                     <td class="attr-center" >
                                         Тип пользователя
@@ -237,6 +243,10 @@
                                 <% if (!listReferences.get(k)[2].equals("true")) {%>
                                 <li class="references-ul-li">
                                     <a a href="unc_object.jsp?id=<%= listReferences.get(k)[0]%>"><%= listReferences.get(k)[1]%></a>
+                                </li>
+                                <%} else {%>
+                                <li class="references-ul-li">
+                                    <a a href="unc_object.jsp?id=<%= listReferences.get(k)[0]%>"><%= listReferences.get(k)[1]%></a> : Заблокированно
                                 </li>
                                 <%}%>
                                 <% } %>
