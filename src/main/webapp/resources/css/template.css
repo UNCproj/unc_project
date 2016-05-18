@@ -204,3 +204,35 @@ a:hover {
 .robokassa-li {
     margin: 15px 10px 0 0; 
 }
+
+.images-news {
+    
+}
+
+.js-mini-carusel {
+    
+}
+
+.mini-carusel {
+    overflow: hidden;
+}
+
+.sub-images-news a {
+    float: left;
+    margin: 10px 10px 0 0;
+}
+
+.big-image img{
+    width: 500px;
+    height: auto;
+    max-width: 500px;
+}
+
+.mini-image img {
+    width: 160px;
+    height: 120px;
+}
+
+.mini-image:last-child {
+    margin-right: 0px !important;
+}
