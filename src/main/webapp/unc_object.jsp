@@ -148,8 +148,7 @@
                             <table class="table table-params">
                                 <% if ((currentObject.getParam("is_admin") != null)
                                             && (currentObject.getParam("is_admin").getValue() != null)
-                                            && (currentObject.getParam("is_admin").getValue().equals("true"))) {%>
-                                <img class="img" src="/unc-project/resources/img/admin_logo.png">
+                                            && (currentObject.getParam("is_admin").getValue().equals("true"))) {%> 
                                 <%}%>
                                 <%  for (int j = 0; j < currentGroupParams.size(); j++) { %>
                                 <% if ((currentGroupParams.get(j).getType() != null) && (currentGroupParams.get(j).getType().equals("2"))) {
@@ -177,6 +176,29 @@
                                         }
                                     }
                                 %>
+                                <% if (i == 0 && j == 1 && (currentObject.getParam("is_admin") != null)
+                                            && (currentObject.getParam("is_admin").getValue() != null)
+                                            && (currentObject.getParam("is_admin").getValue().equals("true"))) { %>
+                                <tr>
+                                    <td class="attr-center" >
+                                        Тип пользователя
+                                    </td>
+                                    <td>
+                                        <img class="img-rule" src="/unc-project/resources/img/admin_logo.png">
+                                    </td>
+                                </tr>
+                                <%} else if (i == 0 && j == 1 && (currentObject.getParam("is_moderator") != null)
+                                            && (currentObject.getParam("is_moderator").getValue() != null)
+                                            && (currentObject.getParam("is_moderator").getValue().equals("true"))){%>
+                                <tr>
+                                    <td class="attr-center" >
+                                        Тип пользователя
+                                    </td>
+                                    <td>
+                                        <img class="img-rule" src="/unc-project/resources/img/moder.png">
+                                    </td>
+                                </tr>
+                                <% } else {%>
                                 <c:catch var="e">
                                     <c:import url="/includes/object/attr_views/<%= currentObject.getType()%>.jsp" />
                                 </c:catch>
@@ -189,6 +211,7 @@
                                     </c:import>
                                 </c:if>       
                                 <% } %>
+                                <%} %>
                             </table>
                         </div>
                         <div>

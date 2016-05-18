@@ -265,8 +265,9 @@ public class UncObject {
             else {
                 String[] mass = new String[]{id};
                 statement = connection.prepareStatement(SQLQueriesHelper.selectFullObjectInformationById(mass));
+                int j = 1;
                 for (String i : mass) {
-                    statement.setString(1, i);
+                    statement.setString(j++, i);
                 }
             }
             System.out.println(statement.toString());

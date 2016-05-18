@@ -24,6 +24,13 @@ and open the template in the editor.
     width: auto;
 }
 
+.img-rule {
+    max-height: 50px;
+    max-width: 100px;
+    height: auto;
+    width: auto;
+}
+
 .graph-pos {
     margin-left: 100px;
     margin-right: 100px;
