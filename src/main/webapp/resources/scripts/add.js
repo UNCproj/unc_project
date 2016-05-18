@@ -200,8 +200,8 @@ $(function () {
 
             $scope.postAdd = function (p) {
                 console.log("Начали грузить");
-                p.map_coordinates = $scope.map_coordinates;		
-				var citySplitted = p.city.split(',');
+                p.map_coordinates = $scope.map_coordinates;
+                var citySplitted = p.city.split(',');
 
                 if (citySplitted.length > 0) {
                     p.city = citySplitted[0];
@@ -251,34 +251,30 @@ $(function () {
                                 }
                                 $scope.fileAdded = function () {
                                     $scope.uploader.flow.files[0] = $scope.file;
-                                    var path = $scope.path;
+                                    for (var i = 0; i < $scope.uploader.flow.files.length; i++) {
+                                        var path = $scope.path;
 
-                                    if (path == undefined || path == null || path.length <= 0) {
-                                        path = '/var/' + $scope.advertId + '.png';
-                                    }
+                                        //if (path == undefined || path == null || path.length <= 0) {
+                                            path = '/var/' + $scope.advertId + '-' + i + '.png';
+                                        //}
 
-                                    console.log(typeof path);
-                                    for (var i = 0; i < path.length; i++) {
-                                        if (path[i] == '\n' || path[i] == '\r') {
-                                            path = path.substring(0, i) + path.substring(i + 1);
-                                        }
+                                        console.log(path);
+                                        $scope.uploader.flow.files[0].name = path;
+                                        console.log($scope.uploader.flow.files[0].name);
+                                        console.log($scope.uploader.flow.files[0]);
+                                        console.log($scope.uploader.flow);
+                                        $scope.uploader.flow.upload();
+                                        $http({
+                                            url: '/unc-project/saveAttrPicServlet',
+                                            method: 'POST',
+                                            params: {
+                                                "id": $scope.advertId,
+                                                "user_pic_file": path
+                                            }
+                                        })
+                                            .success(function (data) {
+                                            });
                                     }
-                                    console.log(path);
-                                    $scope.uploader.flow.files[0].name = path;
-                                    console.log($scope.uploader.flow.files[0].name);
-                                    console.log($scope.uploader.flow.files[0]);
-                                    console.log($scope.uploader.flow);
-                                    $scope.uploader.flow.upload();
-                                    $http({
-                                        url: '/unc-project/saveAttrPicServlet',
-                                        method: 'POST',
-                                        params: {
-                                            "id": $scope.advertId,
-                                            "user_pic_file": path
-                                        }
-                                    })
-                                        .success(function (data) {
-                                        });
                                 };
                                 $scope.fileAdded();
 
@@ -378,16 +374,16 @@ $(function () {
                         '</td>' +
                         '</tr>'
                     );
-                } else if(a_type==6){
+                } else if (a_type == 6) {
                     var cityInput =
                         $('<tr>' +
                             '<td>' +
-                                a_ru_name+
-                            '</td>'+
+                            a_ru_name +
+                            '</td>' +
                             '<td>' +
-                                '<input type="text" id="' + a_name + '">' +
-                            '</td>'+
-                          '</tr>');
+                            '<input type="text" id="' + a_name + '">' +
+                            '</td>' +
+                            '</tr>');
 
                     $("div.attributes table.table-params tbody").append(cityInput);
 
@@ -396,17 +392,17 @@ $(function () {
                     };
 
                     var autocomplete = new google.maps.places.Autocomplete($('#' + a_name)[0], options);
-                }else if (a_type==8) {
+                } else if (a_type == 8) {
                     $("div.attributes table.table-params tbody").append(
                         '<tr>' +
-                            '<td>' +
-                                a_ru_name +
-                            '</td>'+
-                            '<td>' +
-                                '<input id="addr-input" class="controls" type="text" placeholder="Введите адрес">' +
-                                '<div id="map" style="width: 500px; height:300px"></div>' +
-                                '<input id="clear-markers" type="button" value="Удалить маркер" width="100px">' +
-                            '</td>'+
+                        '<td>' +
+                        a_ru_name +
+                        '</td>' +
+                        '<td>' +
+                        '<input id="addr-input" class="controls" type="text" placeholder="Введите адрес">' +
+                        '<div id="map" style="width: 500px; height:300px"></div>' +
+                        '<input id="clear-markers" type="button" value="Удалить маркер" width="100px">' +
+                        '</td>' +
                         '<td>'
                     );
                     initMap();
@@ -566,7 +562,7 @@ $(function () {
                 var scope = $scope;
                 var geocoder = new google.maps.Geocoder;
 
-                clearButton.on('click', function() {
+                clearButton.on('click', function () {
                     if (marker != null) {
                         marker.setMap(null);
                         marker = null;
@@ -635,9 +631,9 @@ $(function () {
                 }
 
                 function setCityToParam(location) {
-                    geocoder.geocode({'location': location}, function(results, status) {
+                    geocoder.geocode({'location': location}, function (results, status) {
                         if (status === google.maps.GeocoderStatus.OK) {
-                            $.each(results[0].address_components, function(i, component) {
+                            $.each(results[0].address_components, function (i, component) {
                                 if (component.types[0] == "locality") {
                                     placeMarker(location, map);
                                     $('#city').prop('value', component.long_name);
