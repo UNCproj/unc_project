@@ -138,7 +138,8 @@
                         <% } %>
                 </ul>
                 <div class="settings tab-content" id="tab_content">
-                    <% String activeSwicth1 = "active", s; %>
+                    <% String activeSwicth1 = "active", s; 
+                        boolean pics_select = true; %>
                     <% for (int i = 0; i < currentObject.getAttributeGroups().size(); i++) {
                             String attrGroupName = currentObject.getAttributeGroups().get(i);
                             ArrayList<Param> currentGroupParams = currentObject.getParams(attrGroupName);%>
@@ -154,6 +155,28 @@
                                 <% if ((currentGroupParams.get(j).getType() != null) && (currentGroupParams.get(j).getType().equals("2"))) {
                                         continue;
                                     }%>
+                                <%  ArrayList<String> pics = null;
+                                    
+                                    if ((currentGroupParams.get(j).getType() != null) && currentGroupParams.get(j).getType().equals("3")) {
+                                        if (pics_select) {
+                                            pics = new ArrayList<>();
+                                            System.out.println(currentGroupParams.get(j).getValue());
+                                            pics.add(currentGroupParams.get(j).getValue());
+                                            pics_select = false;
+                                            for (int k = j + 1; k < currentGroupParams.size(); k++) {
+                                                System.out.println(currentGroupParams.get(k).getValue());
+                                                if (currentGroupParams.get(k).getType().equals("3")) {
+                                                    System.out.println(currentGroupParams.get(k).getValue());
+                                                    pics.add(currentGroupParams.get(k).getValue());
+                                                }
+                                            }
+                                            request.setAttribute("list", pics);
+                                        }
+                                        else {
+                                            continue;
+                                        }
+                                    }
+                                %>
                                 <c:catch var="e">
                                     <c:import url="/includes/object/attr_views/<%= currentObject.getType()%>.jsp" />
                                 </c:catch>

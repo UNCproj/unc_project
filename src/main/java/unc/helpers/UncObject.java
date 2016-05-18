@@ -280,7 +280,7 @@ public class UncObject {
 
                 String currentParamName = results.getString("attr_name");
                 boolean isAdded = false;
-                for (Param param: params) {
+                /*for (Param param: params) {
                     if (param.getName().equals(currentParamName)) {
                         param.setValue(results.getString("value"));
                         param.setRuName(results.getString("attr_name_ru"));
@@ -289,7 +289,7 @@ public class UncObject {
                         isAdded = true;
                         break;
                     }
-                }
+                }*/
 
                 if (!isAdded) {
                     params.add(new Param(currentParamName,

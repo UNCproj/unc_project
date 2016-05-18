@@ -15,7 +15,9 @@
             <c:when test="${param.attr_type.equals(\"3\")}">
                 <c:choose>
                     <c:when test="${!param.attr_value.equals(\"\")}">
-                        <img class="img" src="${param.attr_value}">
+                        <c:forEach items="${list}" var="i">
+                            <img src="<c:out value="${i}" />" alt="">
+                        </c:forEach>
                     </c:when>
                     <c:otherwise>
                         <img class="img" src="/unc-project/resources/img/default.png">
