@@ -64,7 +64,7 @@
                         </div>
                         <div ng-click="redirToAdvertPage(adv.id)">
                             <div class="img">
-                                <img ng-src="{{adv.image != undefined ? adv.image : '${initParam.get("default.advert.image")}'}}">
+                                <img ng-src="{{adv.user_pic_file != undefined ? adv.user_pic_file : '${initParam.get("default.advert.image")}'}}">
                             </div>
                             <div class="main-content">
                                 <div class="name">

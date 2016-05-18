@@ -1126,17 +1126,21 @@ public class SQLQueriesHelper {
                 + "from ( "
                 + "select o.object_id, "
                 + "o.object_name, "
-                + "p2.VALUE "
+                + "p2.VALUE , " +
+                "  p4.value as files "
                 + "from unc_objects o "
                 + "left join unc_params p "
                 + "on o.object_id=p.object_id "
                 + "left join unc_params p2 "
-                + "on p.object_id=p2.object_id "
+                + "on p.object_id=p2.object_id " +
+                " left join unc_params p4 " +
+                " on p4.object_id = o.object_id and p4.attr_id = 6 and substr(p4.value,-6) = '-0.png' "
                 + "where p.attr_id=20 and  "
                 + "p2.attr_id=10 and  "
                 + "p.date_value+7>systimestamp ) "
                 + "ORDER BY dbms_random.value ) "
                 + "WHERE rownum <" + size;
+        System.out.println("vip" + query);
         return query;
     }
 
@@ -1147,12 +1151,15 @@ public class SQLQueriesHelper {
                 + "from ( "
                 + "select o.object_id, "
                 + "o.object_name, "
-                + "p2.VALUE "
+                + "p2.VALUE , " +
+                " p4.value as files "
                 + "from unc_objects o "
                 + "left join unc_params p "
                 + "on o.object_id=p.object_id "
                 + "left join unc_params p2 "
-                + "on p.object_id=p2.object_id "
+                + "on p.object_id=p2.object_id " +
+                " left join unc_params p4 " +
+                " on p4.object_id = o.object_id and p4.attr_id = 6 and substr(p4.value,-6) = '-0.png' "
                 + "where p.attr_id=20 and "
                 + "p2.attr_id=10 and "
                 + "p.date_value+7>systimestamp and "
@@ -1168,6 +1175,7 @@ public class SQLQueriesHelper {
                 + ")) "
                 + "ORDER BY dbms_random.value ) "
                 + "WHERE rownum <" + size;
+        System.out.println("vip" + query);
         return query;
     }
 
@@ -1508,6 +1516,11 @@ public class SQLQueriesHelper {
                 "p2.date_value<(select date_value from unc_params where attr_id = 32 and object_id = "+messId+")  " +
                 "order by p2.date_value desc";
         System.out.println(query);
+        return query;
+    }
+
+    public static String deleteVipAdverts() {
+        String query = "delete unc_params up where sysdate - 1 > up.date_value";
         return query;
     }
 }

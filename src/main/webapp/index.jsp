@@ -172,12 +172,14 @@
                         <ul class="pagination">
                             <li ng-class="{active: $index == activePageNum}">
                                 <a href="" ng-click="makePageActive(0)">
-                                    <b><<</b>
+                                    <span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
+                                    <br/>
                                 </a>
                             </li>
                             <li ng-class="{active: $index == activePageNum}">
                                 <a href="" ng-click="makePageActive(activePageNum - 1)">
-                                    <b><</b>
+                                    <span class="glyphicon glyphicon-triangle-left" aria-hidden="true"></span>
+                                    <br/>
                                 </a>
                             </li>
                             <li ng-repeat="advPage in getPages() track by $index"
@@ -187,12 +189,14 @@
                             </li>
                             <li ng-class="{active: $index == activePageNum}">
                                 <a href="" ng-click="makePageActive(activePageNum + 1)">
-                                    <b>></b>
+                                    <span class="glyphicon glyphicon-triangle-right" aria-hidden="true"></span>
+                                    <br/>
                                 </a>
                             </li>
                             <li ng-class="{active: $index == activePageNum}">
                                 <a href="" ng-click="makePageActive(getPages().length - 1)">
-                                    <b>>></b>
+                                    <span class="glyphicon glyphicon-forward" aria-hidden="true"></span>
+                                    <br/>
                                 </a>
                             </li>
                         </ul>
@@ -267,12 +271,14 @@
                             <ul class="pagination">
                                 <li ng-class="{active: $index == activePageNum}">
                                     <a href="" ng-click="makePageActive(0)">
-                                        <b><<</b>
+                                        <span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
+                                        <br/>
                                     </a>
                                 </li>
                                 <li ng-class="{active: $index == activePageNum}">
                                     <a href="" ng-click="makePageActive(activePageNum - 1)">
-                                        <b><</b>
+                                        <span class="glyphicon glyphicon-triangle-left" aria-hidden="true"></span>
+                                        <br/>
                                     </a>
                                 </li>
                                 <li ng-repeat="advPage in getPages() track by $index"
@@ -282,12 +288,14 @@
                                 </li>
                                 <li ng-class="{active: $index == activePageNum}">
                                     <a href="" ng-click="makePageActive(activePageNum + 1)">
-                                        <b>></b>
+                                        <span class="glyphicon glyphicon-triangle-right" aria-hidden="true"></span>
+                                        <br/>
                                     </a>
                                 </li>
                                 <li ng-class="{active: $index == activePageNum}">
                                     <a href="" ng-click="makePageActive(getPages().length - 1)">
-                                        <b>>></b>
+                                        <span class="glyphicon glyphicon-forward" aria-hidden="true"></span>
+                                        <br/>
                                     </a>
                                 </li>
                             </ul>
@@ -302,7 +310,7 @@
                         <li class="list-group-item" ng-repeat="adv in vipAds">
                             <a href="" ng-click="redirToAdvertPage(adv.id)">
                                 <div class="img">
-                                    <img ng-src="{{adv.pic != undefined ? adv.pic : '${initParam.get("default.advert.image")}'}}">
+                                    <img ng-src="{{adv.pic != undefined ? adv.foto : '${initParam.get("default.advert.image")}'}}">
                                 </div>
                                 <div class="main-content">
                                     <div class="name">

@@ -22,7 +22,7 @@
             })
                 .success(function(data){
                     for (var i = 0; i < $scope.adverts.length; i++) {
-                        if ($scope.adverts[i].id = advId) {
+                        if ($scope.adverts[i].id == advId) {
                             $scope.adverts.splice(i, 1);
                         }
                     }
