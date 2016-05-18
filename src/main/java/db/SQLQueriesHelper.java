@@ -331,6 +331,7 @@ public class SQLQueriesHelper {
                 + "         a.attr_id");
 
         String queryString = query.toString();
+        System.out.println(queryString);
         return queryString;
     }
 

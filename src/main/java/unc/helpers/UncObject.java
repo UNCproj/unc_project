@@ -269,9 +269,9 @@ public class UncObject {
                     statement.setString(1, i);
                 }
             }
-                                     
+            System.out.println(statement.toString());
             ResultSet results = statement.executeQuery();
-            statement.close();
+            
 
             while (results.next()) {
                 if (id == null || id.length() == 0) {
@@ -308,6 +308,7 @@ public class UncObject {
                     );
                 }
             }
+            statement.close();
         }
     }
     
