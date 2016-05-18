@@ -316,6 +316,7 @@
     app.controller('searchResultsController', ['$scope', '$http',
         function($scope, $http) {
             const ADS_PER_PAGE = 10;
+            $scope.PAGES_SHOWED_IN_PAGINATION_COUNT = 5;
 
             $scope.resultsLoaded = true;
             $scope.activePageNum = 0;
@@ -337,6 +338,10 @@
             });
 
             $scope.makePageActive = function(pageNum) {
+                if (pageNum < 0 || pageNum >= $scope.pagesCount) {
+                    return;
+                }
+
                 $scope.resultsLoaded = false;
                 $scope.activePageNum = pageNum;
 
@@ -374,6 +379,25 @@
                 return new Array($scope.pagesCount);
             };
 
+            $scope.isNeedShowPageInPaginator = function($index) {
+                var PAGES_SHOWED_IN_PAGINATION_COUNT = $scope.PAGES_SHOWED_IN_PAGINATION_COUNT - 1;
+
+                return (
+                    $index >= $scope.activePageNum - (PAGES_SHOWED_IN_PAGINATION_COUNT / 2)
+                    && $index <= $scope.activePageNum + (PAGES_SHOWED_IN_PAGINATION_COUNT / 2)
+                )
+                ||
+                (
+                    $scope.activePageNum <= (PAGES_SHOWED_IN_PAGINATION_COUNT / 2)
+                    && $index <= PAGES_SHOWED_IN_PAGINATION_COUNT
+                )
+                ||
+                (
+                    $scope.activePageNum >= ($scope.pagesCount - PAGES_SHOWED_IN_PAGINATION_COUNT / 2)
+                    && $index >= $scope.pagesCount - PAGES_SHOWED_IN_PAGINATION_COUNT - 1
+                );
+            };
+
             $scope.redirToAdvertPage = function(advId) {
                 window.location = "unc_object.jsp?id=" + advId;
             };
@@ -394,7 +418,12 @@
     ]);
     app.controller('vipAdvertsController', ['$scope', '$http',
         function($scope, $http){
+            var MAX_VIP_ADVERTS = 5;
             $scope.vipAds = [];
+
+            $scope.redirToAdvertPage = function(advId) {
+                window.location = "unc_object.jsp?id=" + advId;
+            };
 
             $scope.loadVipAdverts = function(){
                 $http({
@@ -405,7 +434,7 @@
                     }
                 })
                     .success(function(data) {
-                        $scope.vipAds = data;
+                        $scope.vipAds = data.slice(0, MAX_VIP_ADVERTS);
                     });
             };
 

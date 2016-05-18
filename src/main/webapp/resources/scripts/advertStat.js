@@ -80,8 +80,8 @@
         app.controller("BookmarksController", function ($scope, $http){
             $scope.isInBookmarks = isInBookmarksGlobal;
             $scope.bookmarksButtonText = $scope.isInBookmarks ?
-                                            "Удалить закладку" :
-                                            "Добавить закладку";
+                                            "Удалить из избранного" :
+                                            "В избранное";
 
             $scope.deleteBookmarks = function(advId) {
                 $http({
@@ -94,7 +94,7 @@
                 })
                     .success(function(data){
                         $scope.isInBookmarks = false;
-                        $scope.bookmarksButtonText = "Добавить закладку";
+                        $scope.bookmarksButtonText = "В избранное";
                     });
             };
 
@@ -109,7 +109,7 @@
                 })
                     .success(function(data){
                         $scope.isInBookmarks = true;
-                        $scope.bookmarksButtonText = "Удалить закладку";
+                        $scope.bookmarksButtonText = "Удалить из избранного";
                     });
             }
 

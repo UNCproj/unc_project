@@ -23,9 +23,7 @@ $(function () {
             $scope.uploader = {};
             $scope.path;
             $scope.file;
-            $("#printFiles").on("click",function(){
-                console.log($scope.uploader.flow);
-            });
+
             $("div.file-photo").hide();
 
             if ($.urlParam('type') == 'forum_topic') {
@@ -283,8 +281,10 @@ $(function () {
 
                                 };
                                 $scope.fileAdded();
+                                var hr = document.location.href;
+                                hr = hr.substring(0,hr.indexOf("unc_add.jsp?type=advert")) + 'unc_object.jsp?id=' + $scope.advertId;
 
-                                //window.location.replace(location.href + 'unc_object?id=' + data);
+                                window.location.replace(hr);
                             }
                         })
                 }

@@ -59,30 +59,32 @@
             <h2>Закладки</h2>
             <ul class="list-group" ng-if="adverts.length">
                 <li class="list-group-item" ng-repeat="adv in adverts">
-                    <a href="" ng-click="redirToAdvertPage(adv.id)">
-                        <div class="img">
-                            <img ng-src="{{adv.image != undefined ? adv.image : '${initParam.get("default.advert.image")}'}}">
+                    <a href="">
+                        <div class="remove-button">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="deleteBookmarks(adv.id)"></span>
                         </div>
-                        <div class="main-content">
-                            <div class="name">
-                                <h3>{{adv.name}}</h3>
+                        <div ng-click="redirToAdvertPage(adv.id)">
+                            <div class="img">
+                                <img ng-src="{{adv.image != undefined ? adv.image : '${initParam.get("default.advert.image")}'}}">
                             </div>
-                            <div class="description">
-                                {{adv.description}}
-                            </div>
-                            <div class="price">
-                                {{adv.price}} руб.
+                            <div class="main-content">
+                                <div class="name">
+                                    <h3>{{adv.name}}</h3>
+                                </div>
+                                <div class="description">
+                                    {{adv.description}}
+                                </div>
+                                <div class="price">
+                                    {{adv.price}} руб.
+                                </div>
                             </div>
                         </div>
                     </a>
-                    <div class="remove-button">
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="deleteBookmarks(adv.id)"></span>
-                    </div>
                 </li>
             </ul>
             <div ng-if="!adverts.length">
-                <h3>У вас нет ни одной закладки</h3>
-                Вы можете добавить объвление в закладки на странице объявления
+                <h3>В избранном нет ни одного объявления</h3>
+                Вы можете добавить объвление в избранное на странице объявления
             </div>
         </div>
     </div>

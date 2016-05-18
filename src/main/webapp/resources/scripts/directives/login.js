@@ -32,6 +32,7 @@
                 }
                 else {
                     context.isLogInFailed = true;
+                    context.cause = data["cause"];
                 }
             });
         };

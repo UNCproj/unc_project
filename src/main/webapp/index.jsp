@@ -27,7 +27,7 @@
                 <%--<li><a class="a-outline button-style" href="faq.jsp">FAQ</a></li>--%>
                 <li class="private-office">
                     <a class="button-style a-outline" href="bookmarks.jsp">
-                        Закладки
+                        Избранное
                     </a>
                 </li>
             </ul>
@@ -170,8 +170,30 @@
                     <%--Результаты поиска--%>
                     <div class="pagination-wrapper" ng-if="pagesCount > 0">
                         <ul class="pagination">
-                            <li ng-repeat="advPage in getPages() track by $index" ng-class="{active: $index == activePageNum}">
+                            <li ng-class="{active: $index == activePageNum}">
+                                <a href="" ng-click="makePageActive(0)">
+                                    <b><<</b>
+                                </a>
+                            </li>
+                            <li ng-class="{active: $index == activePageNum}">
+                                <a href="" ng-click="makePageActive(activePageNum - 1)">
+                                    <b><</b>
+                                </a>
+                            </li>
+                            <li ng-repeat="advPage in getPages() track by $index"
+                                ng-class="{active: $index == activePageNum}"
+                                ng-if="isNeedShowPageInPaginator($index)">
                                 <a href="" ng-click="makePageActive($index)">{{$index + 1}}</a>
+                            </li>
+                            <li ng-class="{active: $index == activePageNum}">
+                                <a href="" ng-click="makePageActive(activePageNum + 1)">
+                                    <b>></b>
+                                </a>
+                            </li>
+                            <li ng-class="{active: $index == activePageNum}">
+                                <a href="" ng-click="makePageActive(getPages().length - 1)">
+                                    <b>>></b>
+                                </a>
                             </li>
                         </ul>
                     </div>
@@ -220,9 +242,15 @@
                                     </div>
                                     <div class="main-content">
                                         <div class="name">
+                                            <div class="tooltip">
+                                                <span class="tooltiptext"><h3>{{adv.name}}</h3></span>
+                                            </div>
                                             <h3>{{adv.name}}</h3>
                                         </div>
                                         <div class="description">
+                                            <div class="tooltip">
+                                                <span class="tooltiptext">{{adv.description}}</span>
+                                            </div>
                                             {{adv.description}}
                                         </div>
                                         <div class="price">
@@ -235,10 +263,32 @@
                         <img src="resources/img/ajax-loader.gif" class="loading-bar"
                              ng-hide="resultsLoaded" />
                         <br />
-                        <div ng-if="pagesCount > 0">
+                        <div class="pagination-wrapper" ng-if="pagesCount > 0">
                             <ul class="pagination">
-                                <li ng-repeat="advPage in getPages() track by $index" ng-class="{active: $index == activePageNum}">
+                                <li ng-class="{active: $index == activePageNum}">
+                                    <a href="" ng-click="makePageActive(0)">
+                                        <b><<</b>
+                                    </a>
+                                </li>
+                                <li ng-class="{active: $index == activePageNum}">
+                                    <a href="" ng-click="makePageActive(activePageNum - 1)">
+                                        <b><</b>
+                                    </a>
+                                </li>
+                                <li ng-repeat="advPage in getPages() track by $index"
+                                    ng-class="{active: $index == activePageNum}"
+                                    ng-if="isNeedShowPageInPaginator($index)">
                                     <a href="" ng-click="makePageActive($index)">{{$index + 1}}</a>
+                                </li>
+                                <li ng-class="{active: $index == activePageNum}">
+                                    <a href="" ng-click="makePageActive(activePageNum + 1)">
+                                        <b>></b>
+                                    </a>
+                                </li>
+                                <li ng-class="{active: $index == activePageNum}">
+                                    <a href="" ng-click="makePageActive(getPages().length - 1)">
+                                        <b>>></b>
+                                    </a>
                                 </li>
                             </ul>
                         </div>

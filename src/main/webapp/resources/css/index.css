@@ -141,17 +141,46 @@
 }
 
 .search-results .list-group-item .img {
-    width: 200px;
-    height: 150px;
-    float: left;
-    margin: 5px;
-    margin-right: 10px;
-    border: 3px solid #f9f9f9;
+     width: 200px;
+     float: left;
+     margin: 5px;
+     margin-right: 10px;
+     border: 3px solid #f9f9f9;
 }
 
 .search-results .list-group-item .img img {
     width: 200px;
     height: 150px;
+}
+
+.search-results .list-group-item .name h3 {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.search-results .list-group-item .description {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+}
+
+.search-results .list-group-item .name h3:hover .tooltip .tooltiptext {
+    visibility: visible;
 }
 
 .vip-adverts {
@@ -196,6 +225,18 @@
     background-color: #f9f9f9;
     border: 1px solid #d9534f;
     z-index: 2;
+}
+
+.vip-adverts .list-group-item .name h3 {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.vip-adverts .list-group-item .description {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .content:after {

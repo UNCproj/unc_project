@@ -7,7 +7,7 @@
         <%--<li><a class="a-outline button-style" href="faq.jsp">FAQ</a></li>--%>
         <li class="private-office">
             <a class="button-style a-outline" href="bookmarks.jsp">
-                Закладки
+                Избранное
             </a>
         </li>
         </ul>
