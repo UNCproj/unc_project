@@ -102,14 +102,14 @@
                         <li class="list-categories-li">
                             <a href="/unc-project/index.jsp">Главная</a>
                         </li>
-                        <% for (int i = 0; i < listCategories.size(); i++) {%>
+                        <% for (int i = 0; i < listCategories.size(); i++) { %>
                         <li class="list-categories-li">
                             <script type="text/javascript">
                                 var temp = encodeURIComponent('<%= listCategories.get(i)%>');
                                 document.write('<a href="/unc-project/index.jsp?categoryName=' + temp + '"><%= listCategories.get(i)%></a>');
                             </script>
                         </li>
-                        <% }%>
+                        <% } %>
                         <li class="list-categories-li"><%= currentObject.getName()%></li>
                     </ul>
                 </div>
@@ -139,7 +139,7 @@
                 </ul>
                 <div class="settings tab-content" id="tab_content">
                     <% String activeSwicth1 = "active", s; 
-                       boolean pics_select = true, photo_type = true; %>
+                       boolean pics_select = true, photo_type = true, advert_name = true; %>
                     <% for (int i = 0; i < currentObject.getAttributeGroups().size(); i++) {
                             String attrGroupName = currentObject.getAttributeGroups().get(i);
                             ArrayList<Param> currentGroupParams = currentObject.getParams(attrGroupName);%>
@@ -204,6 +204,18 @@
                                         <img class="img-rule" src="/unc-project/resources/img/moder.png">
                                     </td>
                                 </tr>
+                                <% } else if (advert_name && "4".equals(currentObject.getParentType()) && i == 0 && j == 1) {
+                                              advert_name = false;
+                                              j--;  
+                                %>
+                                <tr>
+                                    <td class="attr-center" >
+                                        Название
+                                    </td>
+                                    <td>
+                                        <%= currentObject.getName() %>
+                                    </td>
+                                </tr>
                                 <% } else {%>
                                 <c:catch var="e">
                                     <c:import url="/includes/object/attr_views/<%= currentObject.getType()%>.jsp" />
@@ -252,11 +264,11 @@
                             </a>
                             <%}%>
                         </div>
-                            <%if ("4".equals(currentObject.getParentType()) && user != null && user.isLoggedIn() && !currentObject.isVip()) {%>
+                            <%if ("4".equals(currentObject.getParentType()) && user != null && user.isLoggedIn() && !currentObject.isVip() && user.getId().equals(request.getParameter("id"))) {%>
                                 <div class="clearfix robokassa-button" >
                                     <ul>
                                         <li class="robo-li robokassa-li">
-                                            Оплатить Vip-статус за 1,99 р
+                                            Оплатить Vip-статус за 10 р
                                         </li>
 
                                         <%
@@ -265,7 +277,7 @@
                                             //String sMrchPass2 = "n8DcTF8ogp410TZQqJgI";
                                             String nInvId = "100";
                                             String sDesc = "Test payment ROBOKASSA";
-                                            String sOutSum = "1.99";
+                                            String sOutSum = "10";
                                             String sCulture = "ru";
                                             String sEncoding = "utf-8";
                                             String shp_id_a = currentObject.getId();
