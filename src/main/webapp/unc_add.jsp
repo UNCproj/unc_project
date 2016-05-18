@@ -146,14 +146,13 @@
                         <div class="file-photo"
                              flow-init="{target: '/unc-project/upload', testChunks:false}"
                              flow-name="uploader.flow"
-                             flow-file-added="fileCopy($file, $event, $flow)"
+                             flow-files-added="fileCopy($file, $event, $flow)"
                              flow-complete="complete()">
-
                             <div id="n-load-avatar">Загрузить фото:</div>
+
                             <div id="load-avatar" class="alert bg-primary" flow-drop>
                                 Перетащите изображение сюда
                             </div>
-                            или
                             <button type="button" flow-btn>Загрузить фото</button>
                             <br/>
                             <%--<div class="alert alert-success" role="alert" ng-show="isAvatarChanged">--%>
@@ -164,7 +163,6 @@
                                 <%--<td>{{file.name}}</td>--%>
                             </tr>
                             <img flow-img="$flow.files[0]" />
-                            <button id="printFiles">Посмотреть файлы</button>
                         </div>
                     </form>
                 </div>
