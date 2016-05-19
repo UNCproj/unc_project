@@ -146,7 +146,7 @@ public class SQLQueriesHelper {
     }
 
     static public String isVip(String objectId) {
-        StringBuffer query = new StringBuffer("select VALUE from UNC_PARAMS where ATTR_ID = 20 and OBJECT_ID = ");
+        StringBuffer query = new StringBuffer("select DATE_VALUE from UNC_PARAMS where ATTR_ID = 20 and OBJECT_ID = ");
         query.append(objectId);
         String queryString = query.toString();
         return queryString;
