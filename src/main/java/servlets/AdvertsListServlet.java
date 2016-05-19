@@ -24,6 +24,7 @@ import java.lang.reflect.Type;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -428,7 +429,7 @@ public class AdvertsListServlet extends HttpServlet {
     }
 
     private <T extends Map<String, Object>> Comparator<T> createAdvertsComparator(String sortingParam, String sortingOrder) {
-        final String SORTING_PARAM = sortingParam == null ? "name" : sortingParam;
+        final String SORTING_PARAM = sortingParam == null ? "registration_date" : sortingParam;
         final String SORTING_ORDER = sortingOrder == null ? "asc" : sortingOrder;
 
         return (o1, o2) -> {
@@ -445,14 +446,22 @@ public class AdvertsListServlet extends HttpServlet {
 
             int compared;
 
-            try {
-                int sortingParamIntValue1 = Integer.parseInt(sortingParamValue1);
-                int sortingParamIntValue2 = Integer.parseInt(sortingParamValue2);
+            Integer sortingParamIntValue1 = tryParseInt(sortingParamValue1);
 
-                compared = sortingParamIntValue1 - sortingParamIntValue2;
+            if (sortingParamIntValue1 == null) {
+                Date sortingParamDateValue1 = tryParseDate(sortingParamValue1);
+
+                if (sortingParamDateValue1 == null) {
+                    compared = sortingParamValue1.compareTo(sortingParamValue2);
+                }
+                else {
+                    Date sortingParamDateValue2 = tryParseDate(sortingParamValue2);
+                    compared = sortingParamDateValue1.compareTo(sortingParamDateValue2);
+                }
             }
-            catch (Exception e) {
-                compared = sortingParamValue1.compareTo(sortingParamValue2);
+            else {
+                Integer sortingParamIntValue2 = tryParseInt(sortingParamValue2);
+                compared = sortingParamIntValue1 - sortingParamIntValue2;
             }
 
             return SORTING_ORDER.equalsIgnoreCase("desc") ? -compared : compared;
@@ -470,7 +479,8 @@ public class AdvertsListServlet extends HttpServlet {
 
     private Date tryParseDate(String inputString) {
         try {
-            return DateFormat.getDateInstance().parse(inputString);
+            DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+            return dateFormat.parse(inputString);
         }
         catch (ParseException e) {
             return null;

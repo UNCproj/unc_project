@@ -18,7 +18,7 @@
             $scope.DEFAULT_ADS_COUNT = 10000;
 
             $scope.searchPhrase = "";
-            $scope.searchResultsSortingParam = "name";
+            $scope.searchResultsSortingParam = "registration_date";
             $scope.searchResultsSortingOrder = "asc";
             $scope.foundedAds = [];
             $scope.foundedAdsCount = 0;
