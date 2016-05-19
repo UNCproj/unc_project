@@ -65,6 +65,7 @@ public class LoadVipAdverts extends HttpServlet {
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
 
+        System.out.println(gson.toJson(vipAdvertsArray));
         out.println(gson.toJson(vipAdvertsArray));
     }
 
