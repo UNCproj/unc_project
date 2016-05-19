@@ -111,7 +111,7 @@
                         $scope.isInBookmarks = true;
                         $scope.bookmarksButtonText = "Удалить из избранного";
                     });
-            }
+            };
 
             $scope.addOrDeleteBookmark = function(advertId) {
                 if ($scope.isInBookmarks) {

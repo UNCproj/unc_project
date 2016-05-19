@@ -27,10 +27,9 @@
                 <li><a class="a-outline button-style" href="index.jsp">Главная</a></li>
                 <li><a class="a-outline button-style" href="unc_add.jsp?type=advert">Новое объявление</a></li>
                 <li><a class="a-outline button-style" href="forum.jsp">Форум</a></li>
-                <li><a class="a-outline button-style" href="faq.jsp">FAQ</a></li>
                 <li class="private-office">
                     <a class="button-style a-outline" href="bookmarks.jsp">
-                        Закладки
+                        Избранное
                     </a>
                 </li>
             </ul>
