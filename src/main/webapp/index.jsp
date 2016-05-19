@@ -310,7 +310,7 @@
                         <li class="list-group-item" ng-repeat="adv in vipAds">
                             <a href="" ng-click="redirToAdvertPage(adv.id)">
                                 <div class="img">
-                                    <img ng-src="{{adv.pic != undefined ? adv.foto : '${initParam.get("default.advert.image")}'}}">
+                                    <img ng-src="{{adv.foto != undefined ? adv.foto : '${initParam.get("default.advert.image")}'}}">
                                 </div>
                                 <div class="main-content">
                                     <div class="name">

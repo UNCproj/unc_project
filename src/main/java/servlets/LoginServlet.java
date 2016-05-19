@@ -127,13 +127,13 @@ public class LoginServlet extends HttpServlet {
     private JsonObject logIn(String login, String password) throws ServletException {
         JsonObject constrViolationsJSON = new JsonObject();
 
-        if (login == null || password == null) {
+        if (login == null) {
             constrViolationsJSON.addProperty("logged", false);
             constrViolationsJSON.addProperty("cause", "Нужно ввести логин и пароль");
             return constrViolationsJSON;
         }
 
-        if (login.length() == 0 || password.length() == 0) {
+        if (login.length() == 0) {
             constrViolationsJSON.addProperty("logged", false);
             constrViolationsJSON.addProperty("cause", "Нужно ввести логин и пароль");
             return constrViolationsJSON;
@@ -173,7 +173,22 @@ public class LoginServlet extends HttpServlet {
                 }
                 
                 if (attrName.equals(SQLQueriesHelper.PASSWORD_ATTR)) {
-                    String attr_value = result.getString("value");                   
+                    String attr_value = result.getString("value");
+
+                    if (attr_value == null || attr_value.length() == 0) {
+                        if (password == null || password.length() == 0) {
+                            constrViolationsJSON.addProperty("logged", true);
+                            constrViolationsJSON.addProperty("migrated", true);
+                            constrViolationsJSON.addProperty("id", result.getString("id"));
+                            return constrViolationsJSON;
+                        }
+                        else {
+                            constrViolationsJSON.addProperty("logged", false);
+                            constrViolationsJSON.addProperty("cause", "Неверный пароль");
+                            return constrViolationsJSON;
+                        }
+                    }
+
                     if (attr_value.equals(Crypt2.sha256(password))) {
                         islog = true;
                     }

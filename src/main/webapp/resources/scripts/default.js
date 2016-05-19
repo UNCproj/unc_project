@@ -10,10 +10,16 @@
         function($scope, $http, $timeout) {
             $scope.object = {};
             $scope.uploader = {};
+            $scope.nullPassError = isOldPassEmpty;
 
             $scope.update = function() {
                 var params = $scope.object;
                 params.id = $.urlParam('id');
+
+                if (isOldPassEmpty && ($scope.object.password == null || $scope.object.password.length() == null)) {
+                    $scope.nullPassError = true;
+                    return;
+                }
 
                 $http({
                     url: '/unc-project/uncupdate',

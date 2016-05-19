@@ -21,7 +21,11 @@
                 </c:choose>
             </c:when>
             <c:when test="${param.attr_type.equals(\"2\")}">
+                <script>var isOldPassEmpty = ${param.attr_value == null || param.attr_value.length() == 0};</script>
                 <input id="${param.attr_name}" type="password" ng-model="object.${param.attr_name}" />
+                <div class="errors-wrapper col-sm-offset-2 col-sm-10">
+                    <div class="alert alert-danger" ng-show="nullPassError">Необходимо указать пароль</div>
+                </div>
             </c:when>
             <c:when test="${param.attr_type.equals(\"3\")}">
             <script>
@@ -62,6 +66,9 @@
             </c:when>
             <c:when test="${param.attr_type.equals(\"4\")}">
                 <textarea id="${param.attr_name}">${param.attr_value}</textarea>
+            </c:when>
+            <c:when test="${param.attr_type.equals(\"7\")}">
+                <div>Gold</div>
             </c:when>
             <c:when test="${param.attr_type.equals(\"8\")}">
                 <div id="map" coords='${param.attr_value}'

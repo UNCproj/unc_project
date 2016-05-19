@@ -13,7 +13,7 @@ import java.io.IOException;
  * Created by Денис on 20.04.2016.
  */
 @WebFilter(filterName = "IndexNewAdvertFilter", urlPatterns = {"/uncadd", "/uncupdate", "/upload",
-        "/MigrationUserServlet", "/MigrationAdvertServlet", "/ModerServlet/delAdvert", "/delete"})
+        "/MigrationUserServlet", "/MigrationAdvertServlet", "/ModerServlet/*", "/delete"})
 public class IndexNewAdvertFilter implements Filter {
     @EJB
     private AdvertsManager advertsManagerBean;
