@@ -6,6 +6,11 @@ $(function() {
     function initMap() {
         var mapElem = $('#map');
         var coordsAttr = mapElem.attr('coords');
+
+        if (coordsAttr == null) {
+            return;
+        }
+
         centerCoords = JSON.parse(coordsAttr);
         centerCoords = {lat: centerCoords["lat"], lng: centerCoords["lon"]};
 
