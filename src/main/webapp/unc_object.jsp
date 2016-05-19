@@ -222,7 +222,7 @@
                                         <%= currentObject.getName() %>
                                     </td>
                                 </tr>
-                                <%} else if ("4".equals(currentObject.getParentType()) && currentGroupParams.get(j).getType().equals("8") && currentGroupParams.get(j).getValue() == null)) {
+                                <%} else if ("4".equals(currentObject.getParentType()) && currentGroupParams.get(j).getType().equals("8") && currentGroupParams.get(j).getValue() == null) {
                                     continue;                                              
                                 } else { %>
                                 <c:catch var="e">
