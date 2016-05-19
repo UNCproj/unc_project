@@ -269,10 +269,10 @@ $(function () {
 
                                 };
                                 $scope.fileAdded();
-                                var hr = document.location.href;
-                                hr = hr.substring(0,hr.indexOf("unc_add.jsp?type=advert")) + 'unc_object.jsp?id=' + $scope.advertId;
-
-                                window.location.replace(hr);
+                                //var hr = document.location.href;
+                                //hr = hr.substring(0,hr.indexOf("unc_add.jsp?type=advert")) + 'unc_object.jsp?id=' + $scope.advertId;
+                                //
+                                //window.location.replace(hr);
                             }
                         })
                 }
@@ -676,6 +676,12 @@ $(function () {
                 console.log($scope.path);
                 console.log($scope.uploader.flow);
 
+            };
+            $scope.complete = function () {
+                var hr = document.location.href;
+                hr = hr.substring(0,hr.indexOf("unc_add.jsp?type=advert")) + 'unc_object.jsp?id=' + $scope.advertId;
+
+                window.location.replace(hr);
             };
         }
     ]);
