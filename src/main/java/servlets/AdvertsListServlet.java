@@ -447,20 +447,20 @@ public class AdvertsListServlet extends HttpServlet {
             int compared;
 
             Integer sortingParamIntValue1 = tryParseInt(sortingParamValue1);
+            Integer sortingParamIntValue2 = tryParseInt(sortingParamValue2);
 
-            if (sortingParamIntValue1 == null) {
+            if (sortingParamIntValue1 == null || sortingParamIntValue2 == null) {
                 Date sortingParamDateValue1 = tryParseDate(sortingParamValue1);
+                Date sortingParamDateValue2 = tryParseDate(sortingParamValue2);
 
-                if (sortingParamDateValue1 == null) {
+                if (sortingParamDateValue1 == null || sortingParamDateValue2 == null) {
                     compared = sortingParamValue1.compareTo(sortingParamValue2);
                 }
                 else {
-                    Date sortingParamDateValue2 = tryParseDate(sortingParamValue2);
                     compared = sortingParamDateValue1.compareTo(sortingParamDateValue2);
                 }
             }
             else {
-                Integer sortingParamIntValue2 = tryParseInt(sortingParamValue2);
                 compared = sortingParamIntValue1 - sortingParamIntValue2;
             }
 

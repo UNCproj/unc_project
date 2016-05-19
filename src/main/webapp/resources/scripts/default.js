@@ -83,8 +83,14 @@
                 var mapElem = $('#map');
                 var clearButton = $('#clear-markers');
                 var marker = null;
+                var coordsAttr = mapElem.attr('coords');
+
+                if (coordsAttr == null) {
+                    return;
+                }
+
                 var centerCoords;
-                var initialCoords = JSON.parse(mapElem.attr('coords'));
+                var initialCoords = JSON.parse(coordsAttr);
                 var geocoder = new google.maps.Geocoder;
 
                 clearButton.on('click', function () {
