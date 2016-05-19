@@ -1523,4 +1523,9 @@ public class SQLQueriesHelper {
         String query = "delete unc_params up where sysdate - 1 > up.date_value";
         return query;
     }
+
+    static String checkEmail(String email) {
+        String query = "select * from UNC_PARAMS where ATTR_ID = 5 and OBJECT_ID = " + email;
+        return query;
+    }
 }

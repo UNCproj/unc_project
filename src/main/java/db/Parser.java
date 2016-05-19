@@ -26,6 +26,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import unc.helpers.Crypt2;
 
 /**
  *
@@ -125,7 +126,8 @@ public class Parser {
                     BigDecimal id = results.getBigDecimal("id");
                     statement.executeUpdate(SQLQueriesHelper.insertUser(id, (String)list.get(i).get(0)));
                     statement.executeUpdate(SQLQueriesHelper.insertParam(id, SQLQueriesHelper.LOGIN_ATTR_ID, (String)list.get(i).get(0), null));
-                    statement.executeUpdate(SQLQueriesHelper.insertParam(id, SQLQueriesHelper.PASSWORD_ATTR_ID, (String)list.get(i).get(1), null));
+                    statement.executeUpdate(SQLQueriesHelper.insertParam(id, SQLQueriesHelper.PASSWORD_ATTR_ID, null , null));
+                    statement.executeUpdate(SQLQueriesHelper.insertParam(id, SQLQueriesHelper.EMAIL_ATTR_ID, (String)list.get(i).get(1) , null));
                     statement.executeUpdate(SQLQueriesHelper.insertParam(id, SQLQueriesHelper.REG_DATE_ATTR_ID, null, (Date)list.get(i).get(2)));
                     statement.executeUpdate(SQLQueriesHelper.insertParam(id, SQLQueriesHelper.PHONE_ATTR_ID, (String)list.get(i).get(3), null));
                     params.countRowUser++;
@@ -183,6 +185,18 @@ public class Parser {
                 return results.getBigDecimal("OBJECT_ID");
             else
                 return null;
+        }
+    }
+    
+    private boolean checkEmail(String email) throws SQLException, IOException, PropertyVetoException {
+        try(Connection connection = DataSource.getInstance().getConnection();
+            Statement statement = connection.createStatement())
+        {
+            ResultSet results = statement.executeQuery(SQLQueriesHelper.checkEmail(email));
+            if (results.next())
+                return true;
+            else
+                return false;
         }
     }
 }

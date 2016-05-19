@@ -252,7 +252,7 @@
                                 <% } %>
                             </table>
                         </div>
-                        <div>
+                        <div class="table-pos">
                             <% ArrayList<String[]> listReferences = currentObject.lisrReferences(); %>
                             <% if ("1".equals(currentObject.getType()) && user != null && user.getId().equals(request.getParameter("id"))) {%>
                             <a class="a-outline button-style" href="unc_update.jsp?id=<%=request.getParameter("id")%>" style="width: 200px">
@@ -260,7 +260,7 @@
                             </a>
                             <%}%>
                         </div>
-                        <div>
+                        <div class="table-pos">
                             <% if ("4".equals(currentObject.getParentType()) && user != null && listReferences.get(0)[0].equals(user.getId()) ) {%>
                             <a class="a-outline button-style" href="unc_update.jsp?id=<%=request.getParameter("id")%>" style="width: 200px">
                                 Изменить данные
@@ -292,7 +292,7 @@
                                     </ul>
                                 </div>
                             <%}%>
-                        <div class="references">
+                        <div class="references table-pos">
                             <% if ("1".equals(currentObject.getType())) { %>
                             <h4>Список обьявлений</h4>
                             <ul class="references-ul">
@@ -316,7 +316,7 @@
                     <% activeSwicth1 = ""; %>
                     <% } %>
                     <%if ("1".equals(currentObject.getType())) {%>
-                    <div id="statid" class="tab-pane fade in">
+                    <div id="statid" class="tab-pane fade in ">
                         <div ng-controller="LineCtrl" >
                             <div id = "dropdown1" action="" class="tab-pane fade in" ng-show="isExistData">
                                 <div class="dropdown">
@@ -328,7 +328,7 @@
                                         <li ng-repeat="a in subjects"><a ng-click="dropboxitemselected(a)">{{a.name}}</a></li>
                                     </ul>
                                 </div>
-                                <canvas id="line1" class="chart chart-line" chart-data="data" 
+                                <canvas id="line1" class="chart chart-line " chart-data="data" 
                                         chart-labels="labels" chart-legend="true" chart-series="series"
                                         chart-click="onClick" chart-options="opts" width="800" height="200" >
                                 </canvas>
@@ -339,7 +339,6 @@
                     <% } %>                       
                     <%if ("4".equals(currentObject.getParentType())) {%>
                     <div id="adstatid" class="tab-pane fade in">
-
                         <input type="hidden" id="hidden_user_name" value="${uname}">
                         <h3>Статистика просмотров объявления:</h3>
                         <div ng-controller="AdvertStatCtrl">
@@ -354,8 +353,8 @@
                     <% } %>
                     <div  id="adminka" class="tab-pane fade in" >
                         <%if ("1".equals(currentObject.getParentType())) {%>
-                        <div ng-controller="AdminCtrl">
-                            <ul class="custom-tabs nav nav-tabs tabs" id="tn">
+                        <div ng-controller="AdminCtrl" class="pad-content">
+                            <ul class="custom-tabs nav nav-tabs" id="tn">
                                 <li class="active"><a href="#user_list" data-toggle="tab">Список пользователей</a></li>
                                 <li><a href="#migr" data-toggle="tab">Миграция</a></li>
                                 <li><a href="#reg_stat" data-toggle="tab">Статистика регистраций</a></li>
@@ -461,23 +460,23 @@
                                             chart-options="reg_data.opts" width="800" height="200" >
                                     </canvas>
                                     <h3>Общее количество пользователей</h3>
-                                    <canvas id="regs_graph" class="chart chart-line" chart-data="reg_data.count" 
-                                            chart-labels="reg_data.date" chart-legend="true" chart-series="reg_data.series"
-                                            chart-options="reg_data.opts" width="800" height="200" >
+                                    <canvas id="regs_graph" class="chart chart-line" chart-data="reg_all_data.count" 
+                                            chart-labels="reg_all_data.date" chart-legend="true" chart-series="reg_all_data.series"
+                                            chart-options="reg_all_data.opts" width="800" height="200" >
                                     </canvas>
                                 </div>
                             </div>
                         </div>
                         <%}%>
                     </div>
-                    <div id="adm" class="tab-pane fade in">
+                    <div id="adm" class="tab-pane fade in usrs_tab_content">
 
                         <% if ((user != null) && user.isIsModer() && user.isIsAdmin() && ("4".equals(currentObject.getParentType()))) { %>
                         <br>
-                        <div>
+                        <div class="">
                             <div ng-controller="ModerCtrl">
                                 <button class="btn btn-primary" ng-click="clickToDel();">
-                                    <nobr>Удалить объявление</nobr>
+                                    <nobr>Заблокировать объявление</nobr>
                                 </button>
                             </div>
                         </div>

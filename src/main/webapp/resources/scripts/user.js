@@ -252,8 +252,32 @@
             });
         };
         
+        $scope.reg_all_data = {};
+        $scope.reg_all_data.opts = {
+                    responsive: false,
+                    maintainAspectRatio: false
+                };
+        $scope.reg_all_data.series = ['Статистика регистраций'];
+        function loadRegAllData() {
+            console.log("check!");
+            $.ajax({
+                url: "/unc-project/StatServlet/getAllRegistrations",
+                async: false,
+                data: {}
+            }).done(function (ads) {
+                $scope.reg_all_data.count = []; $scope.reg_all_data.date = [];
+                $.each(ads, function (index, vis) {
+                    
+                    $scope.reg_all_data.date.push(vis.date);
+                    $scope.reg_all_data.count.push(vis.count);
+                });
+                $scope.reg_all_data.count = [$scope.reg_all_data.count];
+            });
+        };
+        
         if ($('#rights').val()==='admin'){
             loadRegData();
+            loadRegAllData();
         };
         
         
