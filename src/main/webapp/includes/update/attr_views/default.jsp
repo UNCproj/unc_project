@@ -21,7 +21,7 @@
                 </c:choose>
             </c:when>
             <c:when test="${param.attr_type.equals(\"2\")}">
-                <script>var isOldPassEmpty = ${param.attr_value == null || param.attr_value.length() == 0};</script>
+                {{setOldPassEmpty(${param.attr_value == null || param.attr_value.length() == 0})}}
                 <input id="${param.attr_name}" type="password" ng-model="object.${param.attr_name}" />
                 <div class="errors-wrapper col-sm-offset-2 col-sm-10">
                     <div class="alert alert-danger" ng-show="nullPassError">Необходимо указать пароль</div>

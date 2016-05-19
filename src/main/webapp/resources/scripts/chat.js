@@ -39,6 +39,7 @@ chat.controller('chatController', ['$scope', '$http',
             }).success(function (data) {
                 console.log(data);
 
+                $scope.firstMessageId=data[0].id;
                 for (var i = 0; i < data.length - 1; i++) {
                     var name;
                     if( data[i].recipientName!=undefined && data[i].recipientSurname==undefined){
@@ -50,11 +51,10 @@ chat.controller('chatController', ['$scope', '$http',
                     }else{
                         name =data[i].recipientLogin ;
                     }
-                    $scope.firstMessageId=data[0].id;
                     $('.message-div').prepend('<div class="message-box"></div>');
                     if (data[i].recipientId == $scope.recipientId) {
                         $('.message-div .message-box:first').append('<div class="message-right"><div class="mess-text-box">' +
-                            '<div class="mess-name">'+ name + '</div>' +
+                            '<div class="mess-name">'+ name + '</div><hr>' +
                             '<div class="mess-text">' + data[i].text + '</div>' +
                             '<div class="mess-date">' + data[i].date + '</div>' +
                             '</div></div>');
@@ -63,7 +63,7 @@ chat.controller('chatController', ['$scope', '$http',
                         $('div.message-right:first').css("margin-left", width);
                     } else {
                         $('.message-div .message-box:first').append('<div class="message-left"><div class="mess-text-box">' +
-                            '<div class="mess-name">'+ name + '</div>' +
+                            '<div class="mess-name">'+ name + '</div><hr>' +
                             '<div class="mess-text">' + data[i].text + '</div>' +
                             '<div class="mess-date">' + data[i].date + '</div>' +
                             '</div></div>');
@@ -73,7 +73,7 @@ chat.controller('chatController', ['$scope', '$http',
                 if (data.length==10){
                     $('div.message-div').prepend('<div class="load-previous-messages">Загрузить предыдущие сообщения</div>');
                     $('div.message-div div.load-previous-messages').on('click',function(){
-                        loadPreviousMessages($scope.firstMessageId);
+                        loadPreviousMessages(data[data.length - 1].messId);
                     });
                 }
             });
@@ -108,7 +108,7 @@ chat.controller('chatController', ['$scope', '$http',
                     $('.message-div').append('<div class="message-box"></div>');
                     if (data[i].recipientId == $scope.recipientId) {
                         $('.message-div .message-box:last').append('<div class="message-right"><div class="mess-text-box">' +
-                            '<div class="mess-name">' + name + '</div>' +
+                            '<div class="mess-name">' + name + '</div><hr>' +
                             '<div class="mess-text">' + data[i].text + '</div>' +
                             '<div class="mess-date">' + data[i].date + '</div>' +
                             '</div></div>');
@@ -117,7 +117,7 @@ chat.controller('chatController', ['$scope', '$http',
                         $('div.message-right:last').css("margin-left", width);
                     } else {
                         $('.message-div .message-box:last').append('<div class="message-left"><div class="mess-text-box">' +
-                            '<div class="mess-name">' + name + '</div>' +
+                            '<div class="mess-name">' + name + '</div><hr>' +
                             '<div class="mess-text">' + data[i].text + '</div>' +
                             '<div class="mess-date">' + data[i].date + '</div>' +
                             '</div></div>');

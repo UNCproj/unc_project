@@ -92,7 +92,14 @@
                     method: 'POST',
                     params: $scope.obje
                 })
-                    .success(function (data) {});
+                    .success(function (data) {
+                        if (data==0 || data=='0'){
+                            var hr = document.location.href;
+                            hr = hr.substring(0,hr.indexOf("unc_object.jsp?id="));
+
+                            window.location.replace(hr);
+                        }
+                    });
                 var hr = document.location.href;
                 hr = hr.substring(0,hr.indexOf("unc_object.jsp?id="));
 
