@@ -91,6 +91,18 @@ public class UncObject {
         }
     }
     
+    public String getIDUserByAdvertId() throws IOException, SQLException, PropertyVetoException {
+        try(Connection connection = DataSource.getInstance().getConnection();
+            Statement statement = connection.createStatement())
+        {
+            ResultSet results = statement.executeQuery(SQLQueriesHelper.selectUserIdByAdvertId(id));
+            while (results.next()) {
+                    return results.getString("object_reference_id");
+            }
+            return null;
+        }
+    }
+    
     public void vipAdvert(String id_advert) throws SQLException, IOException, PropertyVetoException {
         try(Connection connection = DataSource.getInstance().getConnection();
             Statement statement = connection.createStatement())

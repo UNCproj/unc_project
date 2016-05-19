@@ -188,7 +188,18 @@ a:hover {
 }
 
 .robokassa-button {
-    margin-left: 100px;
+    margin-left: 20px;
+    margin-right: 100px;
+    float:right;
+}
+
+.btn-ch {
+    float:left;
+    margin-top: 5px;
+}
+
+.btm-del {
+    margin-top: 5px;
 }
 
 .robo-li {
