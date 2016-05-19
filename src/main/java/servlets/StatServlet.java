@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author craftic
  */
-@WebServlet(name = "StatServlet", urlPatterns = {"/StatServlet/getList", "/StatServlet/getStat", "/StatServlet/getRegistrations"})
+@WebServlet(name = "StatServlet", urlPatterns = {"/StatServlet/getList", "/StatServlet/getStat", "/StatServlet/getRegistrations", "/StatServlet/getAllRegistrations"})
 public class StatServlet extends HttpServlet {
 
     /**
@@ -227,6 +227,54 @@ public class StatServlet extends HttpServlet {
                             + "      up.ATTR_ID = 3\n"
                             + "group by to_char(up.DATE_VALUE,'DD.MM.YY')\n"
                             + "order by to_date(to_char(up.DATE_VALUE,'DD.MM.YY'),'DD.MM.YY')";
+
+                    ResultSet resultSet = st.executeQuery(comm);
+                    while (resultSet.next()) {
+                        VisitBean vis = new VisitBean();
+                        vis.date = resultSet.getString("d");
+                        log.info("date=" + vis.date);
+                        vis.count = resultSet.getInt("count");
+                        visits.add(vis);
+                    }
+                    if (connection != null) {
+                        connection.close();
+                    }
+                    String jsonvis = new Gson().toJson(visits);
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write(jsonvis);
+                    break;
+
+                } catch (SQLException ex) {
+                    Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
+            case "/StatServlet/getAllRegistrations": {
+                try {
+                    Connection connection = null;
+                    Statement st = null;
+                    try {
+                        connection = DataSource.getInstance().getConnection();
+                    } catch (SQLException ex) {
+                        Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (PropertyVetoException ex) {
+                        Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    try {
+                        st = connection.createStatement();
+                    } catch (SQLException ex) {
+                        Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                    String comm = "select  sum(count(o.OBJECT_ID)) OVER (order by to_date(to_char(p.DATE_VALUE,'DD.MM.YY'),'DD.MM.YY')) count,\n" +
+                        "        to_char(p.DATE_VALUE,'DD.MM.YY') d\n" +
+                        "  from  UNC_OBJECTS o\n" +
+                        "    join UNC_PARAMS p\n" +
+                        "      on o.OBJECT_ID = p.OBJECT_ID\n" +
+                        "  where o.OBJECT_TYPE_ID = 1 and p.ATTR_ID = 3\n" +
+                        "  group by to_char(p.DATE_VALUE,'DD.MM.YY')\n" +
+                        "  order by to_date(to_char(p.DATE_VALUE,'DD.MM.YY'),'DD.MM.YY')";
 
                     ResultSet resultSet = st.executeQuery(comm);
                     while (resultSet.next()) {

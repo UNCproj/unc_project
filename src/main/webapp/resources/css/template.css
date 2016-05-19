@@ -236,3 +236,7 @@ a:hover {
 .mini-image:last-child {
     margin-right: 0px !important;
 }
+
+.pad-content {
+    margin-left: 20px;
+}

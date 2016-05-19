@@ -146,7 +146,7 @@ public class SQLQueriesHelper {
     }
 
     static public String isVip(String objectId) {
-        StringBuffer query = new StringBuffer("select VALUE from UNC_PARAMS where ATTR_ID = 20 and OBJECT_ID = ");
+        StringBuffer query = new StringBuffer("select DATE_VALUE from UNC_PARAMS where ATTR_ID = 20 and OBJECT_ID = ");
         query.append(objectId);
         String queryString = query.toString();
         return queryString;
@@ -1608,6 +1608,11 @@ public class SQLQueriesHelper {
     }
     public static String deleteAdvertsRef (String id){
         String query = "delete from unc_references where object_id = "+id+"";
+        return query;
+    }
+
+    static String checkEmail(String email) {
+        String query = "select * from UNC_PARAMS where ATTR_ID = 5 and OBJECT_ID = " + email;
         return query;
     }
 }
