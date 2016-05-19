@@ -134,7 +134,7 @@
                         <%if ((user != null) && (user.isIsAdmin()) && (currentObject.getId().equals(user.getId()))) {%>
                     <li><a href="#adminka" data-toggle="tab">Администрирование</a></li>
                         <% } %>
-                        <%if ((user != null) && (user.isIsAdmin()) && (!currentObject.getId().equals(user.getId()))) {%>
+                        <%if ((user != null) && ((user.isIsAdmin()) || (user.isIsModer())) && (!currentObject.getId().equals(user.getId()))) {%>
                     <li><a href="#adm" data-toggle="tab">Администрирование</a></li>
                         <% } %>
                         <%if ("1".equals(currentObject.getType()) && user != null && user.getId().equals(request.getParameter("id"))) {%>
@@ -476,7 +476,7 @@
                     </div>
                     <div id="adm" class="tab-pane fade in usrs_tab_content">
 
-                        <% if ((user != null) && user.isIsModer() && user.isIsAdmin() && ("4".equals(currentObject.getParentType()))) { %>
+                        <% if ((user != null) && (user.isIsModer() || user.isIsAdmin()) && ("4".equals(currentObject.getParentType()))) { %>
                         <br>
                         <div class="">
                             <div ng-controller="ModerCtrl">
