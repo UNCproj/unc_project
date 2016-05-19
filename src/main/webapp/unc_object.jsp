@@ -508,7 +508,7 @@
                 <%if ("1".equals(currentObject.getType()) && user.getId().equals(request.getParameter("id"))) {%>
                 <div>
                     <a class="a-outline button-style" id="delete-object" style="width: 250px">
-                        Удалиться с сайта
+                        Удалить профиль
                     </a>
                 </div>
                 <%}%>
