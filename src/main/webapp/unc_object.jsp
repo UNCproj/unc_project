@@ -498,13 +498,14 @@
                     <% } %>
                     <br>
                 </div>
-                <%if ("1".equals(currentObject.getType()) && !user.getId().equals(request.getParameter("id"))) {%>
+                <%if ("1".equals(currentObject.getType()) && user != null && !user.getId().equals(request.getParameter("id"))) {%>
                 <div>
                     <a class="a-outline button-style" href="chat.jsp?id=<%=request.getParameter("id")%>" style="width: 230px">
                         Отправить сообщение
                     </a>
                 </div>
                 <%}%>
+                
                 <c:catch var="e">
                     <c:import url="/includes/object/footers/default.jspf" />
                 </c:catch>
