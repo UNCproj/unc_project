@@ -11,6 +11,7 @@
 <script type="text/javascript" src="resources/scripts/Chart.js"></script>
 <script type="text/javascript" src="resources/scripts/angular-chart.js"></script>
 <script type="text/javascript" src="resources/scripts/ngDialog.js"></script>
+<script type="text/javascript" src="resources/scripts/jquery.colorbox.js"></script>
 
 <script src="resources/scripts/bootstrap.min.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDhpSFPZwg079hJYU1k7QmZ9Vsfy8VWLWo&sensor=false"></script>

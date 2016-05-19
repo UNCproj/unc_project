@@ -104,7 +104,7 @@
         %>
         <div class="forum-create-topic">
             <%--<a href="unc_add.jsp?type=forum_topic&name=<%=type%>">Создать обсуждение</a>--%>
-            <a class="a-outline button-style" href="unc_add.jsp?type=forum_topic&name=<%=type%>" style="width: 200px">Создать
+            <a class="a-outline button-style" href="unc_add.jsp?type=forum_topic&name=<%=type%>" style="width: 250px">Создать
                 обсуждение</a>
         </div>
             <%

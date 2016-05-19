@@ -11,7 +11,7 @@ import java.io.IOException;
 /**
  * Created by alex on 01.04.2016.
  */
-@WebFilter(urlPatterns = {"/unc_add.jsp","/unc_update.jsp","/chat.jsp","/bookmarks.jsp","/esmanagement"})
+@WebFilter(urlPatterns = {"/unc_add.jsp","/unc_update.jsp","/chat.jsp","/bookmarks.jsp","/esmanagement", "/delete"})
 public class LoginFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {

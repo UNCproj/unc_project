@@ -85,10 +85,7 @@ public class UncObject {
         {
             ResultSet results = statement.executeQuery(SQLQueriesHelper.isVip(id));
             while (results.next()) {
-                String id = results.getString("VALUE");
-                if ("Gold".equals(id)) {
                     return true;
-                }
             }
             return false;
         }

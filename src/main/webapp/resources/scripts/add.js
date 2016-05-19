@@ -200,14 +200,15 @@ $(function () {
 
             $scope.postAdd = function (p) {
                 console.log("Начали грузить");
-                p.map_coordinates = $scope.map_coordinates;
-                var citySplitted = p.city.split(',');
-
-                if (citySplitted.length > 0) {
-                    p.city = citySplitted[0];
-                }
-
                 if ($scope.validationBefore() == true) {
+                    if ($.urlParam('type') == 'advert') {
+                        p.map_coordinates = $scope.map_coordinates;
+                        var citySplitted = p.city.split(',');
+
+                        if (citySplitted.length > 0) {
+                            p.city = citySplitted[0];
+                        }
+                    }
                     $http({
                         url: '/unc-project/uncadd',
                         method: 'POST',
@@ -215,22 +216,10 @@ $(function () {
                     })
                         .success(function (data) {
                             if (data == 1) {
+                                console.log("Это сообщение");
                                 var h = window.location.href;
                                 var n = h.indexOf('unc_add.jsp?');
                                 var hr = h.substring(0, n);
-                                if ($scope.object.type == 'forum_topic') {
-                                    window.location.href = hr + "forum.jsp?type=" + $scope.object.type1;
-                                }
-                                if ($scope.object.type == 'forum_comment') {
-                                    window.location.href = hr + "forum.jsp?id=" + $scope.object.topic_id;
-                                }
-                            } else if (data == 2) {
-                                var h = window.location.href;
-                                var n = h.indexOf('unc_add.jsp?');
-                                var hr = h.substring(0, n);
-                                if ($scope.object.type == 'advert') {
-                                    window.location.href = hr;
-                                }
                                 if ($scope.object.type == 'forum_topic') {
                                     window.location.href = hr + "forum.jsp?type=" + $scope.object.type1;
                                 }
@@ -278,7 +267,6 @@ $(function () {
                                     }
                                     $scope.uploader.flow.upload();
 
-
                                 };
                                 $scope.fileAdded();
                                 var hr = document.location.href;
@@ -292,46 +280,72 @@ $(function () {
             };
             $scope.validationBefore = function () {
                 var validStat = true;
-                $("#information").empty();
-                if ($("#name").val() == "") {
-                    $("#name").addClass("invalid");
-                    $("#information").append("<p>Пустое поле ввода названия</p>");
-                    validStat = false;
-                } else {
-                    $("#name").removeClass("invalid");
-                }
-                if ($("#description").val() == "") {
-                    $("#description").addClass("invalid");
-                    $("#information").append("<p>Добавьте описание</p>");
-                    validStat = false;
-                } else {
-                    $("#description").removeClass("invalid");
-                }
-                if ($("#city").val() == "" || $("#city").val() == "Выберите город") {
-                    $("#city").addClass("invalid");
-                    $("#information").append("<p>Город не выбран</p>");
-                    validStat = false;
-                } else {
-                    $("#city").removeClass("invalid");
-                }
-                if ($("#price").val() < 0) {
-                    $("#price").addClass("invalid");
-                    $("#information").append("<p>Цена не может быть меньше нуля</p>");
-                    validStat = false;
-                } else {
-                    $("#price").removeClass("invalid");
-                }
-                if ($("#price").val() == "") {
-                    $("#price").addClass("invalid");
-                    $("#information").append("<p>Введите цену</p>");
-                    validStat = false;
-                } else {
-                    $("#price").removeClass("invalid");
+                if ($.urlParam('type') == 'advert') {
+                    $("#information").empty();
+                    if ($("#name").val() == "") {
+                        $("#name").addClass("invalid");
+                        $("#information").append("<p>Пустое поле ввода названия</p>");
+                        validStat = false;
+                    } else {
+                        $("#name").removeClass("invalid");
+                    }
+                    if ($("#description").val() == "") {
+                        $("#description").addClass("invalid");
+                        $("#information").append("<p>Добавьте описание</p>");
+                        validStat = false;
+                    } else {
+                        $("#description").removeClass("invalid");
+                    }
+                    if ($("#city").val() == "" || $("#city").val() == "Выберите город") {
+                        $("#city").addClass("invalid");
+                        $("#information").append("<p>Город не выбран</p>");
+                        validStat = false;
+                    } else {
+                        $("#city").removeClass("invalid");
+                    }
+                    if ($("#price").val() < 0) {
+                        $("#price").addClass("invalid");
+                        $("#information").append("<p>Цена не может быть меньше нуля</p>");
+                        validStat = false;
+                    } else {
+                        $("#price").removeClass("invalid");
+                    }
+                    if ($("#price").val() == "") {
+                        $("#price").addClass("invalid");
+                        $("#information").append("<p>Введите цену</p>");
+                        validStat = false;
+                    } else {
+                        $("#price").removeClass("invalid");
+                    }
+                } else if ($.urlParam('type') == 'forum_topic'){
+                    $("#information").empty();
+                    if ($("#name").val() == "") {
+                        $("#name").addClass("invalid");
+                        $("#information").append("<p>Пустое поле ввода названия</p>");
+                        validStat = false;
+                    } else {
+                        $("#name").removeClass("invalid");
+                    }
+                    if ($("#description").val() == "") {
+                        $("#description").addClass("invalid");
+                        $("#information").append("<p>Добавьте описание</p>");
+                        validStat = false;
+                    } else {
+                        $("#description").removeClass("invalid");
+                    }
+                } else if ($.urlParam('type') == 'forum_comment'){
+                    $("#information").empty();
+                    if ($("#name").val() == "") {
+                        $("#name").addClass("invalid");
+                        $("#information").append("<p>Пустое поле ввода названия</p>");
+                        validStat = false;
+                    } else {
+                        $("#name").removeClass("invalid");
+                    }
                 }
                 return validStat;
             };
             $scope.validationAfter = function () {
-
             };
             $scope.createAttr = function (a_name, a_ru_name, a_type) {
                 if (a_type == 1) {

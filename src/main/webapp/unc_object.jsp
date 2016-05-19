@@ -20,6 +20,11 @@
 <%@ page import="java.util.Hashtable" %>
 <%@ page import="javax.ejb.EJB" %>
 <%@ page import="beans.AdvertsManager" %>
+<%@ page import="java.sql.Connection" %>
+<%@ page import="db.DataSource" %>
+<%@ page import="java.sql.Statement" %>
+<%@ page import="java.sql.ResultSet" %>
+<%@ page import="db.SQLQueriesHelper" %>
 <%
     Logger log = Logger.getLogger("unc_obj_log");
     String objectId = request.getParameter("id");
@@ -96,7 +101,7 @@
                 <%@ include file="/includes/object/headers/default.jsp" %>
             </c:catch>
             <div class="content">
-                <%if (!"1".equals(currentObject.getType())) {%>
+                <%if (!"1".equals(currentObject.getType())) { %>
                 <div class="list-categories clearfix">
                     <ul>
                         <li class="list-categories-li">
@@ -115,7 +120,7 @@
                 </div>
                 <% } %>
                 <ul class="custom-tabs nav nav-tabs tabs" id="tab_name">
-                    <% if (currentObject.getAttributeGroups() != null && currentObject.getAttributeGroups().size() != 0) {%>
+                    <% if (currentObject.getAttributeGroups() != null && currentObject.getAttributeGroups().size() != 0) { %>
                     <li class="active"><a href="#tab<%= currentObject.getAttributeGroups().get(0)%>" data-toggle="tab">Основная информация</a></li>
                         <% for (int i = 1; i < currentObject.getAttributeGroups().size(); i++) {%>
                     <li><a href="#tab<%= currentObject.getAttributeGroups().get(i)%>" data-toggle="tab">Дополнительная информация</a></li>
@@ -123,7 +128,7 @@
                         <%if ("1".equals(currentObject.getType())) {%>
                     <li><a href="#statid" data-toggle="tab">Статистика</a></li>
                         <% } %>
-                        <%if ("4".equals(currentObject.getParentType())) {%>
+                        <%if ("4".equals(currentObject.getParentType()) && user != null && user.getId().equals(request.getParameter("id"))) {%>
                     <li><a href="#adstatid" data-toggle="tab">Статистика просмотров</a></li>
                         <% } %>
                         <%if ((user != null) && (user.isIsAdmin()) && (currentObject.getId().equals(user.getId()))) {%>
@@ -170,6 +175,7 @@
                                                 }
                                             }
                                             request.setAttribute("list", pics);
+                                            request.setAttribute("user_photo", currentObject.getType());
                                         }
                                         else {
                                             continue;
@@ -216,7 +222,9 @@
                                         <%= currentObject.getName() %>
                                     </td>
                                 </tr>
-                                <% } else {%>
+                                <%} else if ("4".equals(currentObject.getParentType()) && currentGroupParams.get(j).getType().equals("8")) {
+                                    continue;                                              
+                                } else { %>
                                 <c:catch var="e">
                                     <c:import url="/includes/object/attr_views/<%= currentObject.getType()%>.jsp" />
                                 </c:catch>
@@ -340,9 +348,7 @@
                         <input type="hidden" id="hidden_user_name" value="${uname}">
                         <h3>Статистика просмотров объявления:</h3>
                         <div ng-controller="AdvertStatCtrl">
-
                             <div class="graph-pos" ng-controller="AdvertStatCtrl">
-
                                 <canvas id="line2" class="chart chart-line" chart-data="data"
                                         chart-labels="labels" chart-legend="true" chart-series="series"
                                         chart-click="onClick" chart-options="opts" width="800" height="400">
@@ -454,6 +460,12 @@
                                     </div>
                                 </div>
                                 <div id="reg_stat" class="tab-pane fade in">
+                                    <h3>Количество новых пользователей</h3>
+                                    <canvas id="regs_graph" class="chart chart-line" chart-data="reg_data.count" 
+                                            chart-labels="reg_data.date" chart-legend="true" chart-series="reg_data.series"
+                                            chart-options="reg_data.opts" width="800" height="200" >
+                                    </canvas>
+                                    <h3>Общее количество пользователей</h3>
                                     <canvas id="regs_graph" class="chart chart-line" chart-data="reg_data.count" 
                                             chart-labels="reg_data.date" chart-legend="true" chart-series="reg_data.series"
                                             chart-options="reg_data.opts" width="800" height="200" >
@@ -491,6 +503,37 @@
                 <div>
                     <a class="a-outline button-style" href="chat.jsp?id=<%=request.getParameter("id")%>" style="width: 230px">
                         Отправить сообщение
+                    </a>
+                </div>
+                <%}%>
+                <%if ("1".equals(currentObject.getType()) && user.getId().equals(request.getParameter("id"))) {%>
+                <div>
+                    <a class="a-outline button-style" id="delete-object" style="width: 250px">
+                        Удалиться с сайта
+                    </a>
+                </div>
+                <%}%>
+                <%
+                    String primId = "";
+                    Connection connection = null;
+                    try{
+                        connection = DataSource.getInstance().getConnection();
+                        Statement statement = connection.createStatement();
+                        ResultSet resultSet = statement.executeQuery(SQLQueriesHelper.selectUserIdByAdvertId(request.getParameter("id")));
+                        if(resultSet.next()){
+                            primId = resultSet.getString("object_reference_id");
+                            System.out.println("Id обладателя объявления " + primId);
+                        }
+                    }finally {
+                        connection.close();
+                    }
+                    System.out.println("currentObject.getType()" + currentObject.getType());
+                    System.out.println(user.getId());
+
+                    if (Integer.parseInt(currentObject.getType()) > 3 && Integer.parseInt(currentObject.getType()) <388 && user.getId().equals(primId)){%>
+                <div>
+                    <a class="a-outline button-style" id="delete-object" style="width: 250px">
+                        Удалить объявление
                     </a>
                 </div>
                 <%}%>

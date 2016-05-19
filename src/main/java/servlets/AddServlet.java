@@ -22,7 +22,44 @@ import java.util.Enumeration;
 @WebServlet(name = "AddServlet", urlPatterns = "/uncadd")
 public class AddServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("Сработал addservlet");
+        System.out.println("Сработал AddServlet");
+        if (request.getParameter("type").equals("advert")) {
+            System.out.println("Объявление");
+            if (
+                    request.getParameter("name") == null || request.getParameter("name").equals("") ||
+                            request.getParameter("description") == null || request.getParameter("description").equals("") ||
+                            request.getParameter("city") == null || request.getParameter("city").equals("") ||
+                            request.getParameter("price") == null || request.getParameter("price").equals("") ||
+                            Integer.parseInt(request.getParameter("price")) < 0
+                    ) {
+                System.out.println("Неправильно");
+                return;
+            } else {
+                System.out.println("Правильно");
+            }
+        } else if (request.getParameter("type").equals("forum_topic")) {
+            System.out.println("Тема форума");
+            if (
+                    request.getParameter("name") == null || request.getParameter("name").equals("") ||
+                            request.getParameter("description") == null || request.getParameter("description").equals("")
+                    ) {
+                System.out.println("Неправильно");
+                return;
+            } else {
+                System.out.println("Правильно");
+            }
+        } else if (request.getParameter("type").equals("forum_comment")) {
+            System.out.println("Комментарий");
+            if (
+                    request.getParameter("name") == null || request.getParameter("name").equals("")
+                    ) {
+                System.out.println("Неправильно");
+                return;
+            } else {
+                System.out.println("Правильно");
+            }
+        }
+        System.out.println("Началось добавление объявления");
         String type = request.getParameter("type");
         String type1 = request.getParameter("type1");
         String type2 = request.getParameter("type2");
@@ -38,7 +75,7 @@ public class AddServlet extends HttpServlet {
 
         Connection connection = null;
         String objectType = "";
-        try{
+        try {
             connection = DataSource.getInstance().getConnection();
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(SQLQueriesHelper.selectChildTypeIdByTypeNames(type, type1,
@@ -49,7 +86,7 @@ public class AddServlet extends HttpServlet {
             e.printStackTrace();
         } catch (PropertyVetoException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 connection.close();
             } catch (SQLException e) {
@@ -83,7 +120,7 @@ public class AddServlet extends HttpServlet {
 
         PrintWriter out = response.getWriter();
         System.out.println(type);
-        if (type.equals("advert")){
+        if (type.equals("advert")) {
             System.out.println(obj.getAdvertId());
             out.println(obj.getAdvertId());
         } else {
