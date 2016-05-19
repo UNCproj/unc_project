@@ -56,4 +56,7 @@
 .mess-text-box hr{
     margin: 3px;
 }
+textarea {
+    border: solid 1px;
+}
 

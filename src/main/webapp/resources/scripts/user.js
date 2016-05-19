@@ -319,6 +319,10 @@
                     params: $scope.object
                 })
                     .success(function (data) {
+                        if(data[0] == null){
+                            $(".message-list").empty();
+                            $(".message-list").append("<div class='info-mess-no'>У вас нет сообщений</div>");
+                        }
                         var stat = false;
                         for(var i=0; i<data.length;i++){
                             if(data[i].readStatus=='no'){
@@ -371,6 +375,11 @@
                     params: $scope.object
                 })
                     .success(function (data) {
+
+                        if(data[0] == null){
+                            $(".message-list").empty();
+                            $(".message-list").append("<div class='info-mess-no'>У вас нет сообщений</div>");
+                        }
 
                         mainData = data;
                         console.log(data);
