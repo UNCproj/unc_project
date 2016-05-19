@@ -25,9 +25,9 @@
         <%@ include file="/includes/object/headers/default.jsp" %>
     </c:catch>
     <div class="content">
-            <div class="message-div message" style="height: 300px; overflow: scroll"></div>
+            <div class="message-div message" style="height: 400px; overflow: scroll"></div>
 
-            <textarea id="textMessage" class="form-control" name="textMessage" cols="30" rows="10"></textarea>
+            <textarea id="textMessage" class="form-control" name="textMessage" cols="30" rows="5"></textarea>
 
         <div class="form-group">
             <input type="button" class="button-style a-outline button-update" value="Отправить сообщение" ng-click="publish()" />

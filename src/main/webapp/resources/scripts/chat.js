@@ -112,7 +112,7 @@ chat.controller('chatController', ['$scope', '$http',
                             '<div class="mess-text">' + data[i].text + '</div>' +
                             '<div class="mess-date">' + data[i].date + '</div>' +
                             '</div></div>');
-                        var width = $('.message-box:last').width() - $('.message-box:last .message-right:last .mess-text-box:last').width() - 20;
+                        var width = $('.message-box:last').width() - $('.message-box:last .message-right:last .mess-text-box:last').width() - 40;
                         console.log(width);
                         $('div.message-right:last').css("margin-left", width);
                     } else {

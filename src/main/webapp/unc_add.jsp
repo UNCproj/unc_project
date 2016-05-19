@@ -159,7 +159,7 @@
                                 <%--Изображение успешно обновлено!--%>
                             <%--</div>--%>
                             <tr ng-repeat="file in $flow.files" style="height: 100px">
-                                <td>{{$index+1}}</td>
+                                <%--<td>{{$index+1}}</td>--%>
                                 <%--<td>{{file.name}}</td>--%>
                             </tr>
                             <img flow-img="$flow.files[0]" />

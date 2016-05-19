@@ -670,8 +670,11 @@ $(function () {
                 $scope.file = $file;
                 var path = $($event.target).parent().attr('path');
                 $scope.path = path;
-                console.log("$scope.file" + $scope.file);
-                console.log("$scope.path" + $scope.path);
+                console.log("$scope.file" );
+                console.log($scope.file);
+                console.log("$scope.path");
+                console.log($scope.path);
+                console.log($scope.uploader.flow);
 
             };
         }
