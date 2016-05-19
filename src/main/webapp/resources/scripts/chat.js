@@ -54,7 +54,7 @@ chat.controller('chatController', ['$scope', '$http',
                     $('.message-div').prepend('<div class="message-box"></div>');
                     if (data[i].recipientId == $scope.recipientId) {
                         $('.message-div .message-box:first').append('<div class="message-right"><div class="mess-text-box">' +
-                            '<div class="mess-name">'+ name + '</div>' +
+                            '<div class="mess-name">'+ name + '</div><hr>' +
                             '<div class="mess-text">' + data[i].text + '</div>' +
                             '<div class="mess-date">' + data[i].date + '</div>' +
                             '</div></div>');
@@ -63,7 +63,7 @@ chat.controller('chatController', ['$scope', '$http',
                         $('div.message-right:first').css("margin-left", width);
                     } else {
                         $('.message-div .message-box:first').append('<div class="message-left"><div class="mess-text-box">' +
-                            '<div class="mess-name">'+ name + '</div>' +
+                            '<div class="mess-name">'+ name + '</div><hr>' +
                             '<div class="mess-text">' + data[i].text + '</div>' +
                             '<div class="mess-date">' + data[i].date + '</div>' +
                             '</div></div>');
@@ -108,7 +108,7 @@ chat.controller('chatController', ['$scope', '$http',
                     $('.message-div').append('<div class="message-box"></div>');
                     if (data[i].recipientId == $scope.recipientId) {
                         $('.message-div .message-box:last').append('<div class="message-right"><div class="mess-text-box">' +
-                            '<div class="mess-name">' + name + '</div>' +
+                            '<div class="mess-name">' + name + '</div><hr>' +
                             '<div class="mess-text">' + data[i].text + '</div>' +
                             '<div class="mess-date">' + data[i].date + '</div>' +
                             '</div></div>');
@@ -117,7 +117,7 @@ chat.controller('chatController', ['$scope', '$http',
                         $('div.message-right:last').css("margin-left", width);
                     } else {
                         $('.message-div .message-box:last').append('<div class="message-left"><div class="mess-text-box">' +
-                            '<div class="mess-name">' + name + '</div>' +
+                            '<div class="mess-name">' + name + '</div><hr>' +
                             '<div class="mess-text">' + data[i].text + '</div>' +
                             '<div class="mess-date">' + data[i].date + '</div>' +
                             '</div></div>');
