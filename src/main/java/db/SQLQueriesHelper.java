@@ -1523,4 +1523,91 @@ public class SQLQueriesHelper {
         String query = "delete unc_params up where sysdate - 1 > up.date_value";
         return query;
     }
+    public static String findTypeIdById (String id){
+        String query = "select t1.ot_id as type " +
+                "from ( " +
+                "select  * " +
+                "from  unc_object_types ot1 " +
+                "start with ot1.ot_id = ( " +
+                "select  o1.object_type_id " +
+                "from  unc_objects o1 " +
+                "where  o1.object_id = "+id+" " +
+                ") " +
+                "connect by prior ot1.parent_id = ot1.ot_id " +
+                ") t1 " +
+                "where t1.parent_id is null ";
+        System.out.println(query);
+        return query;
+    }
+    public static String deleteUsersAdvertsParams (String id){
+        String query = "delete " +
+                "  from  unc_params " +
+                "  where object_id in ( " +
+                "  select  r1.object_id " +
+                "  from  unc_references r1 " +
+                " where  r1.object_reference_id =  "+id+" " +
+                "  )";
+        System.out.println(query);
+        return query;
+    }
+    public static String deleteUsersAdvertsStat (String id){
+        String query = "delete " +
+                "  from  unc_stat " +
+                "  where obj_id in ( " +
+                "  select  r1.object_id " +
+                "  from  unc_references r1 " +
+                " where  r1.object_reference_id =  "+id+" " +
+                "  )";
+        System.out.println(query);
+        return query;
+    }
+    public static String deleteUsersParams (String id){
+        String query = "delete " +
+                "  from  unc_params " +
+                "  where object_id = "+id+"";
+        System.out.println(query);
+        return query;
+    }
+    public static String deleteReferences (String id){
+        String query = "delete " +
+                "  from  unc_references " +
+                "  where object_id = "+id+" or OBJECT_REFERENCE_ID = "+id+"";
+        System.out.println(query);
+        return query;
+    }
+    public static String deleteObjectParams (String id){
+        String query = "delete " +
+                "  from  unc_params " +
+                "  where object_id = "+id+"";
+        System.out.println(query);
+        return query;
+    }
+    public static String deleteObjectStat (String id){
+        String query = "delete " +
+                "  from  unc_stat " +
+                "  where obj_id = "+id+"";
+        System.out.println(query);
+        return query;
+    }
+    public static String deleteObject (String id){
+        String query = "delete " +
+                "  from  unc_objects " +
+                "  where object_id = "+id+"";
+        System.out.println(query);
+        return query;
+    }
+    public static String selectUsersAdverts (String id){
+        String query = "select  r1.object_id \n" +
+                "from  unc_references r1 \n" +
+                " where  r1.object_reference_id =  " + id;
+        return query;
+    }
+    public static String selectUserIdByAdvertId (String id){
+        String query = "select object_reference_id from unc_references where object_id = "+id+"";
+        return query;
+    }
+    public static String deleteAdvertsRef (String id){
+        String query = "delete from unc_references where object_id = "+id+"";
+        return query;
+    }
 }

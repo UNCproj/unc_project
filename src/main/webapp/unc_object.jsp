@@ -20,6 +20,11 @@
 <%@ page import="java.util.Hashtable" %>
 <%@ page import="javax.ejb.EJB" %>
 <%@ page import="beans.AdvertsManager" %>
+<%@ page import="java.sql.Connection" %>
+<%@ page import="db.DataSource" %>
+<%@ page import="java.sql.Statement" %>
+<%@ page import="java.sql.ResultSet" %>
+<%@ page import="db.SQLQueriesHelper" %>
 <%
     Logger log = Logger.getLogger("unc_obj_log");
     String objectId = request.getParameter("id");
@@ -498,6 +503,37 @@
                 <div>
                     <a class="a-outline button-style" href="chat.jsp?id=<%=request.getParameter("id")%>" style="width: 230px">
                         Отправить сообщение
+                    </a>
+                </div>
+                <%}%>
+                <%if ("1".equals(currentObject.getType()) && user.getId().equals(request.getParameter("id"))) {%>
+                <div>
+                    <a class="a-outline button-style" id="delete-object" style="width: 250px">
+                        Удалиться с сайта
+                    </a>
+                </div>
+                <%}%>
+                <%
+                    String primId = "";
+                    Connection connection = null;
+                    try{
+                        connection = DataSource.getInstance().getConnection();
+                        Statement statement = connection.createStatement();
+                        ResultSet resultSet = statement.executeQuery(SQLQueriesHelper.selectUserIdByAdvertId(request.getParameter("id")));
+                        if(resultSet.next()){
+                            primId = resultSet.getString("object_reference_id");
+                            System.out.println("Id обладателя объявления " + primId);
+                        }
+                    }finally {
+                        connection.close();
+                    }
+                    System.out.println("currentObject.getType()" + currentObject.getType());
+                    System.out.println(user.getId());
+
+                    if (Integer.parseInt(currentObject.getType()) > 3 && Integer.parseInt(currentObject.getType()) <388 && user.getId().equals(primId)){%>
+                <div>
+                    <a class="a-outline button-style" id="delete-object" style="width: 250px">
+                        Удалить объявление
                     </a>
                 </div>
                 <%}%>
