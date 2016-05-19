@@ -153,7 +153,14 @@ public class LoginServlet extends HttpServlet {
                 constrViolationsJSON.addProperty("cause", "Пользователь не зарегистрирован");
                 return constrViolationsJSON;
             }
-            while (result.next()) {
+
+            if (!result.next()) {
+                constrViolationsJSON.addProperty("logged", false);
+                constrViolationsJSON.addProperty("cause", "Пользователь не зарегистрирован");
+                return constrViolationsJSON;
+            }
+
+            do {
                 String attrName = result.getString("attr_name");
                 if (attrName.equals("is_invalid")){
                     String attr_value = result.getString("value");
@@ -177,7 +184,7 @@ public class LoginServlet extends HttpServlet {
                         return constrViolationsJSON;
                     }
                 }
-            }
+            } while (result.next());
         } catch (Exception e) {
             throw new ServletException(e);
         }

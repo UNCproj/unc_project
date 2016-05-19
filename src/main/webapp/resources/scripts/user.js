@@ -294,6 +294,20 @@
         $scope.object.id = $.urlParam('id');
 
         $(function(){
+            console.log("Нажали кнопку для удаления");
+            $("#delete-object").on("click",function(){
+                $http({
+                    url: '/unc-project/delete',
+                    method: 'POST',
+                    params: $scope.object
+                })
+                    .success(function (data) {});
+                //var hr = document.location.href;
+                //hr = hr.substring(0,hr.indexOf("unc_object.jsp?id="));
+                //
+                //window.location.replace(hr);
+            });
+
             $scope.loadMessAfter = function(){
                 console.log("loadMessAfter");
                 $http({
@@ -340,13 +354,6 @@
                                         $('div#'+data[i].recipientId + ' div.message-text').addClass("no-read");
                                     }
                                 }
-                                //$("div.message-list div.users-message:last").append('<div class="message-date">' + data[i].date + '</div><hr>');
-
-                                //if (data[i].readStatus == 'yes') {
-                                //    $("div.message-list div.users-message:last").append('<div class="message-text">' + data[i].text + '</div>');
-                                //} else {
-                                //    $("div.message-list div.users-message:last").append('<div class="message-text no-read">' + data[i].text + '</div>');
-                                //}
                             }
                             mainData = data;
                             $scope.loadMessAfter();
@@ -413,4 +420,5 @@
         });
 
     });
+
 })();

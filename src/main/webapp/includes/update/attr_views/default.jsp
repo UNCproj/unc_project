@@ -63,6 +63,11 @@
             <c:when test="${param.attr_type.equals(\"4\")}">
                 <textarea id="${param.attr_name}">${param.attr_value}</textarea>
             </c:when>
+            <c:when test="${param.attr_type.equals(\"8\")}">
+                <div id="map" coords='${param.attr_value}'
+                data-toggle="modal" data-target="#mapModal"></div>
+                <input id="clear-markers" type="button" value="Удалить маркер" width="100px">
+            </c:when>
         </c:choose>
     </td>
 </tr>

@@ -1,6 +1,7 @@
 (function(){
             var app = angular.module('objectSettings', ['chart.js','ngDialog']);
-            console.log('startAd');           
+            console.log('startAd');
+
             var getUrlParameter = function getUrlParameter(sParam) {
                 var sPageURL = decodeURIComponent(window.location.search.substring(1)),
                     sURLVariables = sPageURL.split('&'),
@@ -78,6 +79,26 @@
             });
 
         app.controller("BookmarksController", function ($scope, $http){
+
+            $.urlParam = function(name){
+                var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+                return results[1] || 0;
+            };
+            $scope.obje = {};
+            $scope.obje.id = $.urlParam('id');
+            $("#delete-object").on("click",function(){
+                $http({
+                    url: '/unc-project/delete',
+                    method: 'POST',
+                    params: $scope.obje
+                })
+                    .success(function (data) {});
+                var hr = document.location.href;
+                hr = hr.substring(0,hr.indexOf("unc_object.jsp?id="));
+
+                window.location.replace(hr);
+            });
+
             $scope.isInBookmarks = isInBookmarksGlobal;
             $scope.bookmarksButtonText = $scope.isInBookmarks ?
                                             "Удалить из избранного" :
@@ -111,7 +132,7 @@
                         $scope.isInBookmarks = true;
                         $scope.bookmarksButtonText = "Удалить из избранного";
                     });
-            }
+            };
 
             $scope.addOrDeleteBookmark = function(advertId) {
                 if ($scope.isInBookmarks) {
