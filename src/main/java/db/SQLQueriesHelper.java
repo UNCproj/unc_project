@@ -1597,8 +1597,8 @@ public class SQLQueriesHelper {
         return query;
     }
     public static String selectUsersAdverts (String id){
-        String query = "select  r1.object_id \n" +
-                "from  unc_references r1 \n" +
+        String query = "select  r1.object_id  " +
+                "from  unc_references r1  " +
                 " where  r1.object_reference_id =  " + id;
         return query;
     }

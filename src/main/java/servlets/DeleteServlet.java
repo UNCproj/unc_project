@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,6 +30,7 @@ public class DeleteServlet extends HttpServlet {
 
         String id = request.getParameter("id");
         String type = "";
+        PrintWriter out = response.getWriter();
 
         UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
         String userId = userAccountBean.getId();
@@ -71,7 +73,8 @@ public class DeleteServlet extends HttpServlet {
                 request.getSession().setAttribute(BeansHelper.VK_TOKEN, null);
                 request.getSession().setAttribute(BeansHelper.VK_AUTHORIZATION_KEY, null);
                 request.getSession().setAttribute(BeansHelper.VK_CODE, null);
-                response.sendRedirect("/unc-project/index");
+                out.println("0");
+//                response.sendRedirect("/unc-project/index");
             } else if (type.equals("4")){
                 System.out.println("Удаляем объявление");
                 Statement statementRef = connection.createStatement();
@@ -85,7 +88,8 @@ public class DeleteServlet extends HttpServlet {
                         statement.executeUpdate(SQLQueriesHelper.deleteAdvertsRef(id));
                         statement.executeUpdate(SQLQueriesHelper.deleteObject(id));
                         System.out.println("Все прошло успешно");
-                        response.sendRedirect("/unc-project/index.jsp");
+                        out.println("0");
+//                        response.sendRedirect("/unc-project/index.jsp");
                     }
                 }
             } else if (type.equals("388") && userId.equals(id)){

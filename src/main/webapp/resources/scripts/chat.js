@@ -39,6 +39,7 @@ chat.controller('chatController', ['$scope', '$http',
             }).success(function (data) {
                 console.log(data);
 
+                $scope.firstMessageId=data[0].id;
                 for (var i = 0; i < data.length - 1; i++) {
                     var name;
                     if( data[i].recipientName!=undefined && data[i].recipientSurname==undefined){
@@ -50,7 +51,6 @@ chat.controller('chatController', ['$scope', '$http',
                     }else{
                         name =data[i].recipientLogin ;
                     }
-                    $scope.firstMessageId=data[0].id;
                     $('.message-div').prepend('<div class="message-box"></div>');
                     if (data[i].recipientId == $scope.recipientId) {
                         $('.message-div .message-box:first').append('<div class="message-right"><div class="mess-text-box">' +
@@ -73,7 +73,7 @@ chat.controller('chatController', ['$scope', '$http',
                 if (data.length==10){
                     $('div.message-div').prepend('<div class="load-previous-messages">Загрузить предыдущие сообщения</div>');
                     $('div.message-div div.load-previous-messages').on('click',function(){
-                        loadPreviousMessages($scope.firstMessageId);
+                        loadPreviousMessages(data[data.length - 1].messId);
                     });
                 }
             });
