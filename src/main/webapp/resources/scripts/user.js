@@ -34,7 +34,7 @@
                 });
             });
             if ((data.length === 0) && (adverts.length === 0)) {
-                $('#ifempty').html('У вас пока что нет объявлений.');
+                $('#ifempty').html('<div class=\'info-mess-no\'>У вас пока что нет объявлений.</div>');
                 return false;
             }
             $('#ifempty').html('');

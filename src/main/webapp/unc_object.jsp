@@ -297,6 +297,27 @@
                                     </ul>
                                 </div>
                             <%}%>
+                        <% if ("1".equals(currentObject.getType()) && user != null && user.getId().equals(request.getParameter("id")) && !user.isIsAdmin()) {%>
+                        <div style="margin-left:400px; margin-top:25px;">
+                            <a class="a-outline button-style" id="delete-object" style="width: 250px">
+                                Удалить профиль
+                            </a>
+                        </div>
+                        <%}%>
+                        <% if ("4".equals(currentObject.getParentType()) && user != null && user.getId().equals(currentObject.getIDUserByAdvertId())){%>
+                        <div style="margin-left:400px; margin-top:25px;">
+                            <a class="a-outline button-style" id="delete-object" style="width: 260px">
+                                Удалить объявление
+                            </a>
+                        </div>
+                        <%}%>
+                        <%if ("1".equals(currentObject.getType()) && user != null && !user.getId().equals(request.getParameter("id"))) {%>
+                        <div>
+                            <a class="a-outline button-style" href="chat.jsp?id=<%=request.getParameter("id")%>" style="width: 230px">
+                                Отправить сообщение
+                            </a>
+                        </div>
+                        <%}%>
                         <div class="references table-pos">
                             <% if ("1".equals(currentObject.getType())) { %>
                             <h4>Список обьявлений</h4>
@@ -500,7 +521,7 @@
                 </div>
                 <%if ("1".equals(currentObject.getType()) && user != null && !user.getId().equals(request.getParameter("id"))) {%>
                 <div>
-                    <a class="a-outline button-style" href="chat.jsp?id=<%=request.getParameter("id")%>" style="width: 230px">
+                    <a class="a-outline button-style table-pos" href="chat.jsp?id=<%=request.getParameter("id")%>" style="width: 230px">
                         Отправить сообщение
                     </a>
                 </div>
