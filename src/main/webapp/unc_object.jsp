@@ -305,8 +305,8 @@
                         </div>
                         <%}%>
                         <% if ("4".equals(currentObject.getParentType()) && user != null && user.getId().equals(currentObject.getIDUserByAdvertId())){%>
-                        <div style="margin-left:400px; margin-top:25px;">
-                            <a class="a-outline button-style" id="delete-object" style="width: 260px">
+                        <div style="margin-left:350px; margin-top:25px;">
+                            <a class="a-outline button-style clearfix" id="delete-object" style="width: 200px">
                                 Удалить объявление
                             </a>
                         </div>
@@ -499,12 +499,10 @@
 
                         <% if ((user != null) && (user.isIsModer() || user.isIsAdmin()) && ("4".equals(currentObject.getParentType()))) { %>
                         <br>
-                        <div class="">
-                            <div ng-controller="ModerCtrl">
-                                <button class="btn btn-primary" ng-click="clickToDel();">
-                                    <nobr>Заблокировать объявление</nobr>
-                                </button>
-                            </div>
+                        <div style="margin-left:350px; margin-top:25px;">
+                            <a class="a-outline button-style clearfix" id="delete-object" style="width: 200px">
+                                Удалить объявление
+                            </a>
                         </div>
                         <%
                             }
