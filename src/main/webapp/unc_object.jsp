@@ -397,7 +397,7 @@
                                                     </td>
                                                     <td class="users-td admin-control">
                                                         <span ng-if="(true)">
-                                                            <button style="float:top;" ng-if="(row.isInvalid != true)" type="button" class="btn btn-danger btn-small" ng-click="set_del_id(row.id); clickToDel()">
+                                                            <button style="float:top;" ng-if="(row.isInvalid != true && row.isAdmin != true)" type="button" class="btn btn-danger btn-small" ng-click="set_del_id(row.id); clickToDel()">
                                                                 Заблокировать
                                                             </button>
                                                             <button style="float:top;" ng-if="(row.isInvalid === true)" type="button" class="btn btn-danger btn-small" ng-click="set_del_id(row.id); clickToUnblock()">

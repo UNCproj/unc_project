@@ -416,6 +416,11 @@ public class SQLQueriesHelper {
 
         return query;
     }
+    
+    static public String insertPass(String id) {
+        String query = "insert into unc_params(object_id, attr_id, value, date_value) values("+ id +", 2, null, null)";
+        return query;
+    }
 
     static public String insertParam(BigDecimal object_id, String attrId, String value, Date dateValue) {
         System.out.println("object_id" + object_id + "attrId" + attrId + "value" + value + "dateValue" + dateValue);

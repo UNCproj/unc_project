@@ -126,7 +126,7 @@ public class Parser {
                     BigDecimal id = results.getBigDecimal("id");
                     statement.executeUpdate(SQLQueriesHelper.insertUser(id, (String)list.get(i).get(0)));
                     statement.executeUpdate(SQLQueriesHelper.insertParam(id, SQLQueriesHelper.LOGIN_ATTR_ID, (String)list.get(i).get(0), null));
-                    statement.executeUpdate(SQLQueriesHelper.insertParam(id, SQLQueriesHelper.PASSWORD_ATTR_ID, null , null));
+                    statement.executeUpdate(SQLQueriesHelper.insertPass(id.toString()));
                     statement.executeUpdate(SQLQueriesHelper.insertParam(id, SQLQueriesHelper.EMAIL_ATTR_ID, (String)list.get(i).get(1) , null));
                     statement.executeUpdate(SQLQueriesHelper.insertParam(id, SQLQueriesHelper.REG_DATE_ATTR_ID, null, (Date)list.get(i).get(2)));
                     statement.executeUpdate(SQLQueriesHelper.insertParam(id, SQLQueriesHelper.PHONE_ATTR_ID, (String)list.get(i).get(3), null));
