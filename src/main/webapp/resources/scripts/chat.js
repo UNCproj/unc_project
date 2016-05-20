@@ -56,7 +56,7 @@ chat.controller('chatController', ['$scope', '$http',
                         $('.message-div .message-box:first').append('<div class="message-right"><div class="mess-text-box">' +
                             '<div class="mess-name">'+ name + '</div><hr>' +
                             '<div class="mess-text">' + data[i].text + '</div>' +
-                            '<div class="mess-date">' + data[i].date + '</div>' +
+                            '<div class="mess-date">' + data[i].date.substring(0,20) + '</div>' +
                             '</div></div>');
                         var width = $('.message-box:first').width() - $('.message-box:last .message-right:last .mess-text-box:last').width() - 20;
                         console.log(width);
@@ -65,7 +65,7 @@ chat.controller('chatController', ['$scope', '$http',
                         $('.message-div .message-box:first').append('<div class="message-left"><div class="mess-text-box">' +
                             '<div class="mess-name">'+ name + '</div><hr>' +
                             '<div class="mess-text">' + data[i].text + '</div>' +
-                            '<div class="mess-date">' + data[i].date + '</div>' +
+                            '<div class="mess-date">' + data[i].date.substring(0,20) + '</div>' +
                             '</div></div>');
                     }
 
@@ -110,7 +110,7 @@ chat.controller('chatController', ['$scope', '$http',
                         $('.message-div .message-box:last').append('<div class="message-right"><div class="mess-text-box">' +
                             '<div class="mess-name">' + name + '</div><hr>' +
                             '<div class="mess-text">' + data[i].text + '</div>' +
-                            '<div class="mess-date">' + data[i].date + '</div>' +
+                            '<div class="mess-date">' + data[i].date.substring(0,20) + '</div>' +
                             '</div></div>');
                         var width = $('.message-box:last').width() - $('.message-box:last .message-right:last .mess-text-box:last').width() - 40;
                         console.log(width);
@@ -119,7 +119,7 @@ chat.controller('chatController', ['$scope', '$http',
                         $('.message-div .message-box:last').append('<div class="message-left"><div class="mess-text-box">' +
                             '<div class="mess-name">' + name + '</div><hr>' +
                             '<div class="mess-text">' + data[i].text + '</div>' +
-                            '<div class="mess-date">' + data[i].date + '</div>' +
+                            '<div class="mess-date">' + data[i].date.substring(0,20) + '</div>' +
                             '</div></div>');
                     }
                     $("div.message").animate({scrollTop: 5000}, 5);
