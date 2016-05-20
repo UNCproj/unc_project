@@ -55,7 +55,7 @@
                      ng-show="$flow.files.length"
                      flow-img="$flow.files[imagesCount]"/>
                 <br/>
-                <<--{{increaseImagesCount()}}-->>
+                {{increaseImagesCount()}}
                 <label for="load-avatar">Загрузить:</label>
                 <div id="load-avatar" class="alert bg-primary" flow-drop>
                     Перетащите изображение сюда

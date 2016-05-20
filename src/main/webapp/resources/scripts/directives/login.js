@@ -26,6 +26,9 @@
                     if (from) {
                         window.location = from;
                     }
+                    else if (data["migrated"]) {
+                        window.location = "/unc-project/unc_update.jsp?id=" + data["id"];
+                    }
                     else {
                         window.location = "/unc-project/index";
                     }
@@ -42,10 +45,7 @@
                 if (data["logged"] == "true") {
                     var from = $.urlParam('from');
 
-                    if (data["migrated"]) {
-                        window.location = "/unc-project/unc_update.jsp?id=" + data["id"];
-                    }
-                    else if (from) {
+                    if (from) {
                         window.location = "/" + from;
                     }
                     else {

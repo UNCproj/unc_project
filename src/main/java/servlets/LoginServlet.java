@@ -78,9 +78,11 @@ public class LoginServlet extends HttpServlet {
                     userId = results.getString("object_id");
                 }
 
-                updateLastLoginDateStatement = connection.createStatement();
-                updateLastLoginDateStatement.executeUpdate(
-                        SQLQueriesHelper.updateParam(new BigDecimal(userId), SQLQueriesHelper.LAST_VISIT_DATE_ATTR_ID, null, new Date()));
+                if (userId != null) {
+                    updateLastLoginDateStatement = connection.createStatement();
+                    updateLastLoginDateStatement.executeUpdate(
+                            SQLQueriesHelper.updateParam(new BigDecimal(userId), SQLQueriesHelper.LAST_VISIT_DATE_ATTR_ID, null, new Date()));
+                }
             }
             catch (Exception e) {
                 throw new ServletException(e);
@@ -105,9 +107,21 @@ public class LoginServlet extends HttpServlet {
             }
 
             UserAccountBean userAccountBean = new UserAccountBean();
-            userAccountBean.initialize(userId.toString(), request.getParameter("login"),
-                    String.valueOf(request.getParameter("pass").hashCode()),
-                    email, userPicFile, isLoggedIn, new Date());
+
+            if (responseJSON.get("migrated") != null &&  responseJSON.get("migrated").getAsBoolean()) {
+                userAccountBean.initialize(userId.toString(), request.getParameter("login"),
+                        null,
+                        email, userPicFile, isLoggedIn, new Date());
+                request.getSession().setAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY, userAccountBean);
+                out.print(responseJSON);
+                return;
+            }
+            else {
+                userAccountBean.initialize(userId.toString(), request.getParameter("login"),
+                        String.valueOf(request.getParameter("pass").hashCode()),
+                        email, userPicFile, isLoggedIn, new Date());
+            }
+
             try {
                 userAccountBean.updateAllInfo();
             } catch (PropertyVetoException ex) {
@@ -179,7 +193,7 @@ public class LoginServlet extends HttpServlet {
                         if (password == null || password.length() == 0) {
                             constrViolationsJSON.addProperty("logged", true);
                             constrViolationsJSON.addProperty("migrated", true);
-                            constrViolationsJSON.addProperty("id", result.getString("id"));
+                            constrViolationsJSON.addProperty("id", result.getString("object_id"));
                             return constrViolationsJSON;
                         }
                         else {

@@ -106,6 +106,11 @@
 
             var initMap = function() {
                 var mapElem = $('#map');
+
+                if (mapElem == null) {
+                    return;
+                }
+
                 var clearButton = $('#clear-markers');
                 var marker = null;
                 var coordsAttr = mapElem.attr('coords');

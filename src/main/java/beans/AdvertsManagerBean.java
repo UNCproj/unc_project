@@ -66,6 +66,30 @@ public class AdvertsManagerBean implements AdvertsManager {
 
                         adv.setAttribute("map_coordinates", advListResults.getString("map_coordinates"));
 
+                        String mark = null;
+                        String model = null;
+                        try {
+                            mark = advListResults.getString("mark");
+                        }
+                        catch (Exception e) {
+
+                        }
+
+                        try {
+                            model = advListResults.getString("model");
+                        }
+                        catch (Exception e) {
+
+                        }
+
+                        if (mark != null) {
+                            adv.setAttribute("mark", advListResults.getString("mark"));
+                        }
+
+                        if (model != null) {
+                            adv.setAttribute("model", advListResults.getString("model"));
+                        }
+
                         adverts.add(adv);
                     }
                 }
