@@ -11,28 +11,34 @@
             $scope.object = {};
             $scope.uploader = {};
             $scope.isOldPassEmpty = false;
+            $scope.imagesCount = -1;
 
             $scope.setOldPassEmpty = function(oldPassVal) {
                 $scope.isOldPassEmpty = oldPassVal;
             };
 
             $scope.update = function() {
-                var params = $scope.object;
-                params.id = $.urlParam('id');
-
-                if ($scope.isOldPassEmpty && ($scope.object.password == null || $scope.object.password.length() == null)) {
-                    $scope.nullPassError = true;
-                    return;
+                if ($scope.uploader.flow.files != null && $scope.uploader.flow.files.length > 0) {
+                    $scope.uploader.flow.upload();
                 }
+                else {
+                    var params = $scope.object;
+                    params.id = $.urlParam('id');
 
-                $http({
-                    url: '/unc-project/uncupdate',
-                    method: 'POST',
-                    params: params
-                })
-                    .success(function (data) {
+                    if ($scope.isOldPassEmpty && ($scope.object.password == null || $scope.object.password.length() == null)) {
+                        $scope.nullPassError = true;
+                        return;
+                    }
 
-                    });
+                    $http({
+                        url: '/unc-project/uncupdate',
+                        method: 'POST',
+                        params: params
+                    })
+                        .success(function (data) {
+                            location.href= 'unc_object.jsp?id=' + $.urlParam('id');
+                        });
+                }
             };
 
             $scope.fileAdded = function ($file, $event, $flow) {
@@ -58,7 +64,6 @@
                 }
 
                 $scope.uploader.flow.files[0].name = path;
-                $scope.uploader.flow.upload();
             };
 
             $scope.complete = function () {
@@ -70,13 +75,33 @@
                     }
                 })
                     .success(function(data) {
-                        var avatarImgElem = $('#' + paramAttrName);
-                        avatarImgElem.attr('src', avatarImgElem.attr('src') + "?" + Date.now());
-                        $scope.isAvatarChanged = true;
-                        $timeout(function(){
-                            $scope.isAvatarChanged = false;
-                        }, 5000);
+                        //var avatarImgElem = $('#' + paramAttrName);
+                        //avatarImgElem.attr('src', avatarImgElem.attr('src') + "?" + Date.now());
+                        //$scope.isAvatarChanged = true;
+                        //$timeout(function(){
+                        //    $scope.isAvatarChanged = false;
+                        //}, 5000);
+                        var params = $scope.object;
+                        params.id = $.urlParam('id');
+
+                        if ($scope.isOldPassEmpty && ($scope.object.password == null || $scope.object.password.length() == null)) {
+                            $scope.nullPassError = true;
+                            return;
+                        }
+
+                        $http({
+                            url: '/unc-project/uncupdate',
+                            method: 'POST',
+                            params: params
+                        })
+                            .success(function (data) {
+                                location.href= 'unc_object.jsp?id=' + $.urlParam('id');
+                            });
                     });
+            };
+
+            $scope.increaseImagesCount = function() {
+                $scope.imagesCount++;
             };
 
             var initMap = function() {
@@ -84,13 +109,17 @@
                 var clearButton = $('#clear-markers');
                 var marker = null;
                 var coordsAttr = mapElem.attr('coords');
+                var initialCoords;
 
-                if (coordsAttr == null) {
-                    return;
+                if (coordsAttr != null && coordsAttr.length > 0) {
+                    initialCoords = JSON.parse(coordsAttr);
                 }
 
-                var centerCoords;
-                var initialCoords = JSON.parse(coordsAttr);
+                var centerCoords=   {
+                                        lat: 55.753400,
+                                        lng: 37.620643
+                                    };
+
                 var geocoder = new google.maps.Geocoder;
 
                 clearButton.on('click', function () {
@@ -105,6 +134,8 @@
                 var map = new google.maps.Map(mapElem.get(0), {
                     zoom: 16
                 });
+
+                map.setCenter(centerCoords);
 
                 if (initialCoords != null) {
                     centerCoords = {
@@ -195,7 +226,7 @@
                 }
             };
 
-            initMap();
+            google.maps.event.addDomListener(window, "load", initMap);
         }
     ]);
 })();

@@ -82,7 +82,7 @@
                             <% } %>
                         </form>
                     </table>
-                    <input type="button" onclick="location.href='unc_object.jsp?id=<%= request.getParameter("id") %>'" class="button-style a-outline button-update" value="Обновить" ng-click="update()" />
+                    <input type="button" class="button-style a-outline button-update" value="Обновить" ng-click="update()" />
                     <input type="button" onclick="location.href='unc_object.jsp?id=<%= request.getParameter("id") %>'" class="button-style a-outline button-update" value="Назад" />
                 </div>
             </div>

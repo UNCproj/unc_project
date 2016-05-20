@@ -7,7 +7,7 @@ $(function() {
         var mapElem = $('#map');
         var coordsAttr = mapElem.attr('coords');
 
-        if (coordsAttr == null) {
+        if (coordsAttr == null || coordsAttr.length == 0) {
             return;
         }
 

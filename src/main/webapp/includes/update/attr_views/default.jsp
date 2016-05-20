@@ -47,30 +47,31 @@
                  flow-file-added="fileAdded($file, $event, $flow)"
                  flow-complete="complete()">
 
-                <img id="${param.attr_name}"
-                     src="${(param.attr_value != null && param.attr_value.length() > 0) ?
+                <img src="${(param.attr_value != null && param.attr_value.length() > 0) ?
                                                         param.attr_value :
-                                                        initParam["default.image"]}"/>
+                                                        initParam["default.image"]}"
+                     ng-hide="$flow.files.length"/>
+                <img id="${param.attr_name}"
+                     ng-show="$flow.files.length"
+                     flow-img="$flow.files[imagesCount]"/>
                 <br/>
+                <<--{{increaseImagesCount()}}-->>
                 <label for="load-avatar">Загрузить:</label>
                 <div id="load-avatar" class="alert bg-primary" flow-drop>
                     Перетащите изображение сюда
                 </div>
                 или
                 <button type="button" path="${param.attr_value}" flow-btn>Загрузить</button>
-                <br/>
-                <div class="alert alert-success" role="alert" ng-show="isAvatarChanged">
-                    Изображение успешно обновлено!
-                </div>
             </div>
             </c:when>
             <c:when test="${param.attr_type.equals(\"4\")}">
-                <textarea id="${param.attr_name}">${param.attr_value}</textarea>
+                <textarea id="${param.attr_name}" ng-model="object.${param.attr_name}">${param.attr_value}</textarea>
             </c:when>
             <c:when test="${param.attr_type.equals(\"7\")}">
                 <div>Gold</div>
             </c:when>
             <c:when test="${param.attr_type.equals(\"8\")}">
+                <input id="addr-input" class="controls" type="text" placeholder="Введите адрес">
                 <div id="map" coords='${param.attr_value}'
                 data-toggle="modal" data-target="#mapModal"></div>
                 <input id="clear-markers" type="button" value="Удалить маркер" width="100px">
