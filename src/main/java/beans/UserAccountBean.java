@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.logging.Logger;
+import unc.helpers.Crypt2;
 
 /**
  * Created by Денис on 15.12.2015.
@@ -217,7 +218,7 @@ public class UserAccountBean implements UserAccount {
             } else if (results.getString("attr_name").equals(SQLQueriesHelper.PASSWORD_ATTR)) {
                 this.password = results.getString("value");
             } else if (results.getString("attr_name").equals(SQLQueriesHelper.EMAIL_ATTR)) {
-                this.email = results.getString("value");
+                this.email = Crypt2.decrypt(results.getString("value"));
             } else if (results.getString("attr_name").equals(SQLQueriesHelper.USER_PIC_FILE_ATTR)) {
                 this.userPicFile = results.getString("value");
             } else if (results.getString("attr_name").equals(SQLQueriesHelper.MODER_ATTR)){
@@ -247,21 +248,21 @@ public class UserAccountBean implements UserAccount {
             attrName = results.getString("attr_name");
 
             if (results.getString("attr_name").equals(SQLQueriesHelper.FIRST_NAME_ATTR)) {
-                this.firstName = results.getString("value");
+                this.firstName = Crypt2.decrypt(results.getString("value"));
             } else if (results.getString("attr_name").equals(SQLQueriesHelper.SECOND_NAME_ATTR)) {
-                this.secondName = results.getString("value");
+                this.secondName = Crypt2.decrypt(results.getString("value"));
             } else if (results.getString("attr_name").equals(SQLQueriesHelper.SURNAME_ATTR)) {
-                this.surname = results.getString("value");
+                this.surname = Crypt2.decrypt(results.getString("value"));
             } else if (results.getString("attr_name").equals(SQLQueriesHelper.PHONE_ATTR)) {
-                this.phone = results.getString("value");
+                this.phone = Crypt2.decrypt(results.getString("value"));
             } else if (results.getString("attr_name").equals(SQLQueriesHelper.STREET_AND_HOUSE_NAME_ATTR)) {
-                this.streetAndHouse = results.getString("value");
+                this.streetAndHouse = Crypt2.decrypt(results.getString("value"));
             } else if (results.getString("attr_name").equals(SQLQueriesHelper.CITY_ADVERT_ATTR)) {
-                this.city = results.getString("value");
+                this.city = Crypt2.decrypt(results.getString("value"));
             } else if (results.getString("attr_name").equals(SQLQueriesHelper.COUNTRY_ATTR)) {
-                this.country = results.getString("value");
+                this.country = Crypt2.decrypt(results.getString("value"));
             } else if (results.getString("attr_name").equals(SQLQueriesHelper.ADDITIONAL_INFO_ATTR)) {
-                this.additionalInfo = results.getString("value");
+                this.additionalInfo = Crypt2.decrypt(results.getString("value"));
             } 
         }
     }
