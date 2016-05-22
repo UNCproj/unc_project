@@ -1525,7 +1525,7 @@ public class SQLQueriesHelper {
     }
 
     public static String deleteVipAdverts() {
-        String query = "delete unc_params up where sysdate - 1 > up.date_value";
+        String query = "delete unc_params up where sysdate - 1 > up.date_value and up.ATTR_ID = 20";
         return query;
     }
     public static String findTypeIdById (String id){
