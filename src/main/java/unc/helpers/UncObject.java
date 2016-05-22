@@ -30,8 +30,8 @@ public class UncObject {
     private String userId;
     private String advertId;
     private String IdUserByIdAdvert;
-    private static String [] massEncName = new String[] {"email", "city", "first_name", "second_name", "surname", "phone", "street_and_house", "country"};
-    private static String [] massEncID = new String[] {"5", "9", "12", "13", "14", "15", "16", "17"};
+    private static String [] massEncName = new String[] {"email", "city", "first_name", "second_name", "surname", "phone", "street_and_house", "country", "additional_info"};
+    private static String [] massEncID = new String[] {"5", "9", "12", "13", "14", "15", "16", "17", "18"};
 
     public UncObject() {
         params = new ArrayList<>();

@@ -108,7 +108,7 @@
 
             $scope.isInBookmarks = isInBookmarksGlobal;
             $scope.bookmarksButtonText = $scope.isInBookmarks ?
-                                            "Удалить из избранного" :
+                                            "Из избранного" :
                                             "В избранное";
 
             $scope.deleteBookmarks = function(advId) {
