@@ -125,10 +125,10 @@
                         <% for (int i = 1; i < currentObject.getAttributeGroups().size(); i++) {%>
                     <li><a href="#tab<%= currentObject.getAttributeGroups().get(i)%>" data-toggle="tab">Дополнительная информация</a></li>
                         <% } %>
-                        <%if ("1".equals(currentObject.getType())) {%>
+                        <%if ("1".equals(currentObject.getType()) && user != null && (currentObject.getId().equals(user.getId()))) {%>
                     <li><a href="#statid" data-toggle="tab">Статистика</a></li>
                         <% } %>
-                        <%if ("4".equals(currentObject.getParentType()) && user != null && user.getId().equals(request.getParameter("id"))) {%>
+                        <%if ("4".equals(currentObject.getParentType()) && user != null && user.getId().equals(currentObject.getIDUserByAdvertId())) {%>
                     <li><a href="#adstatid" data-toggle="tab">Статистика просмотров</a></li>
                         <% } %>
                         <%if ((user != null) && (user.isIsAdmin()) && (currentObject.getId().equals(user.getId()))) {%>

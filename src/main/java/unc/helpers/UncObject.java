@@ -29,6 +29,7 @@ public class UncObject {
     private ArrayList<String> attributeGroups;
     private String userId;
     private String advertId;
+    private String IdUserByIdAdvert;
     private static String [] massEncName = new String[] {"email", "city", "first_name", "second_name", "surname", "phone", "street_and_house", "country"};
     private static String [] massEncID = new String[] {"5", "9", "12", "13", "14", "15", "16", "17"};
 
@@ -97,11 +98,16 @@ public class UncObject {
         try(Connection connection = DataSource.getInstance().getConnection();
             Statement statement = connection.createStatement())
         {
-            ResultSet results = statement.executeQuery(SQLQueriesHelper.selectUserIdByAdvertId(id));
-            while (results.next()) {
-                    return results.getString("object_reference_id");
+            if (IdUserByIdAdvert == null) {
+                ResultSet results = statement.executeQuery(SQLQueriesHelper.selectUserIdByAdvertId(id));
+                while (results.next()) {
+                    IdUserByIdAdvert = results.getString("object_reference_id");
+                    return IdUserByIdAdvert;
+                }
+                return null;
             }
-            return null;
+            else
+                return IdUserByIdAdvert;
         }
     }
     
