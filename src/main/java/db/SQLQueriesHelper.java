@@ -116,6 +116,46 @@ public class SQLQueriesHelper {
         return queryString;
     }
 
+    static public String selectAdvertsListWithAllInfo(String rootCategoryId) {
+        String query =
+                "select  o.object_id,\n" +
+                "        o.object_name,\n" +
+                "        ot.ot_name as type,\n" +
+                "        ot.ot_id as type_id,\n" +
+                "        a.attr_name as attr_name,\n" +
+                "        a.attr_type,\n" +
+                "        case\n" +
+                "          when p.value is not null\n" +
+                "            then p.value\n" +
+                "          when r.object_reference_id is not null\n" +
+                "            then to_char(r.object_reference_id)\n" +
+                "          else\n" +
+                "            to_char(p.date_value)\n" +
+                "        end as value,\n" +
+                "        aot.attr_group_id as attr_group\n" +
+                "  from  unc_objects o\n" +
+                "        left join unc_attr_object_types aot\n" +
+                "          on aot.ot_id in (select ot_id\n" +
+                "                             from unc_object_types\n" +
+                "                            start with ot_id = o.object_type_id\n" +
+                "                          connect by ot_id = prior parent_id)\n" +
+                "        left join unc_attributes a\n" +
+                "          on a.attr_id = aot.attr_id\n" +
+                "        left join unc_params p\n" +
+                "          on (aot.attr_id = p.attr_id) and (o.object_id = p.object_id)\n" +
+                "        left join unc_references r\n" +
+                "          on (aot.attr_id = r.attr_id) and (o.object_id = r.object_id)\n" +
+                "        join unc_object_types ot\n" +
+                "          on ot.ot_id = o.object_type_id\n" +
+                " where o.object_type_id in  (select ot_id\n" +
+                "                               from unc_object_types\n" +
+                "                              start with ot_id = " + rootCategoryId +
+                "                            connect by prior ot_id = parent_id)\n" +
+                "order  by object_id";
+
+        return query;
+    }
+
     static public String selectCategories(String objectTypeId) {
         StringBuffer query = new StringBuffer("SELECT  OT_NAME\n"
                 + "  FROM  UNC_OBJECT_TYPES\n"

@@ -242,7 +242,7 @@
                             <li class="list-group-item" ng-repeat="adv in foundedAds">
                                 <a href="" ng-click="redirToAdvertPage(adv.id)">
                                     <div class="img">
-                                        <img ng-src="{{adv.pic != undefined ? adv.pic : '${initParam.get("default.advert.image")}'}}">
+                                        <img ng-src="{{adv.user_pic_file != null ? adv.user_pic_file : '${initParam.get("default.advert.image")}'}}">
                                     </div>
                                     <div class="main-content">
                                         <div class="name">

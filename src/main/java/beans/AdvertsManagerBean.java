@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * Created by Денис on 20.04.2016.
@@ -25,73 +26,41 @@ public class AdvertsManagerBean implements AdvertsManager {
                 Connection connection = DataSource.getInstance().getConnection();
                 Statement statement = connection.createStatement()
         ) {
-            try (ResultSet childrenTypesResults = statement.executeQuery(SQLQueriesHelper.getTypeChildren(adCategoryId))) {
-                ArrayList<String> categories = new ArrayList<>();
+            try (
+                    ResultSet advListResults = statement.executeQuery(
+                            SQLQueriesHelper.selectAdvertsListWithAllInfo("4")
+                    )
+            ) {
+                while (advListResults.next()) {
+                    final String currentAdvId = advListResults.getString("object_id");
+                    AdvertBean currentAdvertBean = null;
 
-                while (childrenTypesResults.next()) {
-                    categories.add(childrenTypesResults.getString("ot_id"));
+                    for (AdvertBean advert : adverts) {
+                        if (advert.getId().equals(currentAdvId)) {
+                            currentAdvertBean = advert;
+                            break;
+                        }
+                    }
+
+                    if (currentAdvertBean == null) {
+                        currentAdvertBean = new AdvertBean();
+                        currentAdvertBean.setId(currentAdvId);
+                        currentAdvertBean.setName(advListResults.getString("object_name"));
+                        currentAdvertBean.setAttribute("category", advListResults.getString("type_id"));
+                        adverts.add(currentAdvertBean);
+                    }
+
+                    currentAdvertBean.setAttribute(advListResults.getString("attr_name"),
+                            advListResults.getString("value"));
                 }
 
-                try (
-                        ResultSet advListResults = statement.executeQuery(
-                                SQLQueriesHelper.getAdvertsList(
-                                        categories.toArray(new String[0]), null, null, null, null, null
-                                )
-                        )
-                ) {
-                    while (advListResults.next()) {
-                        if (isOnlyValid && Boolean.parseBoolean(advListResults.getString("is_invalid"))) {
-                            continue;
-                        }
-
-                        AdvertBean adv = new AdvertBean();
-
-                        adv.setAttribute("object_id", advListResults.getString("object_id"));
-                        adv.setAttribute("object_name", advListResults.getString("object_name"));
-                        adv.setAttribute("type_id", advListResults.getString("type_id"));
-
-                        adv.setAttribute(SQLQueriesHelper.DESCRIPTION_ATTR,
-                                advListResults.getString(SQLQueriesHelper.DESCRIPTION_ATTR));
-
-                        adv.setAttribute(SQLQueriesHelper.CITY_ADVERT_ATTR,
-                                advListResults.getString(SQLQueriesHelper.CITY_ADVERT_ATTR));
-
-                        adv.setAttribute("pic", advListResults.getString("pic"));
-
-                        adv.setAttribute(SQLQueriesHelper.PRICE_ADVERT_ATTR,
-                                advListResults.getString(SQLQueriesHelper.PRICE_ADVERT_ATTR));
-
-                        adv.setAttribute(SQLQueriesHelper.REG_DATE_ATTR,
-                                advListResults.getString(SQLQueriesHelper.REG_DATE_ATTR));
-
-                        adv.setAttribute("map_coordinates", advListResults.getString("map_coordinates"));
-
-                        String mark = null;
-                        String model = null;
-                        try {
-                            mark = advListResults.getString("mark");
-                        }
-                        catch (Exception e) {
-
-                        }
-
-                        try {
-                            model = advListResults.getString("model");
-                        }
-                        catch (Exception e) {
-
-                        }
-
-                        if (mark != null) {
-                            adv.setAttribute("mark", advListResults.getString("mark"));
-                        }
-
-                        if (model != null) {
-                            adv.setAttribute("model", advListResults.getString("model"));
-                        }
-
-                        adverts.add(adv);
-                    }
+                if (isOnlyValid) {
+                    adverts = (ArrayList<AdvertBean>) adverts
+                            .stream()
+                            .filter(advertBean ->
+                                !Boolean.parseBoolean(advertBean.getAttribute("is_invalid"))
+                            )
+                            .collect(Collectors.toList());
                 }
             }
         }

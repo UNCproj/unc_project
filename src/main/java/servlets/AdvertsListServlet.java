@@ -368,7 +368,7 @@ public class AdvertsListServlet extends HttpServlet {
                                             String attrValue =  (String) t.get(attrName);
 
                                             for (String filtrationValue: filtrationValues) {
-                                                if (attrValue.equals(filtrationValue)) {
+                                                if (attrValue != null && attrValue.equals(filtrationValue)) {
                                                     return true;
                                                 }
                                             }
