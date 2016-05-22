@@ -313,7 +313,7 @@
                         <%}%>
                         <%if ("1".equals(currentObject.getType()) && user != null && !user.getId().equals(request.getParameter("id"))) {%>
                         <div>
-                            <a class="a-outline button-style" href="chat.jsp?id=<%=request.getParameter("id")%>" style="width: 230px">
+                            <a class="a-outline button-style table-pos" href="chat.jsp?id=<%=request.getParameter("id")%>" style="width: 230px">
                                 Отправить сообщение
                             </a>
                         </div>
@@ -378,7 +378,7 @@
                     </div>
                     <% } %>
                     <div  id="adminka" class="tab-pane fade in" >
-                        <%if ("1".equals(currentObject.getParentType())) {%>
+                        <%if ("1".equals(currentObject.getParentType()) && user != null && user.isIsAdmin() && user.getId().equals(request.getParameter("id"))) {%>
                         <div ng-controller="AdminCtrl" class="pad-content">
                             <ul class="custom-tabs nav nav-tabs" id="tn">
                                 <li class="active"><a href="#user_list" data-toggle="tab">Список пользователей</a></li>
@@ -451,7 +451,7 @@
                                             flow-name="uploader.flow"
                                             flow-file-success="success($message)">
                                             <h3>Миграция пользователей</h3>
-                                            <button type="button" flow-btn>Выбрать excel</button>
+                                            <button class="button-style a-outline button-update" type="button" flow-btn>Выбрать excel</button>
                                         </div>
                                         <h3>{{CountRowUser}}</h3>
                                         <h3>{{err}}</h3>
@@ -468,7 +468,7 @@
                                             flow-name="uploader.flow"
                                             flow-file-success="success($message)">
                                             <h3>Миграция обьявлений</h3>
-                                            <button type="button" flow-btn>Выбрать excel</button>
+                                            <button class="button-style a-outline button-update" type="button" flow-btn>Выбрать excel</button>
                                         </div>
                                         <h3>{{CountRowAdvert}}</h3>
                                         <h3>{{err}}</h3>
@@ -517,14 +517,6 @@
                     <% } %>
                     <br>
                 </div>
-                <%if ("1".equals(currentObject.getType()) && user != null && !user.getId().equals(request.getParameter("id"))) {%>
-                <div>
-                    <a class="a-outline button-style table-pos" href="chat.jsp?id=<%=request.getParameter("id")%>" style="width: 230px">
-                        Отправить сообщение
-                    </a>
-                </div>
-                <%}%>
-                
                 <c:catch var="e">
                     <c:import url="/includes/object/footers/default.jspf" />
                 </c:catch>

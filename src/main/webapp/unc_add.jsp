@@ -153,7 +153,7 @@
                             <div id="load-avatar" class="alert bg-primary" flow-drop>
                                 Перетащите изображение сюда
                             </div>
-                            <button type="button" flow-btn>Загрузить фото</button>
+                            <button class="button-style a-outline button-update" type="button" flow-btn>Загрузить фото</button>
                             <br/>
                             <%--<div class="alert alert-success" role="alert" ng-show="isAvatarChanged">--%>
                                 <%--Изображение успешно обновлено!--%>
