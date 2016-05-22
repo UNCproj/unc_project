@@ -1,6 +1,6 @@
 package servlets;
 
-import com.google.gson.JsonObject;
+import beans.UserAccountBean;
 import db.DataSource;
 import db.SQLQueriesHelper;
 import validation.UserRegistrationValidationBean;
@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,23 +37,21 @@ public class RegistrationServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         request.setCharacterEncoding("UTF-8");
         String login = request.getParameter("login");
-        String pass = request.getParameter("password");
+        String pass = request.getParameter("pass");
         String retypePass = request.getParameter("retypePass");
         String email = request.getParameter("email");
+        String avatar = request.getParameter("ava");
+        String fname = request.getParameter("fname");
+        String sname = request.getParameter("sname");
         String uid = "";
-
         UserRegistrationValidationBean registrationValidationBean =
                 new UserRegistrationValidationBean(login, pass, retypePass, email);
-
-        JsonObject constrViolationsJSON = registrationValidationBean.validate();
-
+        String constrViolationsJSON = registrationValidationBean.validate().toString();
         if (registrationValidationBean.isValid()) {
             Connection connection = null;
             Statement statement1 = null;
             Statement statement2 = null;
             Statement statement3 = null;
-
-
 
             try {
                 connection = DataSource.getInstance().getConnection();
@@ -69,7 +68,6 @@ public class RegistrationServlet extends HttpServlet {
                 results.next();
                 BigDecimal userId = results.getBigDecimal("object_id");
                 uid = userId.toString();
-
                 statement3 = connection.createStatement();
                 statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.LOGIN_ATTR_ID, login, null));
 
@@ -83,10 +81,18 @@ public class RegistrationServlet extends HttpServlet {
                 statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.LAST_VISIT_DATE_ATTR_ID, null, new java.util.Date()));
 
                 statement3 = connection.createStatement();
-                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.EMAIL_ATTR_ID, email, null));
+                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.EMAIL_ATTR_ID, Crypt2.encrypt(email), null));
+
+                statement3 = connection.createStatement();
+                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.USER_PIC_FILE_ATTR_ID, avatar.equals("") ? "":avatar, null));
+                
+                statement3 = connection.createStatement();
+                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.FIRST_NAME_ATTR_ID, fname.equals("") ? "":Crypt2.encrypt(fname), null));
+                
+                statement3 = connection.createStatement();
+                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.SURNAME_ATTR_ID, sname.equals("") ? "":Crypt2.encrypt(sname), null));
 
                 connection.commit();
-                connection.setAutoCommit(true);
             } catch (Exception e) {
                 try {
                     if (connection != null)
@@ -119,5 +125,10 @@ public class RegistrationServlet extends HttpServlet {
         }
 
         out.print(constrViolationsJSON);
+        
+        if ((request.getParameter("redirect")!=null)&&(request.getParameter("redirect").equals("true"))){
+            //response.sendRedirect("unc_object.jsp?id="+uid);
+            response.sendRedirect("http://" + request.getServerName()+":"+request.getServerPort()+"/unc-project/vklogin");
+        }
     }
 }

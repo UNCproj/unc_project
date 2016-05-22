@@ -147,17 +147,17 @@ public class VkLoginServlet extends HttpServlet {
                 log.info("oauth complete6!");
                 response.setCharacterEncoding("UTF-8");
                 request.setCharacterEncoding("UTF-8");
+                String pass = authToken.getAccessToken();
                 response.sendRedirect("/unc-project/registration"
                         +"?email="+authToken.getParam("email")
                         +"&login="+user_id
-                        +"&pass="+authToken.getAccessToken()
-                        +"&retypePass="+authToken.getAccessToken()
+                        +"&pass="+pass
+                        +"&retypePass="+pass
                         +"&ava="+avatar.replace('"', ' ')
                         +"&fname="+URLEncoder.encode(fname,"UTF-8")
                         +"&sname="+URLEncoder.encode(sname,"UTF-8")
                         +"&redirect=true"
                         );
-                
             }
             
             if (con != null)
