@@ -384,6 +384,7 @@ public class UncObject {
                         );
                     }
                 }
+                select = false;
             }
             statement.close();
         }
