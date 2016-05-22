@@ -24,6 +24,7 @@
     <link rel="stylesheet" type="text/css" href="resources/css/forum.css">
 </head>
 <body>
+<%UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");%>
 <div class="main">
 
     <c:catch>
@@ -84,6 +85,7 @@
                 ResultSet resultSet = statement.executeQuery(SQLQueriesHelper.selectselectForumTopicsWithAttrs(type));
                 while (resultSet.next()) {
         %>
+    <div style="position: relative">
         <div class="forum-topic" onclick="location.href='forum.jsp?id=<%=resultSet.getString("object_id")%>'">
             <div class="forum-topic-title">
                 <%=resultSet.getString("object_name")%>
@@ -93,12 +95,22 @@
                 Комментарии:<%=resultSet.getString("numb_comments")%>
             </div>
         </div>
+        <% if(userAccountBean!=null){
+            System.out.println("!!!!!!!!!!!#" +resultSet.getString("creation_id").equals(userAccountBean.getId()));
+        }
+            if(userAccountBean != null && ((userAccountBean.isIsAdmin() || userAccountBean.isIsModer()) ||
+                    resultSet.getString("creation_id").equals(userAccountBean.getId()))){%>
+        <div class="delete-forum">
+            <span class="glyphicon glyphicon-remove" id="<%=resultSet.getString("object_id")%>"></span>
+            <%--<p id="<%=resultSet.getString("object_id")%>">Удалить обсуждение</p>--%>
+        </div>
+        <%}%>
+    </div>
             <%
                 }
             } finally {
                 connection.close();
             }
-            UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
             if (userAccountBean != null) {
                 String userId = userAccountBean.getId();
         %>
@@ -140,6 +152,7 @@
                     ResultSet resultSet1 = statement1.executeQuery(SQLQueriesHelper.selectForumComments(id));
                     while (resultSet1.next()) {
                 %>
+    <div style="position: relative" id="edew">
         <div class="forum-comment">
             <div class="comment-text"><%=resultSet1.getString("object_name")%>
             </div>
@@ -149,9 +162,16 @@
                 </a>
             </div>
         </div>
+        <%if(userAccountBean != null && ((userAccountBean.isIsAdmin() || userAccountBean.isIsModer()) ||
+                resultSet1.getString("id_creation").equals(userAccountBean.getId()))){%>
+        <div class="delete-forum">
+            <span class="glyphicon glyphicon-remove" id="<%=resultSet1.getString("object_id")%>"></span>
+            <%--<p id="<%=resultSet1.getString("object_id")%>">Удалить обсуждение</p>--%>
+        </div>
+        <%}%>
+    </div>
             <%
                     }
-                    UserAccountBean userAccountBean = (UserAccountBean) request.getSession().getAttribute("userAccount");
                     if (userAccountBean != null) {
                         String userId = userAccountBean.getId();
                 %>
@@ -177,6 +197,9 @@
 
                     }
                 %>
+                <%--<%System.out.println(userAccountBean != null);%>--%>
+                <%--<%System.out.println(userAccountBean.isIsAdmin());%>--%>
+                <%--<%System.out.println(userAccountBean.isIsModer());%>--%>
         <c:catch var="e">
             <c:import url="/includes/object/footers/default.jspf"/>
         </c:catch>

@@ -115,8 +115,8 @@ public class SQLQueriesHelper {
         String queryString = query.toString();
         return queryString;
     }
-
-    static public String selectAdvertsListWithAllInfo(String rootCategoryId) {
+	
+	static public String selectAdvertsListWithAllInfo(String rootCategoryId) {
         String query =
                 "select  o.object_id,\n" +
                 "        o.object_name,\n" +
@@ -1322,7 +1322,7 @@ public class SQLQueriesHelper {
     }
 
     public static String selectForumComments(String forumTopicId) {
-        String query = "select  o.object_name, "
+        String query = "select  o.object_id, o.object_name, "
                 + "to_char(p1.date_value, 'DD:MM:YYYY HH24:MI:SS') as date_creation, "
                 + "p2.value as id_creation, "
                 + "o2.object_name as login_creation "
@@ -1339,7 +1339,9 @@ public class SQLQueriesHelper {
                 + "p1.attr_id = 38 and "
                 + "p2.attr_id = 39 and "
                 + "p3.attr_id = 42 and "
-                + "p3.value = " + forumTopicId;
+                + "p3.value = " + forumTopicId +
+                " order by p1.date_value ";
+        System.out.println(query);
         return query;
     }
 
@@ -1658,6 +1660,16 @@ public class SQLQueriesHelper {
 
     static String checkEmail(String email) {
         String query = "select * from UNC_PARAMS where ATTR_ID = 5 and OBJECT_ID = " + email;
+        return query;
+    }
+    public static String deleteDiscusCommentsParams (String id) {
+        String query = "delete from unc_params where object_id in " +
+                " ( select object_id from unc_params where attr_id = 42 and value = "+id+" )";
+        return query;
+    }
+    public static String deleteDiscusComment (String id) {
+        String query = "delete from unc_objects where object_id in " +
+                " ( select object_id from unc_params where attr_id = 42 and value = "+id+" )";
         return query;
     }
 }

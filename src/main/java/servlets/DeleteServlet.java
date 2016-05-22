@@ -92,13 +92,23 @@ public class DeleteServlet extends HttpServlet {
 //                        response.sendRedirect("/unc-project/index.jsp");
                     }
                 }
-            } else if (type.equals("388") && userId.equals(id)){
-
-            } else if (type.equals("392") && userId.equals(id)){
-
+            } else if (type.equals("388")){
+                System.out.println("удаляем обсуждение");
+                Statement statement = connection.createStatement();
+                statement.executeUpdate(SQLQueriesHelper.deleteDiscusCommentsParams(id));
+                statement.executeUpdate(SQLQueriesHelper.deleteDiscusComment(id));
+                statement.executeUpdate(SQLQueriesHelper.deleteObjectParams(id));
+                statement.executeUpdate(SQLQueriesHelper.deleteObject(id));
+                System.out.println("Все прошло успешно");
+                out.println("0");
+            } else if ( type.equals("392")){
+                System.out.println("Удаляем комментарий");
+                Statement statement = connection.createStatement();
+                statement.executeUpdate(SQLQueriesHelper.deleteObjectParams(id));
+                statement.executeUpdate(SQLQueriesHelper.deleteObject(id));
+                System.out.println("Все прошло успешно");
+                out.println("0");
             }
-
-
 
         } catch (SQLException e) {
             e.printStackTrace();

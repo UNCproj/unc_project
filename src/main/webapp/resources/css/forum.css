@@ -34,6 +34,7 @@
     background-color: rgba(93, 145, 209, 0.55);
     padding: 5px;
     font-size: 20px;
+    position: relative;
 }
 .forum-topic-title{
     padding-top: 5px;
@@ -41,6 +42,10 @@
     display: inline-block;
     width: 79%;
     vertical-align: middle;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 820px;
+    overflow: hidden;
 }
 .forum-topic-create{
     height: 40px;
@@ -72,6 +77,7 @@
     margin: 1% 2%;
     background-color: #a5c1e5;
     border-radius: 8px;
+    word-break: break-word;
 }
 .question-name{
     padding-left: 15px;
@@ -88,6 +94,7 @@
     padding-right: 10px;
 }
 .forum-comment{
+    position: relative;
     margin: 1% 4%;
     background-color: #a5c1e5;
     border-radius: 8px;
@@ -104,4 +111,18 @@
 .comment-create{
     text-align: right;
     padding-right: 10px;
+}
+.delete-forum{
+    position: absolute;
+    right: 30px;
+    top: 5px;
+}
+.delete-forum:hover{
+    color: red;
+    cursor: pointer;
+}
+div#edew .delete-forum{
+    position: absolute;
+    right: 50px;
+    top: 5px;
 }
