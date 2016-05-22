@@ -135,7 +135,7 @@
                         <table class="table table-params">
                             <tbody>
                             <tr>
-                                <td>Название</td>
+                                <td>Комментарий</td>
                                 <td><textarea ng-model="object.name"  id="comment_name"  rows="10"></textarea></td>
                             </tr>
                             </tbody>
