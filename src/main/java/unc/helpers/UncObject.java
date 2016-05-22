@@ -29,6 +29,8 @@ public class UncObject {
     private ArrayList<String> attributeGroups;
     private String userId;
     private String advertId;
+    private static String [] massEncName = new String[] {"email", "city", "first_name", "second_name", "surname", "phone", "street_and_house", "country"};
+    private static String [] massEncID = new String[] {"5", "9", "12", "13", "14", "15", "16", "17"};
 
     public UncObject() {
         params = new ArrayList<>();
@@ -138,6 +140,7 @@ public class UncObject {
     public void insertIntoDB() throws PropertyVetoException, SQLException, IOException {
         try (Connection connection = DataSource.getInstance().getConnection();
              Statement statement = connection.createStatement()) {
+            boolean select = false;
             connection.setAutoCommit(false);
             ResultSet results = (statement.executeQuery(SQLQueriesHelper.newId()));
             results.next();
@@ -184,10 +187,22 @@ public class UncObject {
                             id, param.getValue(), param.getAttrId()
                     ));
                 } else {
-                    statement.executeUpdate(SQLQueriesHelper.insertParam(
+                    for (String EncID : massEncID) {
+                        if (param.getAttrId().equals(EncID)) {
+                            select = true;
+                            statement.executeUpdate(SQLQueriesHelper.insertParam(
+                                new BigDecimal(id), param.getAttrId(), Crypt2.encrypt(param.getValue()), param.getDateValue()
+                            ));
+                            break;
+                        }
+                    }
+                    if (!select) {
+                        statement.executeUpdate(SQLQueriesHelper.insertParam(
                             new BigDecimal(id), param.getAttrId(), param.getValue(), param.getDateValue()
-                    ));
+                        ));
+                    }
                 }
+                select = false;
             }
             connection.commit();
         }
@@ -213,7 +228,7 @@ public class UncObject {
     public void updateInDB() throws PropertyVetoException, SQLException, IOException {
         Connection connection = null;
         Statement statement = null;
-
+        boolean select = false;
         try
         {
             connection = DataSource.getInstance().getConnection();
@@ -234,15 +249,52 @@ public class UncObject {
             if (params != null) {
                 for (Param param : params) {
                     if (param.getAttrId() == null) {
-                        statement.executeUpdate(SQLQueriesHelper.mergeParamByName(
-                                new BigDecimal(id), param.getName(), param.getValue(), param.getDateValue()
-                        ));
+                        if (param.getName().equals("password")) {
+                            statement.executeUpdate(SQLQueriesHelper.mergeParamByName(
+                                new BigDecimal(id), param.getName(), Crypt2.sha256(param.getValue()), param.getDateValue()
+                            ));
+                        }
+                        else {
+                            for (String Encname : massEncName) {
+                                if (param.getName().equals(Encname)) {
+                                    select = true;
+                                    statement.executeUpdate(SQLQueriesHelper.mergeParamByName(
+                                        new BigDecimal(id), param.getName(), Crypt2.encrypt(param.getValue()), param.getDateValue()
+                                    ));
+                                    break;
+                                }
+                            }
+                            if (!select) {
+                                statement.executeUpdate(SQLQueriesHelper.mergeParamByName(
+                                        new BigDecimal(id), param.getName(), param.getValue(), param.getDateValue()
+                                ));
+                            }
+                        }
                     }
                     else {
-                        statement.executeUpdate(SQLQueriesHelper.mergeParam(
-                                new BigDecimal(id), param.getAttrId(), param.getValue(), param.getDateValue()
-                        ));
+                        if (param.getAttrId().equals("2")) {
+                            statement.executeUpdate(SQLQueriesHelper.mergeParam(
+                                    new BigDecimal(id), param.getAttrId(), Crypt2.sha256(param.getValue()), param.getDateValue()
+                            ));
+                        }
+                        else {
+                            for (String Encname : massEncID) {
+                                if (param.getAttrId().equals(Encname)) {
+                                    select = true;
+                                    statement.executeUpdate(SQLQueriesHelper.mergeParamByName(
+                                        new BigDecimal(id), param.getAttrId(), Crypt2.encrypt(param.getValue()), param.getDateValue()
+                                    ));
+                                    break;
+                                }
+                            }
+                            if (!select) {
+                                statement.executeUpdate(SQLQueriesHelper.mergeParamByName(
+                                        new BigDecimal(id), param.getAttrId(), param.getValue(), param.getDateValue()
+                                ));
+                            }
+                        }
                     }
+                    select = false;
                 }
             }
             connection.commit();
@@ -265,6 +317,7 @@ public class UncObject {
     public void selectFromDB() throws PropertyVetoException, SQLException, IOException {
         try(Connection connection = DataSource.getInstance().getConnection())
         {
+            boolean select = false;
             params = new ArrayList<>();
             PreparedStatement statement;
             if (id == null || id.length() == 0) { 
@@ -310,12 +363,26 @@ public class UncObject {
                 }*/
 
                 if (!isAdded) {
-                    params.add(new Param(currentParamName,
-                                            results.getString("value"),
-                                            results.getString("attr_name_ru"),
-                                            results.getString("attr_group"),
-                                            results.getString("attr_type"))
-                    );
+                    for (String Encname : massEncName) {
+                        if (currentParamName.equals(Encname)) {
+                            select = true;
+                            params.add(new Param(currentParamName,
+                                                Crypt2.decrypt(results.getString("value")),
+                                                results.getString("attr_name_ru"),
+                                                results.getString("attr_group"),
+                                                results.getString("attr_type"))
+                            );
+                            break;
+                        }
+                    }
+                    if (!select) {
+                        params.add(new Param(currentParamName,
+                                                results.getString("value"),
+                                                results.getString("attr_name_ru"),
+                                                results.getString("attr_group"),
+                                                results.getString("attr_type"))
+                        );
+                    }
                 }
             }
             statement.close();

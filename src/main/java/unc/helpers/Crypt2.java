@@ -11,28 +11,48 @@ import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Base64;
 
 public class Crypt2 {
-  private static String IV = "AAAAAAAAAAAAAAAA";
-  private static String encryptionKey = "0123456789abcdef";
+    private static byte[] key = {
+            0x74, 0x68, 0x69, 0x73, 0x49, 0x73, 0x41, 0x53, 0x65, 0x63, 0x72, 0x65, 0x74, 0x4b, 0x65, 0x79
+    };
 
-  public static String encrypt(String plainText) throws Exception {
-      Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-      SecretKeySpec key = new SecretKeySpec(encryptionKey.getBytes("UTF-8"), "AES");
-      cipher.init(Cipher.ENCRYPT_MODE, key,new IvParameterSpec(IV.getBytes("UTF-8")));
-      return new Base64().encodeAsString(cipher.doFinal(plainText.getBytes("UTF-8")));
-  }
+    public static String encrypt(String strToEncrypt)
+    {
+        try
+        {
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            final SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            final String encryptedString = Base64.encodeBase64String(cipher.doFinal(strToEncrypt.getBytes()));
+            return encryptedString;
+        }
+        catch (Exception e)
+        {
+           e.printStackTrace();
+        }
+        return null;
 
-  public static String decrypt(String cipherText) throws Exception{
-      byte[] text = new Base64().decodeBase64(cipherText);
-      Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-      SecretKeySpec key = new SecretKeySpec(encryptionKey.getBytes("UTF-8"), "AES");
-      cipher.init(Cipher.DECRYPT_MODE, key,new IvParameterSpec(IV.getBytes("UTF-8")));
-      return new String(cipher.doFinal(text),"UTF-8");
-  }
+    }
+
+    public static String decrypt(String strToDecrypt)
+    {
+        try
+        {
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
+            final SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+            final String decryptedString = new String(cipher.doFinal(Base64.decodeBase64(strToDecrypt)));
+            return decryptedString;
+        }
+        catch (Exception e)
+        {
+          e.printStackTrace();
+        }
+        return null;
+    }
   
   public static String sha256(String base) {
       try {
