@@ -1,5 +1,6 @@
 package servlets;
 
+import com.google.gson.JsonObject;
 import beans.UserAccountBean;
 import db.DataSource;
 import db.SQLQueriesHelper;
@@ -37,7 +38,7 @@ public class RegistrationServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         request.setCharacterEncoding("UTF-8");
         String login = request.getParameter("login");
-        String pass = request.getParameter("pass");
+        String pass = request.getParameter("password") == null ? request.getParameter("pass") : request.getParameter("password");
         String retypePass = request.getParameter("retypePass");
         String email = request.getParameter("email");
         String avatar = request.getParameter("ava");
@@ -46,7 +47,7 @@ public class RegistrationServlet extends HttpServlet {
         String uid = "";
         UserRegistrationValidationBean registrationValidationBean =
                 new UserRegistrationValidationBean(login, pass, retypePass, email);
-        String constrViolationsJSON = registrationValidationBean.validate().toString();
+        JsonObject constrViolationsJSON = registrationValidationBean.validate();
         if (registrationValidationBean.isValid()) {
             Connection connection = null;
             Statement statement1 = null;
