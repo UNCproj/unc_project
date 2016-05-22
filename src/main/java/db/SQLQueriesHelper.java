@@ -206,7 +206,7 @@ public class SQLQueriesHelper {
                 + "from  unc_references r\n"
                 + "  left join UNC_OBJECTS o\n"
                 + "    on r.OBJECT_ID = o.OBJECT_ID\n"
-                + "where r.OBJECT_REFERENCE_ID =  " + objectId + " union \n"
+                + "where r.OBJECT_REFERENCE_ID =  " + objectId + " and r.ATTR_ID = 11 union \n"
                 + "select  rr.OBJECT_REFERENCE_ID,\n"
                 + "        oo.OBJECT_NAME,\n"
                 + "        nvl(\n"
@@ -221,7 +221,8 @@ public class SQLQueriesHelper {
                 + "    on rr.OBJECT_REFERENCE_ID = oo.OBJECT_ID\n"
                 + "where rr.OBJECT_ID = "
         );
-        query.append(objectId);
+        query.append(objectId); 
+        query.append(" and rr.ATTR_ID = 11");
         String queryString = query.toString();
         return queryString;
     }
