@@ -233,7 +233,7 @@
         
         //pager
         console.log('pager');
-        if ($('#rights').val()==='admin'){
+        if ($('#rights').val()==='admin' || $('#rights').val()==='moderator'){
             $scope.loadAllUsers();
         };
         $scope.viewby = 10;

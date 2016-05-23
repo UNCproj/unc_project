@@ -131,7 +131,7 @@
                         <%if ("4".equals(currentObject.getParentType()) && user != null && user.getId().equals(currentObject.getIDUserByAdvertId())) {%>
                     <li><a href="#adstatid" data-toggle="tab">Статистика просмотров</a></li>
                         <% } %>
-                        <%if ((user != null) && (user.isIsAdmin()) && (currentObject.getId().equals(user.getId()))) {%>
+                        <%if ((user != null) && ((user.isIsAdmin()) || (user.isIsModer())) && (currentObject.getId().equals(user.getId()))) {%>
                     <li><a href="#adminka" data-toggle="tab">Администрирование</a></li>
                         <% } %>
                         <%if ((user != null) && ((user.isIsAdmin()) || (user.isIsModer())) && (!currentObject.getId().equals(user.getId()))) {%>
@@ -378,12 +378,14 @@
                     </div>
                     <% } %>
                     <div  id="adminka" class="tab-pane fade in" >
-                        <%if ("1".equals(currentObject.getParentType()) && user != null && user.isIsAdmin() && user.getId().equals(request.getParameter("id"))) {%>
+                        <%if ("1".equals(currentObject.getParentType()) && user != null && (user.isIsAdmin() || user.isIsModer()) && user.getId().equals(request.getParameter("id"))) {%>
                         <div ng-controller="AdminCtrl" class="pad-content">
                             <ul class="custom-tabs nav nav-tabs" id="tn">
                                 <li class="active"><a href="#user_list" data-toggle="tab">Список пользователей</a></li>
+                                <% if (user.isIsAdmin()) {%>
                                 <li><a href="#migr" data-toggle="tab">Миграция</a></li>
                                 <li><a href="#reg_stat" data-toggle="tab">Статистика регистраций</a></li>
+                                <% } %>
                             </ul>
                             <div class="settings tab-content" id="usrs_tab_content">
                                 <div id="user_list" class="tab-pane fade in active">
@@ -393,8 +395,8 @@
                                         <table class="table">
                                             <thead>
                                                 <tr>
-                                                    <td class="users-td" ><b>Ссылка<b></td>
-                                                    <td class="users-td" ><b>Логин<b></td>
+                                                    <td class="users-td"><b>Ссылка<b></td>
+                                                    <td class="users-td"><b>Логин<b></td>
                                                     <td class="users-td"><b>Имя</b></td>
                                                     <td class="users-td"><b>Фамилия</b></td>
                                                     <td class="users-td"><b>Фото<b></td>
@@ -418,6 +420,17 @@
                                                     </td>
                                                     <td class="users-td admin-control">
                                                         <span ng-if="(true)">
+                                                            <% if (!user.isIsAdmin()) {%>
+                                                            <button style="float:top;" ng-if="(row.isInvalid != true && row.isAdmin != true && row.isModer != true)" type="button" class="btn btn-danger btn-small" ng-click="set_del_id(row.id); clickToDel()">
+                                                                Заблокировать
+                                                            </button>
+                                                            <button style="float:top;" ng-if="(row.isInvalid === true && row.isAdmin != true && row.isModer != true)" type="button" class="btn btn-danger btn-small" ng-click="set_del_id(row.id); clickToUnblock()">
+                                                                Разблокировать
+                                                            </button>
+                                                            <button style="float:top;" ng-if="(row.isModer != true && row.isAdmin != true)" type="button" class="btn btn-danger btn-small" ng-click="clickToModer(row.id, 'true', 'moderator')">
+                                                                Сделать модератором
+                                                            </button>
+                                                            <%} else { %>
                                                             <button style="float:top;" ng-if="(row.isInvalid != true && row.isAdmin != true)" type="button" class="btn btn-danger btn-small" ng-click="set_del_id(row.id); clickToDel()">
                                                                 Заблокировать
                                                             </button>
@@ -436,6 +449,7 @@
                                                             <button style="float:top;" ng-if="(row.isAdmin === true)" type="button" class="btn btn-danger btn-small" ng-click="clickToModer(row.id, 'false', 'admin')">
                                                                 Снять права администратора
                                                             </button>
+                                                            <% } %>
                                                         </span>
                                                     </td>
                                                 </tr>
