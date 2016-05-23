@@ -120,7 +120,7 @@ public class Parser {
         {
             connection.setAutoCommit(false);
             for (int i = 1; i < list.size(); i++){
-                if (checkLogin((String)list.get(i).get(0)) == null) {//проверить если этот логин
+                if (checkLogin((String)list.get(i).get(0)) == null && !checkEmail((String)list.get(i).get(1))) {//проверить если этот логин
                     ResultSet results = (statement.executeQuery(SQLQueriesHelper.newId()));
                     results.next();
                     BigDecimal id = results.getBigDecimal("id");

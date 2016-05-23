@@ -66,7 +66,6 @@
                     console.log("del success!");
                     console.log("uid="+$scope.del_model.uid);
                     console.log("umsg="+$scope.del_model.txt);
-                    //$scope.close_diag.close();
                     window.location.href = '/unc-project/index.jsp'; 
                 });
                };
