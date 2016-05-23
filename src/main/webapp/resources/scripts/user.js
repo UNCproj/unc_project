@@ -133,6 +133,35 @@
         };
 
     });
+    
+    app.controller("ModerCtrl", function ($scope, ngDialog){
+               console.log("advert moder ready!");
+                $scope.del_model = {};
+                $scope.del_model.txt = "";
+                $scope.del_model.uid = $('#hidden_user_name').val();
+                $scope.deleteAdvert = function (){
+                   $.ajax({
+                url: "/unc-project/ModerServlet/delUser",
+                async:false,
+                data: {"id": getUrlParameter("id"),
+                        "uid":encodeURIComponent($scope.del_model.uid),
+                        "msg":encodeURIComponent($scope.del_model.txt),
+                        "value":true}
+                }).done(function(data) {
+                    console.log("del success!");
+                    console.log("uid="+$scope.del_model.uid);
+                    console.log("umsg="+$scope.del_model.txt);
+                    window.location.href = '/unc-project/index.jsp'; 
+                });
+               };
+               
+                $scope.clickToDel = function (){
+                        $scope.close_diag = ngDialog.open({ template: 'directives/delete.html',
+                        scope: $scope
+                    });
+                };
+             
+            });
 
     app.controller("AdminCtrl", function ($scope, ngDialog) {
         console.log("adminmoder ready!");

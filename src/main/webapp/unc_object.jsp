@@ -506,9 +506,16 @@
                                 </button>
                             </div>
                         </div>
-                        <%
-                            }
-                        %>
+                        <% } else if ((user != null) && (user.isIsModer() || user.isIsAdmin()) && ("1".equals(currentObject.getType()))) {%>
+                        <br>
+                        <div class="table-pos">
+                            <div ng-controller="ModerCtrl">
+                                <button class="button-style a-outline button-update" ng-click="clickToDel();">
+                                    <nobr>Заблокировать пользователя</nobr>
+                                </button>
+                            </div>
+                        </div>
+                        <% } %>
                     </div>
                     <%if ("1".equals(currentObject.getType()) && user != null && user.getId().equals(request.getParameter("id"))) {%>
                     <div id="messages" class="tab-pane fade in">

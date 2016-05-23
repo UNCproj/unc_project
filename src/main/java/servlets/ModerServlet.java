@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author artem
  */
-@WebServlet(name = "ModerServlet", urlPatterns = {"/ModerServlet/delAdvert", "/ModerServlet/deleted", "/ModerServlet/setModerRights",
+@WebServlet(name = "ModerServlet", urlPatterns = {"/ModerServlet/delAdvert", "/ModerServlet/delUser", "/ModerServlet/deleted", "/ModerServlet/setModerRights",
     "/ModerServlet/GetUsersList"})
 public class ModerServlet extends HttpServlet {
 
@@ -112,6 +112,101 @@ public class ModerServlet extends HttpServlet {
                 res.next();
                 String type = res.getString(1);
                 if (!type.equals(SQLQueriesHelper.ADVERT_TYPE_ID) && !type.equals(SQLQueriesHelper.USER_TYPE_ID)) {
+                    log.info("Некорректный тип объекта!");
+                    log.info(type);
+                    return;
+                }
+                statement.close();
+                comm = "select value from unc_params where "
+                        + "object_id=" + id + " "
+                        + "and attr_id=" + SQLQueriesHelper.INVALID_ATTR_ID;
+                log.info("getvalue " + comm);
+                res = st.executeQuery(comm);
+                if (!res.next()) {
+                    comm = "insert into unc_params (object_id, attr_id, value)"
+                            + "values(" + id + "," + SQLQueriesHelper.INVALID_ATTR_ID + "," + "'" + delValue + "'" + ")";
+                    log.info("insert= " + comm);
+                    int r = st.executeUpdate(comm);
+                    log.info("res= " + r);
+                } else {
+                    comm = SQLQueriesHelper.updateParam(new BigDecimal(id), attr_id, delValue, null);
+                    log.info("update= " + comm);
+                    int r = st.executeUpdate(comm);
+                    log.info("res= " + r);
+                }
+
+                comm = "select value from unc_params where "
+                        + "object_id=" + id + " "
+                        + "and attr_id=" + SQLQueriesHelper.DEL_ID_ATTR_ID;
+                log.info("getvalue " + comm);
+                res = st.executeQuery(comm);
+                if (!res.next()) {
+                    comm = "insert into unc_params (object_id, attr_id, value)"
+                            + "values(" + id + "," + SQLQueriesHelper.DEL_ID_ATTR_ID + "," + "'" + delId + "'" + ")";
+                    log.info("insert= " + comm);
+                    int r = st.executeUpdate(comm);
+                    log.info("res= " + r);
+                    comm = "insert into unc_params (object_id, attr_id, value)"
+                            + "values(" + id + "," + SQLQueriesHelper.DEL_MSG_ATTR_ID + "," + "'" + delMsg + "'" + ")";
+                    log.info("insert= " + comm);
+                    r = st.executeUpdate(comm);
+                    log.info("res= " + r);
+                } else {
+                    comm = SQLQueriesHelper.updateParam(new BigDecimal(id), SQLQueriesHelper.DEL_ID_ATTR_ID, delId, null);
+                    log.info("update= " + comm);
+                    int r = st.executeUpdate(comm);
+                    log.info("res= " + r);
+                    comm = SQLQueriesHelper.updateParam(new BigDecimal(id), SQLQueriesHelper.DEL_MSG_ATTR_ID, delMsg, null);
+                    log.info("update= " + comm);
+                    r = st.executeUpdate(comm);
+                    log.info("res= " + r);
+                }
+
+            } catch (SQLException ex) {
+                Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else if (request.getServletPath().equals("/ModerServlet/delUser")) {
+            String delMsg = request.getParameter("msg");
+            String delId = request.getParameter("uid");
+            String delValue = request.getParameter("value");
+            UserAccountBean user = (UserAccountBean) request.getSession().getAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY);
+
+            if ((user == null) || ((!user.isIsModer()) && (!user.isIsAdmin()))) {
+                return;
+            }
+            try {
+                connection = DataSource.getInstance().getConnection();
+            } catch (PropertyVetoException ex) {
+                Logger.getLogger(StatServlet.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            String id = request.getParameter("id");
+            String attr_id = SQLQueriesHelper.INVALID_ATTR_ID;
+
+            try {
+                st = connection.createStatement();
+            } catch (SQLException ex) {
+                Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            try {
+                //String comm = SQLQueriesHelper.updateParam(new BigDecimal(id), attr_id, "true", null);
+                PreparedStatement statement = connection.prepareStatement(SQLQueriesHelper.getTypeIdByObjectId());
+                statement.setBigDecimal(1, new BigDecimal(id));
+                String comm = SQLQueriesHelper.getTypeIdByObjectId();
+                log.info("checktype1 " + statement);
+                ResultSet res = statement.executeQuery();
+                res.next();
+                String typeId = res.getString(1);
+                statement.close();
+                statement = connection.prepareStatement(SQLQueriesHelper.getParentTypeIdByObjectTypeId());
+                statement.setInt(1, new Integer(typeId));
+                comm = SQLQueriesHelper.getParentTypeIdByObjectTypeId();
+                log.info("checktype2 " + comm);
+                res = statement.executeQuery();
+                res.next();
+                String type = res.getString(1);
+                if (!type.equals(SQLQueriesHelper.USER_TYPE_ID)) {
                     log.info("Некорректный тип объекта!");
                     log.info(type);
                     return;
