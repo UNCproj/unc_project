@@ -195,13 +195,15 @@ public class UncObject {
                             id, param.getValue(), param.getAttrId()
                     ));
                 } else {
-                    for (String EncID : massEncID) {
-                        if (param.getAttrId().equals(EncID)) {
-                            select = true;
-                            statement.executeUpdate(SQLQueriesHelper.insertParam(
-                                new BigDecimal(id), param.getAttrId(), Crypt2.encrypt(param.getValue()), param.getDateValue()
-                            ));
-                            break;
+                    if (type.equals(SQLQueriesHelper.USER_TYPE_ID)) {
+                        for (String EncID : massEncID) {
+                            if (param.getAttrId().equals(EncID)) {
+                                select = true;
+                                statement.executeUpdate(SQLQueriesHelper.insertParam(
+                                    new BigDecimal(id), param.getAttrId(), Crypt2.encrypt(param.getValue()), param.getDateValue()
+                                ));
+                                break;
+                            }
                         }
                     }
                     if (!select) {
@@ -263,13 +265,15 @@ public class UncObject {
                             ));
                         }
                         else {
-                            for (String Encname : massEncName) {
-                                if (param.getName().equals(Encname)) {
-                                    select = true;
-                                    statement.executeUpdate(SQLQueriesHelper.mergeParamByName(
-                                        new BigDecimal(id), param.getName(), Crypt2.encrypt(param.getValue()), param.getDateValue()
-                                    ));
-                                    break;
+                            if (type.equals(SQLQueriesHelper.USER_TYPE_ID)) { 
+                                for (String Encname : massEncName) {
+                                    if (param.getName().equals(Encname)) {
+                                        select = true;
+                                        statement.executeUpdate(SQLQueriesHelper.mergeParamByName(
+                                            new BigDecimal(id), param.getName(), Crypt2.encrypt(param.getValue()), param.getDateValue()
+                                        ));
+                                        break;
+                                    }
                                 }
                             }
                             if (!select) {
@@ -286,13 +290,15 @@ public class UncObject {
                             ));
                         }
                         else {
-                            for (String Encname : massEncID) {
-                                if (param.getAttrId().equals(Encname)) {
-                                    select = true;
-                                    statement.executeUpdate(SQLQueriesHelper.mergeParamByName(
-                                        new BigDecimal(id), param.getAttrId(), Crypt2.encrypt(param.getValue()), param.getDateValue()
-                                    ));
-                                    break;
+                            if (type.equals(SQLQueriesHelper.USER_TYPE_ID)) {
+                                for (String Encname : massEncID) {
+                                    if (param.getAttrId().equals(Encname)) {
+                                        select = true;
+                                        statement.executeUpdate(SQLQueriesHelper.mergeParamByName(
+                                            new BigDecimal(id), param.getAttrId(), Crypt2.encrypt(param.getValue()), param.getDateValue()
+                                        ));
+                                        break;
+                                    }
                                 }
                             }
                             if (!select) {
@@ -369,18 +375,19 @@ public class UncObject {
                         break;
                     }
                 }*/
-
                 if (!isAdded) {
-                    for (String Encname : massEncName) {
-                        if (currentParamName.equals(Encname)) {
-                            select = true;
-                            params.add(new Param(currentParamName,
-                                                Crypt2.decrypt(results.getString("value")),
-                                                results.getString("attr_name_ru"),
-                                                results.getString("attr_group"),
-                                                results.getString("attr_type"))
-                            );
-                            break;
+                    if (type.equals(SQLQueriesHelper.USER_TYPE_ID)) {
+                        for (String Encname : massEncName) {
+                            if (currentParamName.equals(Encname)) {
+                                select = true;
+                                params.add(new Param(currentParamName,
+                                                    Crypt2.decrypt(results.getString("value")),
+                                                    results.getString("attr_name_ru"),
+                                                    results.getString("attr_group"),
+                                                    results.getString("attr_type"))
+                                );
+                                break;
+                            }
                         }
                     }
                     if (!select) {

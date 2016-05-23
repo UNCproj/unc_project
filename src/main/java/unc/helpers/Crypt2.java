@@ -54,7 +54,7 @@ public class Crypt2 {
         return null;
     }
   
-  public static String sha256(String base) {
+    public static String sha256(String base) {
       try {
           MessageDigest digest = MessageDigest.getInstance("SHA-256");
           byte[] hash = digest.digest(base.getBytes("UTF-8"));
