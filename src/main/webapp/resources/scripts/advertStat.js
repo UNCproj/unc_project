@@ -137,7 +137,7 @@
                 })
                     .success(function(data){
                         $scope.isInBookmarks = true;
-                        $scope.bookmarksButtonText = "Удалить из избранного";
+                        $scope.bookmarksButtonText = "Из избранного";
                     });
             };
 
