@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <tr>
-    <td>
+    <td class="attr-center" >
     ${param.attr_name_ru}
     </td>
     <td>
@@ -61,7 +61,7 @@
                     Перетащите изображение сюда
                 </div>
                 или
-                <button type="button" path="${param.attr_value}" flow-btn>Загрузить</button>
+                <button type="button-style a-outline button-update" path="${param.attr_value}" flow-btn>Загрузить</button>
             </div>
             </c:when>
             <c:when test="${param.attr_type.equals(\"4\")}">

@@ -92,7 +92,7 @@ public class ModerServlet extends HttpServlet {
             String delValue = request.getParameter("value");
             UserAccountBean user = (UserAccountBean) request.getSession().getAttribute(BeansHelper.USER_ACCOUNT_SESSION_KEY);
 
-            if ((user == null) || (!user.isIsModer()) || (!user.isIsAdmin())) {
+            if ((user == null) || ((!user.isIsModer()) && (!user.isIsAdmin()))) {
                 return;
             }
             try {
@@ -177,6 +177,7 @@ public class ModerServlet extends HttpServlet {
                     r = st.executeUpdate(comm);
                     log.info("res= " + r);
                 }
+            response.sendRedirect("/unc-project/index.jsp");
 
             } catch (SQLException ex) {
                 Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);

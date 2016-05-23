@@ -83,15 +83,21 @@ public class RegistrationServlet extends HttpServlet {
 
                 statement3 = connection.createStatement();
                 statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.EMAIL_ATTR_ID, Crypt2.encrypt(email), null));
-
-                statement3 = connection.createStatement();
-                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.USER_PIC_FILE_ATTR_ID, avatar.equals("") ? "":avatar, null));
                 
-                statement3 = connection.createStatement();
-                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.FIRST_NAME_ATTR_ID, fname.equals("") ? "":Crypt2.encrypt(fname), null));
+                if (avatar != null) {
+                    statement3 = connection.createStatement();
+                    statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.USER_PIC_FILE_ATTR_ID, avatar.equals("") ? "":avatar, null));
+                }
                 
-                statement3 = connection.createStatement();
-                statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.SURNAME_ATTR_ID, sname.equals("") ? "":Crypt2.encrypt(sname), null));
+                if (fname != null) {
+                    statement3 = connection.createStatement();
+                    statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.FIRST_NAME_ATTR_ID, fname.equals("") ? "":Crypt2.encrypt(fname), null));
+                }
+                
+                if (sname != null) {
+                    statement3 = connection.createStatement();
+                    statement3.executeUpdate(SQLQueriesHelper.insertParam(userId, SQLQueriesHelper.SURNAME_ATTR_ID, sname.equals("") ? "":Crypt2.encrypt(sname), null));
+                }
 
                 connection.commit();
             } catch (Exception e) {

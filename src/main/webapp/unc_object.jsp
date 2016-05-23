@@ -499,10 +499,12 @@
 
                         <% if ((user != null) && (user.isIsModer() || user.isIsAdmin()) && ("4".equals(currentObject.getParentType()))) { %>
                         <br>
-                        <div style="margin-left:350px; margin-top:25px;">
-                            <a class="a-outline button-style clearfix" id="delete-object" style="width: 200px">
-                                Удалить объявление
-                            </a>
+                        <div class="table-pos">
+                            <div ng-controller="ModerCtrl">
+                                <button class="button-style a-outline button-update" ng-click="clickToDel();">
+                                    <nobr>Заблокировать объявление</nobr>
+                                </button>
+                            </div>
                         </div>
                         <%
                             }
