@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.PreparedStatement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
 
 /**
@@ -382,12 +384,30 @@ public class UncObject {
                         }
                     }
                     if (!select) {
-                        params.add(new Param(currentParamName,
-                                                results.getString("value"),
-                                                results.getString("attr_name_ru"),
-                                                results.getString("attr_group"),
-                                                results.getString("attr_type"))
-                        );
+                        if (currentParamName.equals("registration_date") || currentParamName.equals("last_visit_date")) {
+                            SimpleDateFormat fromUser = new SimpleDateFormat("dd-MMM-yy");
+                            SimpleDateFormat myFormat = new SimpleDateFormat("dd.MM.yyyy");
+                            String reformattedStr = null;
+                            try {
+                                reformattedStr = myFormat.format(fromUser.parse(results.getString("value")));
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            params.add(new Param(currentParamName,
+                                                    reformattedStr,
+                                                    results.getString("attr_name_ru"),
+                                                    results.getString("attr_group"),
+                                                    results.getString("attr_type"))
+                            );
+                        }
+                        else {
+                            params.add(new Param(currentParamName,
+                                                    results.getString("value"),
+                                                    results.getString("attr_name_ru"),
+                                                    results.getString("attr_group"),
+                                                    results.getString("attr_type"))
+                            );
+                        }
                     }
                 }
                 select = false;
