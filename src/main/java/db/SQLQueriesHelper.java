@@ -1180,8 +1180,11 @@ public class SQLQueriesHelper {
                 + "left join unc_params p2 "
                 + "on p.object_id=p2.object_id " +
                 " left join unc_params p4 " +
-                " on p4.object_id = o.object_id and p4.attr_id = 6 and substr(p4.value,-6) = '-0.png' "
-                + "where p.attr_id=20 and  "
+                " on p4.object_id = o.object_id and p4.attr_id = 6 and substr(p4.value,-6) = '-0.png' " +
+                "left join unc_params p5 " +
+                " on p5.attr_id = 37 and p5.object_id = o.object_id "
+                + "where p.attr_id=20 and " +
+                " p5.value is null and  "
                 + "p2.attr_id=10 and  "
                 + "p.date_value+7>systimestamp ) "
                 + "ORDER BY dbms_random.value ) "
@@ -1205,8 +1208,11 @@ public class SQLQueriesHelper {
                 + "left join unc_params p2 "
                 + "on p.object_id=p2.object_id " +
                 " left join unc_params p4 " +
-                " on p4.object_id = o.object_id and p4.attr_id = 6 and substr(p4.value,-6) = '-0.png' "
-                + "where p.attr_id=20 and "
+                " on p4.object_id = o.object_id and p4.attr_id = 6 and substr(p4.value,-6) = '-0.png' " +
+                " left join unc_params p5 " +
+                " on p5.attr_id = 37 and p5.object_id = o.object_id "
+                + "where p.attr_id=20 and " +
+                " p5.value is null and "
                 + "p2.attr_id=10 and "
                 + "p.date_value+7>systimestamp and "
                 + "o.object_type_id in ( "
