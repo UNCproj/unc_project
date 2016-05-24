@@ -289,6 +289,13 @@ $(function () {
                     } else {
                         $("#name").removeClass("invalid");
                     }
+                    if ($("#phone").val() == "") {
+                        $("#phone").addClass("invalid");
+                        $("#information").append("<p>Введите номер телефона</p>");
+                        validStat = false;
+                    } else {
+                        $("#phone").removeClass("invalid");
+                    }
                     if ($("#description").val() == "") {
                         $("#description").addClass("invalid");
                         $("#information").append("<p>Добавьте описание</p>");
@@ -349,16 +356,29 @@ $(function () {
             };
             $scope.createAttr = function (a_name, a_ru_name, a_type) {
                 if (a_type == 1) {
-                    $("div.attributes table.table-params tbody").append(
-                        '<tr>' +
-                        '<td>' +
-                        a_ru_name +
-                        '</td>' +
-                        '<td>' +
-                        '<input type="text" ng-model="object.' + a_name + '" id="' + a_name + '"/>' +
-                        '</td>' +
-                        '</tr>'
-                    );
+                    if (a_name == 'phone'){
+                        $("div.attributes table.table-params tbody").append(
+                            '<tr>' +
+                            '<td>' +
+                            a_ru_name +
+                            '</td>' +
+                            '<td>' +
+                            '<input type="tel" ng-model="object.' + a_name + '" id="' + a_name + '" pattern="\+7\-[0-9]{3}\-[0-9]{3}\-[0-9]{2}\-[0-9]{2}"/>' +
+                            '</td>' +
+                            '</tr>'
+                        );
+                    }else {
+                        $("div.attributes table.table-params tbody").append(
+                            '<tr>' +
+                            '<td>' +
+                            a_ru_name +
+                            '</td>' +
+                            '<td>' +
+                            '<input type="text" ng-model="object.' + a_name + '" id="' + a_name + '"/>' +
+                            '</td>' +
+                            '</tr>'
+                        );
+                    }
                 } else if (a_type == 3) {
                     //$("div.attributes table.table-params tbody").append(
                     //    '<tr>' +

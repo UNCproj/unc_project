@@ -29,6 +29,7 @@ public class AddServlet extends HttpServlet {
                     request.getParameter("name") == null || request.getParameter("name").equals("") ||
                             request.getParameter("description") == null || request.getParameter("description").equals("") ||
                             request.getParameter("city") == null || request.getParameter("city").equals("") ||
+                            request.getParameter("phone") == null || request.getParameter("phone").equals("") ||
                             request.getParameter("price") == null || request.getParameter("price").equals("") ||
                             Integer.parseInt(request.getParameter("price")) < 0
                     ) {
