@@ -501,6 +501,33 @@ public class UncObject {
             return false;
         }
     }
+    
+    public boolean checkUserIsAdmin() throws SQLException, IOException, PropertyVetoException {
+        try(Connection connection = DataSource.getInstance().getConnection();
+            Statement statement = connection.createStatement())
+        {
+
+            ResultSet results = statement.executeQuery(SQLQueriesHelper.checkUserIsAdmin(id));
+
+            while (results.next()) {
+                return true;
+            }
+            return false;
+        }
+    }
+    
+    public boolean checkUserIsAdminOrModer() throws SQLException, IOException, PropertyVetoException {
+        try(Connection connection = DataSource.getInstance().getConnection();
+            Statement statement = connection.createStatement())
+        {
+
+            ResultSet results = statement.executeQuery(SQLQueriesHelper.checkUserIsAdminOrModerator(id));
+            while (results.next()) {
+                return true;
+            }
+            return false;
+        }
+    }
 
     public String getId() {
         return id;

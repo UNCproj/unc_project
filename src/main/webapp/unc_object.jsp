@@ -520,7 +520,7 @@
                                 </button>
                             </div>
                         </div>
-                        <% } else if ((user != null) && (user.isIsModer() || user.isIsAdmin()) && ("1".equals(currentObject.getType()))) {%>
+                        <% } else if ((user != null) && user.isIsModer() && ("1".equals(currentObject.getType())) && !currentObject.checkUserIsAdminOrModer()) {%>
                         <br>
                         <div class="table-pos">
                             <div ng-controller="ModerCtrl">
@@ -529,7 +529,20 @@
                                 </button>
                             </div>
                         </div>
-                        <% } %>
+                        <% } else if ((user != null) && user.isIsAdmin() && ("1".equals(currentObject.getType())) && !currentObject.checkUserIsAdmin()) {%>
+                        <br>
+                        <div class="table-pos">
+                            <div ng-controller="ModerCtrl">
+                                <button class="button-style a-outline button-update" ng-click="clickToDel();">
+                                    <nobr>Заблокировать пользователя</nobr>
+                                </button>
+                            </div>
+                        </div>
+                        <% } else { %>
+                            <div class="table-pos">
+                                <h3>Нет доступных действий</h3>
+                            </div>
+                        <% }%>
                     </div>
                     <%if ("1".equals(currentObject.getType()) && user != null && user.getId().equals(request.getParameter("id"))) {%>
                     <div id="messages" class="tab-pane fade in">

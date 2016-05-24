@@ -1673,4 +1673,14 @@ public class SQLQueriesHelper {
                 " ( select object_id from unc_params where attr_id = 42 and value = "+id+" )";
         return query;
     }
+    
+    public static String checkUserIsAdmin(String id) {
+        String query = "select * from UNC_PARAMS where OBJECT_ID = " +id+ " and ATTR_ID = 36 and VALUE = 'true'";
+        return query;
+    }
+    
+    public static String checkUserIsAdminOrModerator(String id) {
+        String query = "select * from UNC_PARAMS where OBJECT_ID = " + id + " and (ATTR_ID = 35 or ATTR_ID = 36) and VALUE = 'true'";
+        return query;
+    }
 }
