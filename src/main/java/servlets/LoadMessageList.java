@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import db.DataSource;
 import db.SQLQueriesHelper;
+import unc.helpers.Crypt2;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -43,13 +44,14 @@ public class LoadMessageList extends HttpServlet {
                 Statement statement = connection.createStatement();
                 ResultSet resultSet = statement.executeQuery(SQLQueriesHelper.selectAllUsersDialog(id));
                 while(resultSet.next()){
+                    /*Crypt2.decrypt()*/
                     String recipient_Id = resultSet.getString("recipient");
                     String recipient_Login = resultSet.getString("login");
                     String text_ = resultSet.getString("mess_text");
                     String date_ = resultSet.getString("mess_date");
                     String read_Status = resultSet.getString("read_status");
-                    String recipient_Name = resultSet.getString("name");
-                    String recipient_Surname = resultSet.getString("surname");
+                    String recipient_Name = Crypt2.decrypt(resultSet.getString("name"));
+                    String recipient_Surname = Crypt2.decrypt(resultSet.getString("surname"));
                     String mess_Id = resultSet.getString("mess_id");
                     String sender_Id = resultSet.getString("sender");
                     arrMess.add(new Message(recipient_Id, recipient_Login, text_, date_,read_Status,recipient_Name,recipient_Surname,mess_Id,sender_Id));

@@ -1274,7 +1274,7 @@ public class SQLQueriesHelper {
         String query = "select o.object_id, "
                 + "o.object_name, "
                 + "p1.value as description, "
-                + "to_char(p2.DATE_VALUE,'DD:MM:YYYY HH24:MI:SS') as creation_date, "
+                + "to_char(p2.DATE_VALUE,'HH24:MI:SS DD:MM:YYYY') as creation_date, "
                 + "p3.value as creation_id, "
                 + "o2.object_name as creation_login , "
                 + "count(o.object_id) as numb_comments "
@@ -1297,7 +1297,7 @@ public class SQLQueriesHelper {
                 + ") and p1.attr_id = " + DESCRIPTION_ATTR_ID
                 + " and p2.attr_id =  " + DATE_CREATION
                 + " and p3.attr_id =  " + PERSON_CREATION
-                + " group by o.object_id, o.object_name, p1.value, to_char(p2.DATE_VALUE,'DD:MM:YYYY HH24:MI:SS'), p3.value, o2.object_name "
+                + " group by o.object_id, o.object_name, p1.value, to_char(p2.DATE_VALUE,'HH24:MI:SS DD:MM:YYYY'), p3.value, o2.object_name "
                 + "order by creation_date desc";
         System.out.println(query);
         return query;
@@ -1307,7 +1307,7 @@ public class SQLQueriesHelper {
         String query = "select o.object_id, "
                 + "o.object_name, "
                 + "p1.value as description, "
-                + "to_char(p2.DATE_VALUE,'DD:MM:YYYY HH24:MI:SS') as creation_date, "
+                + "to_char(p2.DATE_VALUE,'HH24:MI:SS DD:MM:YYYY') as creation_date, "
                 + "p3.value as creation_id, "
                 + "o2.object_name as creation_login "
                 + "from unc_objects o "
@@ -1330,7 +1330,7 @@ public class SQLQueriesHelper {
 
     public static String selectForumComments(String forumTopicId) {
         String query = "select  o.object_id, o.object_name, "
-                + "to_char(p1.date_value, 'DD:MM:YYYY HH24:MI:SS') as date_creation, "
+                + "to_char(p1.date_value, 'HH24:MI:SS DD:MM:YYYY') as date_creation, "
                 + "p2.value as id_creation, "
                 + "o2.object_name as login_creation "
                 + "from unc_objects o "
