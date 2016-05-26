@@ -16,7 +16,9 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.PreparedStatement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Logger;
+import java.util.regex.*;
 
 /**
  * Created by Денис on 24.02.2016.
@@ -396,7 +398,13 @@ public class UncObject {
                             SimpleDateFormat myFormat = new SimpleDateFormat("dd.MM.yyyy");
                             String reformattedStr = null;
                             try {
-                                reformattedStr = myFormat.format(fromUser.parse(results.getString("value")));
+                                String str = results.getString("value");
+                                if (str != null && str.contains("-")) {
+                                    Date d = fromUser.parse(str);
+                                    reformattedStr = myFormat.format(d);
+                                }
+                                else
+                                    reformattedStr = str;
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }

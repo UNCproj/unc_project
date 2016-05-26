@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.Locale;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import java.sql.Statement;
 
 public class DataSource {
     private String userName;
@@ -29,9 +30,9 @@ public class DataSource {
 
     private DataSource() throws IOException, SQLException, PropertyVetoException {
         Locale.setDefault(Locale.ENGLISH);
-        this.userName = "unc_user";
+        this.userName = "uncfinal";
         this.password = "pass123";
-        this.host = "jdbc:oracle:thin:@vinokurov2.no-ip.biz:1521:xe";
+        this.host = "jdbc:oracle:thin:@localhost:1521:xe";//vinokurov2.no-ip.biz
         cpds = new ComboPooledDataSource();
         cpds.setDriverClass("oracle.jdbc.OracleDriver"); //loads the jdbc driver
         cpds.setJdbcUrl(this.host);
@@ -43,7 +44,6 @@ public class DataSource {
         //cpds.setAcquireIncrement(100);
         //cpds.setMaxPoolSize(10000);
         //cpds.setMaxStatements(10000);
-
     }
 
     public static DataSource getInstance() throws IOException, SQLException, PropertyVetoException {
@@ -56,6 +56,10 @@ public class DataSource {
     }
 
     public Connection getConnection() throws SQLException {
+        /*Connection con = this.cpds.getConnection();
+        Statement st = con.createStatement();
+        st.executeQuery("alter session set nls_date_format='dd.mm.yyyy hh24:mi:ss'");
+        return con;*/
         return this.cpds.getConnection();
     }
 }

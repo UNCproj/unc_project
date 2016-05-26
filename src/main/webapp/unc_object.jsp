@@ -307,7 +307,7 @@
                         <% if ("4".equals(currentObject.getParentType()) && user != null && user.getId().equals(currentObject.getIDUserByAdvertId())){%>
                         <div style="margin-left:350px; margin-top:25px;">
                             <a class="a-outline button-style clearfix" id="delete-object" style="width: 200px">
-                                Удалить объявление
+                                Удалить
                             </a>
                         </div>
                         <%}%>

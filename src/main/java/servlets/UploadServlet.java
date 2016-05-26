@@ -22,7 +22,7 @@ public class UploadServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Part filePart = request.getPart("file");
-        String fileName = request.getParameter("flowFilename");
+        String fileName = "c:\\var\\" + request.getParameter("flowFilename");
         File uploadFile = new File(fileName);
 
         try(InputStream input = filePart.getInputStream()) {

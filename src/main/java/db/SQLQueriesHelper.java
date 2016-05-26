@@ -1666,7 +1666,7 @@ public class SQLQueriesHelper {
     }
 
     static String checkEmail(String email) {
-        String query = "select * from UNC_PARAMS where ATTR_ID = 5 and OBJECT_ID = " + email;
+        String query = "select * from UNC_PARAMS where ATTR_ID = 5 and VALUE = '" + email + "'";
         return query;
     }
     public static String deleteDiscusCommentsParams (String id) {
@@ -1687,6 +1687,17 @@ public class SQLQueriesHelper {
     
     public static String checkUserIsAdminOrModerator(String id) {
         String query = "select * from UNC_PARAMS where OBJECT_ID = " + id + " and (ATTR_ID = 35 or ATTR_ID = 36) and VALUE = 'true'";
+        return query;
+    }
+    
+    public static String getUsersFullInfo() {
+        String query = "select  uo.OBJECT_ID,\n" +
+            "        up.ATTR_ID,\n" +
+            "        up.VALUE\n" +
+            "  from  UNC_OBJECTS uo\n" +
+            "    left join UNC_PARAMS up\n" +
+            "      on uo.OBJECT_ID = up.OBJECT_ID\n" +
+            "  where uo.OBJECT_TYPE_ID = 1 and up.ATTR_ID in (1, 6, 12, 14, 35, 36, 37)";
         return query;
     }
 }

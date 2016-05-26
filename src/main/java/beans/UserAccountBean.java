@@ -53,6 +53,15 @@ public class UserAccountBean implements UserAccount {
         lastLoginDate = currentLoginDate;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o != null && ((o.getClass().equals(UserAccountBean.class) && ((UserAccountBean)o).getId().equals(id)) || (o.getClass().equals(String.class) && ((String)o).equals(id)))){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
     
     @Override
     public String getId() { return this.id; };
@@ -273,12 +282,20 @@ public class UserAccountBean implements UserAccount {
     public boolean isIsModer() {
         return isModer;
     }
+    
+    public void setisIsModer(boolean value) {
+        isModer = value;
+    }
 
     /**
      * @return the isAdmin
      */
     public boolean isIsAdmin() {
         return isAdmin;
+    }
+    
+    public void setisIsAdmin(boolean value) {
+        isAdmin = value;
     }
 
     /**

@@ -253,7 +253,7 @@ $(function () {
 
                                         console.log("path = " + path);
                                         console.log($scope.uploader.flow.files);
-                                        $scope.uploader.flow.files[i].name = path;
+                                        $scope.uploader.flow.files[i].name = $scope.advertId + '-' + i + '.png';
                                         $http({
                                             url: '/unc-project/saveAttrPicServlet',
                                             method: 'POST',

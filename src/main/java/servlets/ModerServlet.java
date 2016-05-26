@@ -28,6 +28,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import unc.helpers.Crypt2;
 
 /**
  *
@@ -365,25 +366,56 @@ public class ModerServlet extends HttpServlet {
             } catch (SQLException ex) {
                 Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-            ResultSet uids = null;
+            ResultSet results = null;
             try {
-                uids = st.executeQuery(SQLQueriesHelper.getUsersIds());
+                results = st.executeQuery(SQLQueriesHelper.getUsersFullInfo());
             } catch (SQLException ex) {
                 Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             try {
-                while (uids.next()) {
-                    UserAccountBean uab = new UserAccountBean();
-                    uab.setId(uids.getString(1));
+                
+                while (results.next()) {
+                    String userid = results.getString(1);
+                    UserAccountBean currentUserBean = null;
+
+                    for (UserAccountBean user : users) {
+                        if (user.getId().equals(userid)) {
+                            currentUserBean = user;
+                            break;
+                        }
+                    }
+
+                    if (currentUserBean == null) {
+                        currentUserBean = new UserAccountBean();
+                        currentUserBean.setId(userid);
+                        users.add(currentUserBean);
+                    }
+                    if (results.getString("ATTR_ID").equals(SQLQueriesHelper.FIRST_NAME_ATTR_ID)) {
+                        currentUserBean.setFirstName(Crypt2.decrypt(results.getString("VALUE")));
+                    } else if (results.getString("ATTR_ID").equals(SQLQueriesHelper.SURNAME_ATTR_ID)) {
+                        currentUserBean.setSurname(Crypt2.decrypt(results.getString("VALUE")));
+                    } else if (results.getString("ATTR_ID").equals(SQLQueriesHelper.LOGIN_ATTR_ID)) {
+                        currentUserBean.setLogin(results.getString("VALUE"));
+                    } else if (results.getString("ATTR_ID").equals(SQLQueriesHelper.USER_PIC_FILE_ATTR_ID)) {
+                        currentUserBean.setUserPicFile(results.getString("VALUE"));
+                    } else if (results.getString("ATTR_ID").equals(SQLQueriesHelper.MODER_ATTR_ID)) {
+                        currentUserBean.setisIsModer(Boolean.parseBoolean(results.getString("VALUE")));
+                    } else if (results.getString("ATTR_ID").equals(SQLQueriesHelper.ADMIN_ATTR_ID)) {
+                        currentUserBean.setisIsAdmin(Boolean.parseBoolean(results.getString("VALUE")));
+                    } else if (results.getString("ATTR_ID").equals(SQLQueriesHelper.INVALID_ATTR_ID)) {
+                        currentUserBean.setIsInvalid(Boolean.parseBoolean(results.getString("VALUE")));
+                    }
+                    
+                    
+                    /*uab.setId(uids.getString(1));
+                    
                     uab.updateAllInfo();
-                    users.add(uab);
+                    users.add(uab);*/
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (PropertyVetoException ex) {
-                Logger.getLogger(ModerServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            } 
             if (connection != null) {
                 try {
                     connection.close();
