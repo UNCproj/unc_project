@@ -280,6 +280,8 @@ $(function () {
             };
             $scope.validationBefore = function () {
                 var validStat = true;
+                var regPhone = /^(\+7|8)(\(\d{3}\)|\d{3})\d{7}$/;
+                console.log(regPhone.test($("#phone").val()));
                 if ($.urlParam('type') == 'advert') {
                     $("#information").empty();
                     if ($("#name").val() == "") {
@@ -289,9 +291,9 @@ $(function () {
                     } else {
                         $("#name").removeClass("invalid");
                     }
-                    if ($("#phone").val() == "") {
+                    if ($("#phone").val() == "" || (regPhone.test($("#phone").val())==false)) {
                         $("#phone").addClass("invalid");
-                        $("#information").append("<p>Введите номер телефона</p>");
+                        $("#information").append("<p>Введите номер телефона ( Например: +79876543210 )</p>");
                         validStat = false;
                     } else {
                         $("#phone").removeClass("invalid");
@@ -363,7 +365,7 @@ $(function () {
                             a_ru_name +
                             '</td>' +
                             '<td>' +
-                            '<input type="tel" ng-model="object.' + a_name + '" id="' + a_name + '" pattern="\+7\-[0-9]{3}\-[0-9]{3}\-[0-9]{2}\-[0-9]{2}"/>' +
+                            '<input type="tel" ng-model="object.' + a_name + '" id="' + a_name + '">' +
                             '</td>' +
                             '</tr>'
                         );
@@ -706,3 +708,67 @@ $(function () {
         }
     ]);
 })();
+
+(function( $ ){
+
+//// ---> Проверка на существование элемента на странице
+    jQuery.fn.exists = function() {
+        return jQuery(this).length;
+    }
+
+//	Phone Mask
+    $(function() {
+
+        if($('#user_phone').exists()){
+
+            $('#user_phone').each(function(){
+                $(this).mask("(999) 999-99-99");
+            });
+
+        }
+
+        if($('.phone_form').exists()){
+
+            var form = $('.phone_form'),
+                btn = form.find('.btn_submit');
+
+            form.find('.rfield').addClass('empty_field');
+
+            setInterval(function(){
+
+                if($('#user_phone').exists()){
+                    var pmc = $('#user_phone');
+                    if ( (pmc.val().indexOf("_") != -1) || pmc.val() == '' ) {
+                        pmc.addClass('empty_field');
+                    } else {
+                        pmc.removeClass('empty_field');
+                    }
+                }
+
+                var sizeEmpty = form.find('.empty_field').size();
+
+                if(sizeEmpty > 0){
+                    if(btn.hasClass('disabled')){
+                        return false
+                    } else {
+                        btn.addClass('disabled')
+                    }
+                } else {
+                    btn.removeClass('disabled')
+                }
+
+            },200);
+
+            btn.click(function(){
+                if($(this).hasClass('disabled')){
+                    return false
+                } else {
+                    form.submit();
+                }
+            });
+
+        }
+
+    });
+
+})( jQuery );
