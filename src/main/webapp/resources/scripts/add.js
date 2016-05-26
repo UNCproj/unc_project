@@ -280,6 +280,9 @@ $(function () {
             };
             $scope.validationBefore = function () {
                 var validStat = true;
+                var regPhone = /^(\+7|8)(\(\d{3}\)|\d{3})\d{7}$/;
+                console.log(regPhone.test($("#phone").val()));
+
                 if ($.urlParam('type') == 'advert') {
                     $("#information").empty();
                     if ($("#name").val() == "") {
@@ -289,9 +292,9 @@ $(function () {
                     } else {
                         $("#name").removeClass("invalid");
                     }
-                    if ($("#phone").val() == "") {
+                    if ($("#phone").val() == "" || (regPhone.test($("#phone").val())==false)) {
                         $("#phone").addClass("invalid");
-                        $("#information").append("<p>Введите номер телефона</p>");
+                        $("#information").append("<p>Введите номер телефона ( Например: +79876543210 )</p>");
                         validStat = false;
                     } else {
                         $("#phone").removeClass("invalid");

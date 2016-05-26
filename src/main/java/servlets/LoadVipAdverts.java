@@ -37,11 +37,11 @@ public class LoadVipAdverts extends HttpServlet {
             connection = DataSource.getInstance().getConnection();
             Statement statement = connection.createStatement();
             ResultSet resultSet = null;
-            if (type.equals("-1")) {
+//            if (type.equals("-1")) {
                 resultSet = statement.executeQuery(SQLQueriesHelper.selectVipAdverts(n));
-            } else {
-                resultSet = statement.executeQuery(SQLQueriesHelper.selectVipAdverts(n, type));
-            }
+//            } else {
+//                resultSet = statement.executeQuery(SQLQueriesHelper.selectVipAdverts(n, type));
+//            }
 
             while (resultSet.next()){
                 vipAdvertsArray.add(new VipAdvert(resultSet.getString("object_id"),
